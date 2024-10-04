@@ -1,4 +1,5 @@
 <template>
+  <Header title="Asignaciones"></Header>
   <div style="display: flex; justify-content: center; padding:10px">
     <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog" :toggleActivate="changestatus"></CustomTable>
     <q-dialog v-model="alert">
@@ -22,6 +23,7 @@
 <script setup>
 import CustomTable from "../components/tables/tables.vue"
 import { ref } from "vue"
+import Header from '../components/header/header.vue';
 
 let title = ref("Titulo de la tabla enviada desde padre")
 let alert = ref(false)

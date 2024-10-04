@@ -1,4 +1,3 @@
-
 <template>
   <div class="home">
     <div class="cards">
@@ -29,31 +28,31 @@ const cards = [
     buttonText: 'Ver'
   },
   {
-    imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    imageSrc: 'https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     title: 'Aprendices',
     buttonLink: '/apprentice',
     buttonText: 'Ver'
   },
   {
-    imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    imageSrc: 'https://images.pexels.com/photos/3183186/pexels-photo-3183186.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     title: 'Asignación',
     buttonLink: '/assignment',
     buttonText: 'Ver'
   },
   {
-    imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    imageSrc: 'https://images.pexels.com/photos/313691/pexels-photo-313691.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     title: 'Seguimiento',
     buttonLink: '/followup',
     buttonText: 'Ver'
   },
   {
-    imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    imageSrc: 'https://images.pexels.com/photos/7693107/pexels-photo-7693107.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     title: 'Bitacoras',
     buttonLink: '/binnacles',
     buttonText: 'Ver'
   },
   {
-    imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    imageSrc: 'https://images.pexels.com/photos/4836585/pexels-photo-4836585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     title: 'Informes',
     buttonLink: '/binnacles',
     buttonText: 'Ver'
@@ -75,3 +74,4 @@ const cards = [
   align-items: center;
 } 
 </style>
+

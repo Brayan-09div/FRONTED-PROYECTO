@@ -12,8 +12,8 @@ import instructor from '../views/Instructor.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
-    {path: '/', component: layouts, children:[
-        {path: '/home', component: home},
+    {path: '/layouts', component: layouts, children:[
+        {path: '/', component: home},
         {path: '/apprentice', component: apprentice},
         {path: '/assignment', component: assignment},
         {path: '/binnacles', component: binnacles},

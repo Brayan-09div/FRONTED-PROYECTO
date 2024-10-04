@@ -9,6 +9,9 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
   title:{
@@ -16,7 +19,12 @@ const props = defineProps({
     Required:true,
     default:'Title'
   }
+  
 })
+
+const Salir = async () => {
+  router.replace("/")
+}
 
 </script>
 
