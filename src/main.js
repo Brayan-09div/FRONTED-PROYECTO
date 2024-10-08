@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { Quasar, Dialog, Notify, Dark } from 'quasar'
 import {createPinia} from 'pinia'
-import { router } from './routers/routers'
+import { router } from './router/routers'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import  axios from 'axios'
 

@@ -3,12 +3,12 @@
     <div class="cards">
       <!-- Renderizamos cada tarjeta de UserCard con v-for -->
       <UserCard
-        v-for="(card, index) in cards"
+        v-for="(Card, index) in cards"
         :key="index"
-        :imageSrc="card.imageSrc"
-        :title="card.title"
-        :buttonLink="card.buttonLink"
-        :buttonText="card.buttonText"
+        :imageSrc="Card.imageSrc"
+        :title="Card.title"
+        :buttonLink="Card.buttonLink"
+        :buttonText="Card.buttonText"
       />
     </div>
   </div>
@@ -17,7 +17,7 @@
 <script setup>
 // Importa el componente UserCard
 // import  from '../components/cards/card.vue'
-import UserCard from '../components/cards/card.vue'
+import UserCard from '../components/cards/Card.vue'
 
 // Define las tarjetas con datos (imágenes, títulos, enlaces, etc.)
 const cards = [
@@ -64,7 +64,6 @@ const cards = [
 .cards { 
    width: 80%;
   margin: 0 auto;
-  margin-bottom: 120px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;

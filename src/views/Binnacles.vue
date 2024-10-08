@@ -5,9 +5,8 @@
 
 
 <script setup>
-import modalDialog from '../components/modal/modal.vue';
-import header from '../components/header/header.vue';
-import Header from '../components/header/header.vue';
+import modalDialog from '../components/modal/Modal.vue';
+import Header from '../components/header/Header.vue';
 
 // const fiveInputs =[
 // +

@@ -5,8 +5,8 @@
   
   
   <script setup>
-  import Button from '../components/buttons/buttons.vue'
-  import Header from '../components/header/header.vue';
+  import Button from '../components/buttons/Button.vue'
+  import Header from '../components/header/Header.vue';
 
   function  Search(){
     console.log('Se hizo click en este boton')

@@ -1,4 +1,4 @@
-import layouts from '../layouts/layouts.vue'
+import layouts from '../layouts/Layout.vue'
 import home from '../views/Home.vue'
 import apprentice from '../views/Apprentice.vue'
 import assignment from '../views/Assignament.vue'
@@ -22,7 +22,6 @@ const routes = [
         {path: '/modality', component: modality},
         {path: '/register', component: register},
         {path: '/userEP', component: userEP},
-        // {path: '/login', component:logs}
     ]},
     
     {path: '/logs', component: logs},
