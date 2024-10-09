@@ -1,19 +1,43 @@
 <template>
   <Header title="Bitacoras"></Header>
-  <modalDialog title="Modal Nuevo"></modalDialog>
+  
+  <!-- Usando el modal con inputs dentro del slot -->
+  <ModalDialog 
+    title="Nuevo Registro" 
+    nameButton="Abrir Modal"
+    labelClose="Cancelar" 
+    labelSend="Guardar"
+    :onclickClose="cerrarModal" 
+    :onclickSend="guardarDatos"
+  >
+
+    <q-input v-model="nombre" label="Nombre" filled />
+    <q-input v-model="apellido" label="Apellido" filled />
+    <q-input v-model="email" label="Email" filled />
+
+  </ModalDialog>
 </template>
 
-
 <script setup>
-import modalDialog from '../components/modal/Modal.vue';
+import { ref } from 'vue';
+import ModalDialog from '../components/modal/modal.vue';
 import Header from '../components/header/Header.vue';
 
-// const fiveInputs =[
-// +
+const nombre = ref('pablo')
+const apellido = ref('lopez')
+const email = ref('pablo@example.com')
 
-// ]
+
+const cerrarModal = () => {
+  console.log('Modal cerrado');
+};
+
+const guardarDatos = () => {
+  console.log('Datos guardados:');
+};
 
 </script>
 
-
-<style></style>
+<style>
+/* Estilos adicionales si es necesario */
+</style>
