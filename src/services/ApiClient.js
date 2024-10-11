@@ -7,6 +7,7 @@ export async function getData(url, params = {}) {
         const response = await apiClient.get(url, { params });
         return response.data;  // Devuelve los datos de la respuesta
     } catch (error) {
+        
         console.error('Error en la petición GET:', error);
         throw error;  // Opcionalmente, puedes manejar el error o lanzarlo
     }
