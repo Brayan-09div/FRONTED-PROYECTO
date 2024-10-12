@@ -1,18 +1,18 @@
 <template>
   <Header title="Aprendices"></Header>
-  <div>
+  <!-- <div>
     <h2>Datos de Aprendices</h2>
     <ul>
       <li v-for="aprendiz in aprendices" :key="aprendiz.id">{{ aprendiz.name }}</li>
     </ul>
-  </div>
+  </div> -->
 
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import Header from '../components/header/header.vue';
-import { getData } from '../services/ApiClient.js'; 
+// import { getData } from '../services/ApiClient.js'; 
 const aprendices = ref([]); 
 
 
