@@ -25,7 +25,7 @@ import CustomTable from "../components/tables/Tables.vue"
 import { ref } from "vue"
 import Header from '../components/header/Header.vue';
 
-let title = ref("Titulo de la tabla enviada desde padre")
+let title = ref("Asignaciones")
 let alert = ref(false)
 
 const columns = ref([

@@ -1,33 +1,88 @@
 <template>
   <Header title="Aprendices"></Header>
-  <!-- <div>
-    <h2>Datos de Aprendices</h2>
-    <ul>
-      <li v-for="aprendiz in aprendices" :key="aprendiz.id">{{ aprendiz.name }}</li>
-    </ul>
-  </div> -->
+  <div style="display: flex; justify-content: center; padding: 10px">
+    <CustomTable
+      :rows="rows"
+      :columns="columns"
+      :title="title"
+      :onClickEdit="openDialog"
+      :toggleActivate="changestatus"
+    >
+  </CustomTable>
 
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import Header from '../components/header/header.vue';
-// import { getData } from '../services/ApiClient.js'; 
-const aprendices = ref([]); 
+import CustomTable from "../components/tables/Tables.vue"
+import { onBeforeMount, ref } from "vue";
+import Header from '../components/header/Header.vue';
+import { getData } from '../services/ApiClient.js';
+
+let title = ref("Aprendices")
+let alert = ref(false)
+const rows = ref([]);
 
 
-const fetchAprendices = async () => {
-  try {
-    const url = '/api/aprendices'; 
-    aprendices.value = await getData(url); 
-  } catch (error) {
-    console.error('Error al obtener los aprendices:', error);
-  }
-};
-       
-
-
-onMounted(() => {
-  fetchAprendices();
+onBeforeMount(() => {
+  loadData(); 
 });
+
+const loadData = async () => {
+    const response = await getData('/apprendice/listallapprentice');
+    console.log(response);
+    rows.value = response
+};
+
+
+
+const columns = ref([
+  {
+    name: "firstName",
+    label: "Nombre",
+    field: "firstName",
+    align: "center",
+    sortable: true,
+  },
+  {
+    name: "lastName",
+    label: "Apellido",
+    align: "center",
+    field: "lastName",
+    sortable: true,
+  },
+  {
+    name: "numDocument",
+    align: "center",
+    label: "N° Documento",
+    field: "numDocument",
+    sortable: true,
+  },
+  {
+    name: "email",
+    align: "center",
+    label: "Correo",
+    field: "email",
+    sortable: true,
+  },
+  {
+    name: "phone",
+    align: "center",
+    label: "Telefono",
+    field: "phone",
+    sortable: true,
+  },
+]);
+
+
+
+function openDialog(row){
+  alert.value=true
+  console.log(row);
+}
+
+function changestatus(row){
+  row.estado = row.estado === 1 ? 0 : 1; 
+}
+
 </script>
