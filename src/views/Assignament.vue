@@ -1,5 +1,6 @@
 <template>
   <Header title="Asignaciones"></Header>
+
   <div style="display: flex; justify-content: center; padding:10px">
     <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog" :toggleActivate="changestatus"></CustomTable>
     <q-dialog v-model="alert">

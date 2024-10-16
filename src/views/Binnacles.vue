@@ -1,19 +1,13 @@
 <template>
   <Header title="Bitacoras"></Header>
-  
-  <!-- Usando el modal con inputs dentro del slot -->
-  <ModalDialog 
-    title="Nuevo Registro" 
-    nameButton="Abrir Modal"
-    labelClose="Cancelar" 
-    labelSend="Guardar"
-    :onclickClose="cerrarModal" 
-    :onclickSend="guardarDatos"
-  >
 
-    <q-input v-model="nombre" label="Nombre" filled />
-    <q-input v-model="apellido" label="Apellido" filled />
-    <q-input v-model="email" label="Email" filled />
+  <!-- Usando el modal con inputs dentro del slot -->
+  <ModalDialog title="Nuevo Registro" nameButton="Abrir Modal" labelClose="Cancelar" labelSend="Guardar"
+    :onclickClose="cerrarModal" :onclickSend="guardarDatos">
+
+    <q-input v-model="nombre" label="Nombre" filled /> <br>
+    <q-input v-model="apellido" label="Apellido" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br>
 
   </ModalDialog>
 </template>

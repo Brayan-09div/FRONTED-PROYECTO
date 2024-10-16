@@ -1,6 +1,5 @@
 <template>
-  <q-btn :label="nameButton" color="green-8" @click="fixed = true" />
-  <q-dialog v-model="fixed" transition-show="rotate" transition-hide="rotate">
+    <q-dialog v-model="fixed" transition-show="rotate" transition-hide="rotate">
     <q-card>
       <q-card-section class="title">
         <div class="text-h6 text-center">{{ title }}</div>
@@ -24,16 +23,16 @@
   </q-dialog>
 </template>
 
+
 <script setup>
 import { ref } from 'vue';
 
 let fixed = ref(false);
 
 const props = defineProps({
-  nameButton: {
-    type: String,
-    required: true,
-    default: 'Boton'
+fixed : {
+    type: Boolean,
+    required: true
   },
   title: {
     type: String,
