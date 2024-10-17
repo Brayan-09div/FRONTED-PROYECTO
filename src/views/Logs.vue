@@ -73,7 +73,7 @@ const handleSubmit = async () => {
     });
     notifySuccessRequest('Inicio de sesión exitoso');
     localStorage.setItem('token', response.token); 
-    router.push('/dashboard');
+    router.push('/layouts');
   } catch (error) {
     console.error('Error en handleSubmit:', error);
     if (error.response && error.response.data && error.response.data.error) {

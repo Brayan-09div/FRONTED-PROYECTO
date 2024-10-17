@@ -25,9 +25,9 @@
 </template>
 
 <script setup>
-import CustomTable from "../components/tables/Tables.vue"
+import CustomTable from "../components/tables/tables.vue"
 import { onBeforeMount, ref } from "vue";
-import Header from '../components/header/Header.vue';
+// import Header from '../components/header/Header.vue';
 import { getData, putData } from '../services/ApiClient.js';
 
 // let title = ref("Aprendices")

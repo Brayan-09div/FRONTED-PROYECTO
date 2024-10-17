@@ -45,12 +45,14 @@
           <q-btn
             class="toggle-btn"
             @click="toggleActivate(props.row)"
-            :icon="props.row.status == 1 ? 'check' : 'close'"
+            :icon="props.row.status._id == 1 ? 'close' : 'check'"
             round
             size="md"
             aria-label="Toggle Activation"
-            :color="props.row.status == 1 ? 'positive' : 'negative'"
+            :color="props.row.status._id == 1 ? 'negative' : 'positive'"
+            :loading="loading"
           />
+          
         </q-td>
       </template>
 
@@ -60,6 +62,9 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+let loading =  ref(false)
+
 const props = defineProps({
   rows: {
     type: Array,
@@ -82,6 +87,15 @@ const props = defineProps({
     required: true
   },
 });
+
+const toggleActivate = async (row) => {
+  loading.value = true
+  try {
+    await props.toggleActivate(row)
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <style scoped>
