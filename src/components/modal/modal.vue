@@ -1,5 +1,9 @@
 <template>
-  <q-btn :label="nameButton" color="green-8" @click="fixed = true" />
+  <q-btn id="button" color="green-8" @click="fixed = true" class="q-mb-md">
+    <q-icon name="add" />
+    <span style="font-weight: bold !important; margin-left: 5px;">{{ nameButton }}</span>
+  </q-btn>
+
   <q-dialog v-model="fixed" transition-show="rotate" transition-hide="rotate">
     <q-card>
       <q-card-section class="title">
@@ -9,20 +13,33 @@
       <q-separator />
 
       <q-card-section>
-        <slot>
-        </slot>
+        <slot></slot>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat :label="labelClose" @click="onclickClose" color="red-8" v-close-popup />
-        <q-btn flat :label="labelSend" @click="onclickSend" color="white" style="background-color: #2f7d32;"
-          v-close-popup />
+        <q-btn
+          flat
+          :label="labelClose"
+          @click="onclickClose"
+          color="red-8"
+          v-close-popup
+          style="font-weight: bold;"
+        />
+        <q-btn
+          flat
+          :label="labelSend"
+          @click="onclickSend"
+          color="white"
+          style="background-color: #2f7d32; font-weight: bold;"
+          v-close-popup
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
@@ -69,5 +86,12 @@ const props = defineProps({
 
 .q-card {
   width: 400px;
+}
+
+#button{
+  width: 160px;
+  margin-left: 2%;
+  margin-top: 2%;
+  margin-bottom: 0px;
 }
 </style>

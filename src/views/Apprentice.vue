@@ -1,8 +1,25 @@
 <template>
   <Header title="Aprendices"></Header>
+  <ModalDialog
+      nameButton="Agregar"
+      title="Título del Modal"
+      labelClose="Cerrar"
+      labelSend="Enviar"
+      :onclickClose="handleClose"
+      :onclickSend="handleSend"
+    >
+  </ModalDialog>
   <div style="display: flex; justify-content: center; padding: 10px">
     <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog"
       :toggleActivate="changestatus">
+
+    <!-- <q-input v-model="nombre" label="Nombre" filled /> <br>
+    <q-input v-model="apellido" label="Apellido" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br>
+    <q-input v-model="celular" label="Email" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br> -->
     </CustomTable>
     <q-dialog v-model="alert">
       <q-card>
@@ -21,6 +38,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+
   </div>
 </template>
 
@@ -28,8 +47,10 @@
 import CustomTable from "../components/tables/tables.vue"
 import { onBeforeMount, ref } from "vue";
 // import Header from '../components/header/Header.vue';
-import Header from "../components/header/Header.vue";
+import Header from "../components/header/header.vue";
 import { getData, putData } from '../services/ApiClient.js';
+import ModalDialog from '../components/modal/modal.vue';
+
 
 // let title = ref("Aprendices")
 let alert = ref(false)
@@ -95,12 +116,6 @@ const columns = ref([
     label: "Editar",
     align: "center",
     field: "editar"
-  },
-  {
-    name: "activar",
-    label: "Activar/Desactivar",
-    align: "center",
-    field: "activar"
   },
 ]);
 
