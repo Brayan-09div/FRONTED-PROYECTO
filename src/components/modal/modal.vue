@@ -19,22 +19,9 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn
-          flat
-          :label="labelClose"
-          @click="onclickClose"
-          color="red-8"
-          v-close-popup
-          style="font-weight: bold;"
-        />
-        <q-btn
-          flat
-          :label="labelSend"
-          @click="onclickSend"
-          color="white"
-          style="background-color: #2f7d32; font-weight: bold;"
-          v-close-popup
-        />
+        <q-btn flat :label="labelClose" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
+        <q-btn flat :label="labelSend" @click="onclickSend" color="white"
+          style="background-color: #2f7d32; font-weight: bold;" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -85,10 +72,10 @@ const props = defineProps({
 }
 
 .q-card {
-  width: 400px;
+  width: 450px;
 }
 
-#button{
+#button {
   width: 160px;
   margin-left: 2%;
   margin-top: 2%;

@@ -1,25 +1,21 @@
 <template>
   <Header title="Aprendices"></Header>
-  <ModalDialog
-      nameButton="Agregar"
-      title="Título del Modal"
-      labelClose="Cerrar"
-      labelSend="Enviar"
-      :onclickClose="handleClose"
-      :onclickSend="handleSend"
-    >
+  <ModalDialog nameButton="Agregar" title="Agregar Aprendiz" labelClose="Cerrar" labelSend="Enviar"
+    :onclickClose="handleClose" :onclickSend="handleSend">
+    <q-input v-model="firstName" label="Nombre" filled /> <br>
+    <q-input v-model="lastName" label="Apellido" filled /> <br>
+    <q-input v-model="email" label="Email" filled /> <br>
+    <q-input v-model="phone" label="Telefono" filled /> <br>
+    <q-select square filled v-model="tpDocument" :options="options" label="Tipo de Documento" /><br>
+    <q-input v-model="numDocument" label="N° Documento" filled /> <br>
+    <!-- <q-select square filled v-model="fiche" :optionsFiche="options" label="N° Documento" /><br> -->
+    <q-select dense v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options
+              option-label="fiche" option-value="_id" use-input @filter="filterFunction" class="custom-select"
+              use-chips></q-select>
   </ModalDialog>
   <div style="display: flex; justify-content: center; padding: 10px">
     <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog"
       :toggleActivate="changestatus">
-
-    <!-- <q-input v-model="nombre" label="Nombre" filled /> <br>
-    <q-input v-model="apellido" label="Apellido" filled /> <br>
-    <q-input v-model="email" label="Email" filled /> <br>
-    <q-input v-model="celular" label="Email" filled /> <br>
-    <q-input v-model="email" label="Email" filled /> <br>
-    <q-input v-model="email" label="Email" filled /> <br>
-    <q-input v-model="email" label="Email" filled /> <br> -->
     </CustomTable>
     <q-dialog v-model="alert">
       <q-card>
@@ -48,14 +44,26 @@ import CustomTable from "../components/tables/tables.vue"
 import { onBeforeMount, ref } from "vue";
 // import Header from '../components/header/Header.vue';
 import Header from "../components/header/header.vue";
-import { getData, putData } from '../services/ApiClient.js';
+import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
+import { mdiFountainPenTip } from "@quasar/extras/mdi-v4";
 
 
 // let title = ref("Aprendices")
 let alert = ref(false)
 const rows = ref([]);
+// variables del aprendiz
+let firstName = ref('')
+let lastName = ref('')
+let email = ref('')
+let phone = ref('')
+let tpDocument = ref('')
+let numDocument = ref('')
+let fiche = ref('')
 
+const options = [
+  'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
+]
 
 onBeforeMount(() => {
   loadData();
@@ -66,8 +74,6 @@ const loadData = async () => {
   console.log(response);
   rows.value = response
 };
-
-
 
 const columns = ref([
   {
@@ -135,4 +141,19 @@ async function changestatus(row) {
   row.status = row.status === 1 ? 0 : 1;
 }
 
+async function handleSend() {
+  const response = await postData('/apprentice', {
+    firstname: firstName.value,
+    lastname: lastName.value,
+    email: email.value,
+    phone: phone.value,
+    tpdocument: tpDocument.value,
+    numdocument: numDocument.value,
+    fiche: fiche.value
+  })
+
+}
+
 </script>
+
+<style></style>

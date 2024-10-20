@@ -54,6 +54,13 @@
           <q-item-section> Bitacoras </q-item-section>
         </q-item>
         <q-separator />
+        <q-item clickable to="/register" v-ripple class="menu-button custom-menu-item">
+          <q-item-section avatar>
+            <q-icon name="dictionary" />
+          </q-item-section>
+          <q-item-section> Registro </q-item-section>
+        </q-item>
+        <q-separator />
       </q-list>
     </q-scroll-area>
   </q-drawer>
