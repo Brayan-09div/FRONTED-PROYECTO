@@ -46,7 +46,7 @@ import { onBeforeMount, ref } from "vue";
 import Header from "../components/header/header.vue";
 import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
-import { mdiFountainPenTip } from "@quasar/extras/mdi-v4";
+
 
 
 // let title = ref("Aprendices")

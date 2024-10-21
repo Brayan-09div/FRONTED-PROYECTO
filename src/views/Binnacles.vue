@@ -10,13 +10,14 @@
     <q-input v-model="email" label="Email" filled /> <br>
 
   </ModalDialog>
+  <Dialog></Dialog>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import ModalDialog from '../components/modal/modal.vue';
 import Header from '../components/header/Header.vue';
-
+import Dialog from '../components/modal/dialog.vue';
 const nombre = ref('pablo')
 const apellido = ref('lopez')
 const email = ref('pablo@example.com')

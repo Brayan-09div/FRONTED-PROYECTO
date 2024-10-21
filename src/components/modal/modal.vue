@@ -76,7 +76,7 @@ const props = defineProps({
 }
 
 #button {
-  width: 160px;
+  /* width: 160px; */
   margin-left: 2%;
   margin-top: 2%;
   margin-bottom: 0px;
