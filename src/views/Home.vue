@@ -1,29 +1,42 @@
 <template>
-  <div class="home">
-    <div class="cards">
-      <!-- Renderizamos cada tarjeta de UserCard con v-for -->
-      <UserCard
-        v-for="(Card, index) in cards"
-        :key="index"
-        :imageSrc="Card.imageSrc"
-        :title="Card.title"
-        :buttonLink="Card.buttonLink"
-        :buttonText="Card.buttonText"
-      />
-    </div>
-  </div>
+  <q-layout view="hHh Lpr lff">
+    <Header :toggle-drawer="toggleDrawer" />
+    <Sidebar v-model="drawer" />
+    <q-page-container>
+      <div class="home">
+        <div class="cards">
+          <UserCard
+            v-for="(Card, index) in cards"
+            :key="index"
+            :imageSrc="Card.imageSrc"
+            :title="Card.title"
+            :buttonLink="Card.buttonLink"
+            :buttonText="Card.buttonText"
+          />
+        </div>
+      </div>
+    </q-page-container>
+    <Footer />
+  </q-layout>
 </template>
 
 <script setup>
-// Importa el componente UserCard
-// import  from '../components/cards/card.vue'
-import UserCard from '../components/cards/Card.vue'
+import Header from '../layouts/LayoutHeader.vue';
+import Sidebar from '../layouts/LayoutSidebar.vue';
+import Footer from '../layouts/LayoutFooter.vue';
+import UserCard from '../components/cards/cards.vue';
+import { ref } from "vue";
 
-// Define las tarjetas con datos (imágenes, títulos, enlaces, etc.)
+const drawer = ref(false);
+
+const toggleDrawer = () => {
+  drawer.value = !drawer.value;
+};
+
 const cards = [
   {
     imageSrc: 'https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    title: 'Intructor',
+    title: 'Instructor',
     buttonLink: '/instructor',
     buttonText: 'Ver'
   },
@@ -47,7 +60,7 @@ const cards = [
   },
   {
     imageSrc: 'https://images.pexels.com/photos/7693107/pexels-photo-7693107.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    title: 'Bitacoras',
+    title: 'Bitácoras',
     buttonLink: '/binnacles',
     buttonText: 'Ver'
   },
@@ -57,20 +70,20 @@ const cards = [
     buttonLink: '/binnacles',
     buttonText: 'Ver'
   }
-]
+];
 </script>
 
 <style scoped>
 .cards { 
-   width: 80%;
+  width: 80%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
   margin-top: 20px;
   justify-content: center;
   text-align: center;
-  align-items: center;
+  align-items: stretch; /* Estira los elementos para que tengan la misma altura */
 } 
 </style>
 

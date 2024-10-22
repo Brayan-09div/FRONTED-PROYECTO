@@ -12,7 +12,7 @@
   >
     <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 1 }">
       <q-list padding>
-        <q-item clickable to="/" v-ripple class="menu-button custom-menu-item">
+        <q-item clickable to="/index/home" v-ripple class="menu-button custom-menu-item">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
@@ -56,7 +56,7 @@
         <q-separator />
         <q-item clickable to="/register" v-ripple class="menu-button custom-menu-item">
           <q-item-section avatar>
-            <q-icon name="dictionary" />
+            <q-icon name="Library Books" />
           </q-item-section>
           <q-item-section> Registro </q-item-section>
         </q-item>

@@ -4,11 +4,8 @@
       <div class="login-header">
         <h1>REPFORA</h1>
       </div>
-      <img 
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s"
-        alt="Logo SENA" 
-        class="logo"
-      />
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s"
+        alt="Logo SENA" class="logo" />
       <h2 class="login-title">LOGIN</h2>
       <hr />
       <div class="container-form">
@@ -28,7 +25,14 @@
               <label for="user">Usuario</label>
               <input type="text" id="user" v-model="user" required class="input-field" />
               <label for="password">Contraseña</label>
-              <input type="password" id="password" v-model="password" required class="input-field" />
+
+              <div class="password-container">
+                <input :type="isPasswordVisible ? 'text' : 'password'" id="password" v-model="password" required
+                  class="input-field" />
+                <span @click="togglePasswordVisibility" class="toggle-password">
+                  <q-icon :name="isPasswordVisible ? 'visibility' : 'visibility_off'" />
+                </span>
+              </div>
             </div>
             <button type="submit" class="login-button" :disabled="isLoading">INICIAR SESIÓN</button>
           </div>
@@ -49,6 +53,7 @@ import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '
 
 const router = useRouter();
 const isRoleSelected = ref(false);
+const isPasswordVisible = ref(false);
 
 const rol = ref('');
 const user = ref('');
@@ -56,7 +61,7 @@ const password = ref('');
 let isLoading = ref(false);
 
 const handleRoleChange = () => {
-  isRoleSelected.value = !!rol.value; 
+  isRoleSelected.value = !!rol.value;
 };
 
 const handleSubmit = async () => {
@@ -64,36 +69,36 @@ const handleSubmit = async () => {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
-  isLoading.value = true; 
+  isLoading.value = true;
   try {
     const response = await postData('/Repfora/login', {
       role: rol.value,
       email: user.value,
-     password: password.value
+      password: password.value
     });
     notifySuccessRequest('Inicio de sesión exitoso');
-    localStorage.setItem('token', response.token); 
+    localStorage.setItem('token', response.token);
     router.push('/layouts');
   } catch (error) {
     console.error('Error en handleSubmit:', error);
     if (error.response && error.response.data && error.response.data.error) {
-      console.log('Error del servidor:', error.response.data.error);
       notifyErrorRequest(`Error: ${error.response.data.error}`);
     } else {
       notifyErrorRequest('Error inesperado, inténtalo nuevamente');
     }
   } finally {
-    isLoading.value = false; 
+    isLoading.value = false;
   }
 };
 
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value;
+};
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');
 };
-
 </script>
-
 
 <style>
 .login-container {
@@ -104,19 +109,8 @@ const forgotPassword = () => {
   background-color: #f0f0f0;
 }
 
-.login-container p {
-  margin-top: 10px !important;
-  margin-bottom: 20px !important;
-  text-decoration: underline;
-}
-
-.container-form {
-  padding: 20px !important;
-}
-
 .login-box {
   width: 650px;
-  /* padding: 20px; */
   border-radius: 10px;
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -147,6 +141,10 @@ const forgotPassword = () => {
   font-weight: bold;
 }
 
+.container-form {
+  padding: 20px !important;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -161,6 +159,23 @@ const forgotPassword = () => {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
+  padding-right: 40px;
+  position: relative;
+
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  pointer-events: all;
+  color: #666;
 }
 
 .login-button {
