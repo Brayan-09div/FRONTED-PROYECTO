@@ -24,7 +24,7 @@ const routes = [
         {path: '/userEP', component: userEP},
     ]},
     
-    {path: '/', component: logs},
+    {path: '/', component: loguin},
 ]
 
 export const router = createRouter({
