@@ -56,7 +56,7 @@
         <q-separator />
         <q-item clickable to="/register" v-ripple class="menu-button custom-menu-item">
           <q-item-section avatar>
-            <q-icon name="dictionary" />
+            <q-icon name="Library Books" />
           </q-item-section>
           <q-item-section> Registro </q-item-section>
         </q-item>

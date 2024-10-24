@@ -151,7 +151,6 @@ async function handleSend() {
     numdocument: numDocument.value,
     fiche: fiche.value
   })
-
 }
 
 </script>

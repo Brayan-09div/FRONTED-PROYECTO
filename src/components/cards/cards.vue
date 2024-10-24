@@ -1,11 +1,11 @@
 <template>
   <q-card class="my-card">
-    <q-img :src="imageSrc" class="card-image">
+    <q-img :src="imageSrc" class="card-image" style="height: 350px; object-fit: cover;">
       <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
         {{ title }}
       </div>
     </q-img>
-    <q-card-section>
+    <q-card-section class="card-section">
       <q-btn id="Ver" color="primary" clickable :to="buttonLink" v-ripple>
         {{ buttonText }}
       </q-btn>
@@ -31,36 +31,27 @@ const props = defineProps({
       type: String,
       default: 'Ver'
     }
-  })
+})
 </script>
 
 <style scoped>
-
-/* .cards { */
-  /* width: 80%;
-  margin: 0 auto;
-  margin-bottom: 120px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-  justify-content: center;
-  align-items: center;
-} */
-
-#Ver,
-#REGISTRO {
-  background-color: #2F7D32 !important;
-  font-size: 15px;
-  font-weight: bold;
+.my-card {
+  height: 300px; 
+  display: flex;
+  flex-direction: column; 
 }
 
-#REGISTRO {
-  width: 35%;
+.card-section {
+  flex-grow: 1; 
 }
 
 #Ver {
+  background-color: #2F7D32 !important;
+  font-size: 15px;
+  font-weight: bold;
   width: 55%;
+  margin: 0 auto; 
 }
 </style>
+
 

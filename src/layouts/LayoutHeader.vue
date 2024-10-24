@@ -1,3 +1,6 @@
+
+
+
 <template>
     <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-green-8'">
       <q-toolbar>
