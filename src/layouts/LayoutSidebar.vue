@@ -12,7 +12,7 @@
   >
     <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 1 }">
       <q-list padding>
-        <q-item clickable to="/" v-ripple class="menu-button custom-menu-item">
+        <q-item clickable to="/home" v-ripple class="menu-button custom-menu-item">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>

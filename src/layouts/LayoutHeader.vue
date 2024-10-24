@@ -20,7 +20,7 @@
   };
   
   const logout = () => {
-    router.push('/logs');
+    router.push('/');
   };
   </script>
   

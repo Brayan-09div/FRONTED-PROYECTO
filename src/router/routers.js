@@ -13,7 +13,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
     {path: '/layouts', component: layouts, children:[
-        {path: '/', component: home},
+        {path: '/home', component: home},
         {path: '/apprentice', component: apprentice},
         {path: '/assignment', component: assignment},
         {path: '/binnacles', component: binnacles},
@@ -24,7 +24,7 @@ const routes = [
         {path: '/userEP', component: userEP},
     ]},
     
-    {path: '/logs', component: logs},
+    {path: '/', component: logs},
 ]
 
 export const router = createRouter({

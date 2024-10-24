@@ -14,9 +14,6 @@
   </div>
 </template>
 
-<script setup>
-// Importa el componente UserCard
-// import  from '../components/cards/card.vue'
 import UserCard from '../components/cards/Card.vue'
 
 // Define las tarjetas con datos (imágenes, títulos, enlaces, etc.)
