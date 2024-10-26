@@ -11,43 +11,48 @@
 
             <!-- Columna de Estado -->
             <template v-slot:body-cell-status="props">
-                <q-td 
-                :props="props" 
-                class="q-pa-xs text-center">
-                    <q-select :v-model="props.row.status" 
-                    :options="OptionsStatus" 
-                    :class="{
+                <q-td :props="props" class="q-pa-xs text-center">
+                    <q-select :v-model="props.row.status" :options="OptionsStatus" :class="{
                         'select-Programado': props.row.status === '1',
                         'select-Ejecutado': props.row.status === '2',
                         'select-Pendiente': props.row.status === '3',
                         'select-Verificado': props.row.status === '4'
-                    }" 
-                      label="Seleccione Estado" 
-            dense 
-            outlined 
-            emit-value 
-            map-options
-
-            >
+                    }" label="Seleccione Estado" dense outlined emit-value map-options>
                     </q-select>
                 </q-td>
             </template>
+            <!-- Columna de Obsevación -->
 
-            
-      <!-- Columna de editar -->
-      <template v-slot:body-cell-editar="props">
-        <q-td :props="props" class="q-pa-xs text-center">
-          <q-btn
-            class="edit-btn"
-            @click="onClickEdit(props.row)"
-            color="primary"
-            icon="edit"
-            round
-            size="md"
-            aria-label="Edit"
-          />
-        </q-td>
-      </template>
+            <template v-slot:body-cell-observation="props">
+                <q-td :props="props">
+                    <q-btn @click="onClickObservation(props.row)" color="primary" icon="search" round size="md"
+                        aria-label="Buscar" />
+                </q-td>
+            </template>
+  <!-- Columna de añadir -->
+            <template v-slot:body-cell-añadir="props">
+                <q-td :props="props">
+                    <q-btn @click="onClickObservation(props.row)" color="primary" icon="add_circle" round size="md"
+                        aria-label="Añadir" />
+                </q-td>
+            </template>
+        
+            <!-- Columna de editar -->
+            <template v-slot:body-cell-editar="props">
+                <q-td :props="props" class="q-pa-xs text-center">
+                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit" round size="md"
+                        aria-label="Edit" />
+                </q-td>
+            </template>
+
+
+            <template v-slot:body-cell-detalle="props">
+                <q-td :props="props" class="q-pa-xs text-center">
+                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="search" round size="md"
+                        aria-label="search" />
+                </q-td>
+            </template>
+
         </q-table>
     </div>
 </template>
@@ -84,6 +89,10 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    onClickObservation: {
+        type: Function,
+        required: true,
+    }
 });
 
 const toggleActivate = async (row) => {

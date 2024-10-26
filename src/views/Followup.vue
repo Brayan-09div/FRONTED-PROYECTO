@@ -13,6 +13,7 @@
     <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
   </ButtonAgregate>
   <tableSelect :props="props" :rows="rows" :columns="columns"></tableSelect>
+
 </template>
 
 
@@ -34,7 +35,7 @@ let user = ref('');
 let observationDate = ref('');
 const rows = ref([
   {
-    assignment: "1",
+    assignment: "Nombre del Aprendiz",
     instructor: "John Doe",
     number: "12345",
     month: "1",
@@ -42,7 +43,7 @@ const rows = ref([
     status: "1",
     users: "1",
     user: "johndoe",
-    observation: "Ninguna",
+    // observation: "Ninguna",
     observationDate: "2022-02-02"
   }, {
     assignment: "1",
@@ -53,7 +54,7 @@ const rows = ref([
     status: "1",
     users: "1",
     user: "johndoe",
-    observation: "Ninguna",
+    // observation: "Ninguna",
     observationDate: "2022-02-02"
   },
   {
@@ -65,86 +66,73 @@ const rows = ref([
     status: "1",
     users: "1",
     user: "johndoe",
-    observation: "Ninguna",
+    // observation: "Ninguna",
     observationDate: "2022-02-02"
   }
 ])
 
 const columns = ref([
+{
+    name: "N°",
+    label: "N°",
+    align: "center",
+    field: "N°",
+    sortable: true,
+  },
   {
     name: "assignment",
-    label: "Asignación",
+    label: "ETAPA PRODUCTIVA SEGUIMIENTO",
     align: "center",
     field: "assignment",
     sortable: true,
   },
   {
-    name: "instructor",
-    label: "Instructor",
-    align: "center",
-    field: "instructor",
-    sortable: true,
-  },
-  {
     name: "number",
-    label: "Numero",
+    label: "N° SEGUIMIENTO",
     align: "center",
     field: "number",
     sortable: true,
-  },
-  {
-    name: "month",
-    label: "mes",
+  },{
+    name: "status",
+    label: "ESTADO",
     align: "center",
-    field: "month",
-    sortable: true,
-  },
-  {
-    name: "document",
-    label: "Documento",
-    align: "center",
-    field: "document",
-    sortable: true,
-  }, {
-    name: "users",
-    label: "Usuarios",
-    align: "center",
-    field: "users",
-    sortable: true,
-  },
-  {
-    name: "user",
-    label: "Usuario",
-    align: "center",
-    field: "user",
+    field: "status",
     sortable: true,
   },
   {
     name: "observation",
-    label: "Observación",
+    label: "OBSERVACINES",
     align: "center",
     field: "observation",
+    sortable: true,
+  },  {
+    name: "añadir",
+    label: "AÑADIR",
+    align: "center",
+    field: "añadir",
     sortable: true,
   },
   {
     name: "observationDate",
-    label: "Fecha de Observación",
+    label: "PROXIMO SEGUIMIENTO",
     align: "center",
     field: "observationDate",
     sortable: true,
-  }, {
-    name: "status",
-    label: "Estado",
+  }, 
+    {
+    name: "detalle",
+    label: "DETALLES",
     align: "center",
-    field: "status",
-    sortable: true,
-  }, {
-    name: "editar",
-    label: "Esditar",
-    align: "center",
-    field: "editar",
+    field: "detalle",
     sortable: true,
   },
+  //  {
+  //   name: "editar",
+  //   label: "Esditar",
+  //   align: "center",
+  //   field: "editar",
+  //   sortable: true,
+  // },
 ])
 </script>
 
