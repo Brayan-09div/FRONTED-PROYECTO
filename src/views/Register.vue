@@ -23,7 +23,7 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue';
-import CustomTable from '../components/tables/tables.vue';
+import CustomTable from '../components/tables/tableEditStatusOptions.vue'
 import Header from '../components/header/header.vue';
 import createRegister from '../components/modal/modal.vue';
 import { notifyErrorRequest, notifySuccessRequest } from '../composables/useNotify'
@@ -59,28 +59,35 @@ async function loadData() {
 }
 
 const columns = ref([
+{
+    name: "Num",
+    label: "N°",
+    field: "startDate",
+    align: "center",
+    sortable: true,
+  },
   {
     name: "startDate",
-    label: "Fecha Inicial",
+    label: "FECHA INICIAL",
     field: "startDate",
     align: "center",
     sortable: true,
   }, {
     name: "endDate",
-    label: "Fecha Final",
+    label: "FECHA FINAL",
     field: "endDate",
     align: "center",
     sortable: true,
   }, {
     name: "company",
-    label: "Compañia",
+    label: "COMPAÑIA",
     field: "company",
     align: "center",
     sortable: true,
   },
   {
     name: "phoneCompany",
-    label: "Telefono",
+    label: "TEL",
     align: "center",
     field: "phoneCompany",
     sortable: true,
@@ -88,50 +95,50 @@ const columns = ref([
   {
     name: "addressCompany",
     align: "center",
-    label: "Dirección",
+    label: "DIRECCION",
     field: "addressCompany",
     sortable: true,
   }, {
     name: "mailCompany",
     align: "center",
-    label: "Email",
+    label: "EMAIL COMPAÑIA",
     field: "mailCompany",
     sortable: true,
   },
   {
     name: "owner",
     align: "center",
-    label: "Dueño",
+    label: "DUEÑO",
     field: "owner",
     sortable: true,
   },
   {
     name: "hour",
     align: "center",
-    label: "Horas",
+    label: "HORAS",
     field: "hour",
     sortable: true,
   }, {
     name: "businessProyectHour",
     align: "center",
-    label: "Horas Proyecto Empresarial",
+    label: "HORAS PROYECTO EMPRESARIAL",
     field: "businessProyectHour",
     sortable: true,
   }, {
     name: "productiveProjectHour",
     align: "center",
-    label: "Horas de proyecto productivo",
+    label: "HORAS PROYECTO PRODUCTIVO",
     field: "productiveProjectHour",
     sortable: true,
   },
   {
     name: "status",
-    label: "Estado",
+    label: "ESTADO",
     align: "center",
     field: "status"
   }, {
     name: "editar",
-    label: "Editar",
+    label: "EDITAR",
     align: "center",
     field: "editar"
   },

@@ -29,29 +29,41 @@
                         aria-label="Buscar" />
                 </q-td>
             </template>
-  <!-- Columna de añadir -->
+            <!-- Columna de añadir -->
             <template v-slot:body-cell-añadir="props">
                 <q-td :props="props">
                     <q-btn @click="onClickObservation(props.row)" color="primary" icon="add_circle" round size="md"
                         aria-label="Añadir" />
                 </q-td>
             </template>
-        
-            <!-- Columna de editar -->
-            <template v-slot:body-cell-editar="props">
+
+            <!-- Columna de OPCIONES-->
+            <template v-slot:body-cell-opcion="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit" round size="md"
-                        aria-label="Edit" />
+                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round
+                        size="md" aria-label="Edit Square" />
+                    <q-btn class="estado-btn" @click="toggleStatus(props.row)"
+                        :icon="props.row.status === 1 ? 'cancel' : 'check_circle'"
+                        :color="props.row.status === 1 ? 'red' : 'green'" round size="md"
+                        :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'" />
                 </q-td>
+
             </template>
 
-
+            <!-- Columna de Detalle-->
             <template v-slot:body-cell-detalle="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="search" round size="md"
+                    <q-btn class="edit-btn" @click="onClickDetail(props.row)" color="primary" icon="search" round size="md"
                         aria-label="search" />
                 </q-td>
             </template>
+
+            <!-- columna de Num -->
+             <template v-slot:body-cell-Num="props">
+                <q-td :props="props" class="q-pa-xs text-center">
+                    {{ props.pageIndex + 1 }}
+                </q-td>
+             </template>
 
         </q-table>
     </div>
@@ -90,6 +102,10 @@ const props = defineProps({
         required: true,
     },
     onClickObservation: {
+        type: Function,
+        required: true,
+    },
+    onClickDetail:{
         type: Function,
         required: true,
     }

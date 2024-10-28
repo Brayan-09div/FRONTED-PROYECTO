@@ -12,8 +12,14 @@
     <q-input v-model="user" label="Usuario" filled /> <br>
     <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
   </ButtonAgregate>
-  <tableSelect :props="props" :rows="rows" :columns="columns"></tableSelect>
-
+  <tableSelect :props="props" :rows="rows" :columns="columns" :onClickDetail="openDialogDetail">
+  </tableSelect>
+<ModalDialog v-model="isDialogVisible" title="Detalle Seguimiento">
+  <div class="detail" > 
+<p>No hay detalles para este seguimiento</p>
+<p>df</p>
+  </div>
+</ModalDialog>
 </template>
 
 
@@ -22,6 +28,7 @@ import { ref } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue';
 import ButtonAgregate from '../components/modal/modal.vue';
+import ModalDialog  from '../components/modal/dialog.vue';
 
 let assignament = ref('');
 let idinstructor = ref('');
@@ -33,10 +40,12 @@ let status = ref('');
 let observation = ref('');
 let user = ref('');
 let observationDate = ref('');
+
+let isDialogVisible = ref(false)
+
 const rows = ref([
   {
-    assignment: "Nombre del Aprendiz",
-    instructor: "John Doe",
+    name: "John Doe",
     number: "12345",
     month: "1",
     document: "ABC123",
@@ -46,8 +55,7 @@ const rows = ref([
     // observation: "Ninguna",
     observationDate: "2022-02-02"
   }, {
-    assignment: "1",
-    instructor: "John Doe",
+    name: "John Doe",
     number: "12345",
     month: "1",
     document: "ABC123",
@@ -58,8 +66,7 @@ const rows = ref([
     observationDate: "2022-02-02"
   },
   {
-    assignment: "1",
-    instructor: "John Doe",
+    name: "John Doe",
     number: "12345",
     month: "1",
     document: "ABC123",
@@ -73,17 +80,17 @@ const rows = ref([
 
 const columns = ref([
 {
-    name: "N°",
+    name: "Num",
     label: "N°",
     align: "center",
-    field: "N°",
+    field: "Num",
     sortable: true,
   },
   {
-    name: "assignment",
+    name: "name",
     label: "ETAPA PRODUCTIVA SEGUIMIENTO",
     align: "center",
-    field: "assignment",
+    field: "name",
     sortable: true,
   },
   {
@@ -134,7 +141,16 @@ const columns = ref([
   //   sortable: true,
   // },
 ])
+
+async function openDialogDetail() {
+  isDialogVisible.value = true
+}
 </script>
 
 
-<style></style>
+<style>
+.detail p{
+padding: 10px;
+background-color: rgb(215, 213, 209);
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <q-dialog :model-value="modelValue" transition-show="rotate" transition-hide="rotate">
+    <q-dialog :model-value="modelValue" transition-show="rotate" transition-hide="rotate" persistent>
     <q-card>
       <q-card-section class="title">
         <div class="text-h6 text-center">{{ title }}</div>
@@ -26,8 +26,6 @@
 
 <script setup>
 import { ref } from 'vue';
-
-// let fixed = ref(false);
 
 const props = defineProps({
   modelValue : {
@@ -58,6 +56,7 @@ const props = defineProps({
     required: true
   }
 });
+
 </script>
 
 <style>

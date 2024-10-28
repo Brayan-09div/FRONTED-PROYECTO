@@ -16,10 +16,13 @@ const router = useRouter();
 const props = defineProps({
   title:{
     type:String,
-    Required:true,
+    required:true,
     default:'Title'
-  }
-  
+  },
+  Salir:{
+    type:Function,
+    required:true
+  } 
 })
 
 const Salir = async () => {

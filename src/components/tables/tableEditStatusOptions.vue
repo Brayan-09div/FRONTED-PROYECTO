@@ -1,20 +1,9 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      :rows="rows"
-      :columns="columns"
-      flat
-      bordered
-      class="q-table-custom"
-    >
+    <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom">
       <template v-slot:header="props">
         <q-tr :props="props" class="custom-header-row">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            class="custom-header-cell"
-          >
+          <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -23,31 +12,31 @@
       <!-- Columna de estado con botón de activación/desactivación -->
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="q-pa-xs text-center">
-          <q-btn
-            @click="toggleActivate(props.row)"
-            :color="props.row.status === 1 ? 'green' : 'red'"
-            :loading="loadingStates[props.row._id]"
-          >
+          <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
+            :loading="loadingStates[props.row._id]">
             <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
             {{ props.row.status === 1 ? 'Activo' : 'Inactivo' }}
           </q-btn>
         </q-td>
       </template>
 
-      <!-- Columna de editar -->
-      <template v-slot:body-cell-editar="props">
-        <q-td :props="props" class="q-pa-xs text-center">
-          <q-btn
-            class="edit-btn"
-            @click="onClickEdit(props.row)"
-            color="primary"
-            icon="edit"
-            round
-            size="md"
-            aria-label="Edit"
-          />
+      <!-- Columna de OPCIONES-->
+      <template v-slot:body-cell-opcion="props">
+        <q-td :props="props" class="opcion-btn">
+          <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
+            aria-label="Edit Square" />
+          <q-btn class="estado-btn" @click="toggleStatus(props.row)"
+            :icon="props.row.status === 1 ? 'cancel' : 'check_circle'" :color="props.row.status === 1 ? 'red' : 'green'"
+            round size="md" :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'" />
         </q-td>
       </template>
+
+      <template v-slot:body-cell-Num="props">
+        <q-td :props="props" class="q-pa-xs text-center">
+          {{ props.pageIndex + 1 }}
+        </q-td>
+      </template>
+
     </q-table>
   </div>
 </template>
@@ -99,7 +88,8 @@ const toggleActivate = async (row) => {
 }
 
 .custom-header-row {
-  background-color: #4caf50; /* Verde para el encabezado */
+  background-color: #4caf50;
+  /* Verde para el encabezado */
 }
 
 .custom-header-cell {
@@ -111,8 +101,12 @@ const toggleActivate = async (row) => {
   font-weight: 700;
 }
 
-.edit-btn{
+.edit-btn {
   background-color: #1c4b33 !important;
 }
-</style>
 
+.opcion-btn {
+  display: flex;
+  gap: 10px;
+}
+</style>

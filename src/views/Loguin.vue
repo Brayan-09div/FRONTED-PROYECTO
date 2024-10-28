@@ -71,7 +71,7 @@ const handleSubmit = async () => {
   }
   isLoading.value = true;
   try {
-    const response = await postData('/Repfora/login', {
+    const response = await postData('/Repfora/loginAdmin', {
       role: rol.value,
       email: user.value,
       password: password.value

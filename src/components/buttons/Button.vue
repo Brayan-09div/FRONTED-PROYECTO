@@ -1,11 +1,5 @@
 <template>
-    <!-- <q-btn
-      :label="label"
-      :color="color"
-      :icon="icon"
-      :to="to"
-      v-ripple
-    /> -->
+
     <q-btn push color="green-8" @click="onclickButton" :label="nameButton" />
   </template>
   

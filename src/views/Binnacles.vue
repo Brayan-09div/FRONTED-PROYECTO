@@ -53,7 +53,7 @@ const isDialogVisible = ref(false);
 
 
 const rows = ref([{
-  instructor: "John Doe",
+  name: "John Doe",
   number: "12345",
   document: "ABC123",
   status: "1",
@@ -62,7 +62,7 @@ const rows = ref([{
   observationDate: "2022-02-02"
 },
 {
-  instructor: "Jane Smith",
+  name: "Jane Smith",
   number: "67890",
   document: "XYZ789",
   status: "1",
@@ -71,7 +71,7 @@ const rows = ref([{
   observationDate: "2022-02-02"
 },
 {
-  instructor: "Alice Johnson",
+  name: "Alice Johnson",
   number: "11223",
   document: "LMN456",
   status: "1",
@@ -81,56 +81,50 @@ const rows = ref([{
 }]);
 
 const columns = ref([
-  {
-    name: "instructor",
-    label: "Instructor",
+{
+    name: "Num",
+    label: "N°",
     align: "center",
-    field: "instructor",
+    field: "Num",
+    sortable: true,
+  },
+  {
+    name: "name",
+    label: "ETAPA PRODUCTIVA ASIGNADA",
+    align: "center",
+    field: "name",
     sortable: true,
   },
   {
     name: "number",
-    label: "Numero",
+    label: "N° BITACORA",
     align: "center",
     field: "number",
     sortable: true,
   },
   {
-    name: "document",
-    label: "Documento",
+    name: "status",
+    label: "ESTADO",
     align: "center",
-    field: "document",
+    field: "status",
     sortable: true,
-  },
-  {
-    name: "user",
-    label: "Usuario",
-    align: "center",
-    field: "user",
-    sortable: true,
-  }, {
+  },{
     name: "observation",
     label: "Observación ",
     align: "center",
     field: "observation",
     sortable: true,
-  } ,{
-    name: "observationDate",
-    label: "Observación Fecha",
+  },{
+    name: "añadir",
+    label: "AÑADIR",
     align: "center",
-    field: "observationDate",
-    sortable: true,
-  }, {
-    name: "status",
-    label: "Estado",
-    align: "center",
-    field: "status",
+    field: "añadir",
     sortable: true,
   },{
-    name: "editar",
-    label: "Editar",
+    name: "detalle",
+    label: "Detalle",
     align: "center",
-    field: "editar",
+    field: "detalle",
     sortable: true,
   },
 ])

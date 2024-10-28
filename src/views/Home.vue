@@ -16,7 +16,6 @@
         </div>
       </div>
     </q-page-container>
-    <Footer />
   </q-layout>
 </template>
 
@@ -24,9 +23,6 @@ import UserCard from '../components/cards/Card.vue'
 
 // Define las tarjetas con datos (imágenes, títulos, enlaces, etc.)
 <script setup>
-import Header from '../layouts/LayoutHeader.vue';
-import Sidebar from '../layouts/LayoutSidebar.vue';
-import Footer from '../layouts/LayoutFooter.vue';
 import UserCard from '../components/cards/cards.vue';
 import { ref } from "vue";
 
