@@ -12,13 +12,14 @@
     <q-select square filled v-model="tpDocument" :options="options" label="Tipo de Documento" /><br>
     <q-input v-model="numDocument" label="N° Documento" filled /> <br>
     <q-input v-model="modality" icon="settings" label=" Modalidad Etapa Productiva" filled /> <br>
-    <q-input  icon="school" v-model="modality"  label="Modalidad Etapa Productiva" filled /> <br>
+    <q-input icon="school" v-model="modality" label="Modalidad Etapa Productiva" filled /> <br>
   </ModalDialog>
-    <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit"
-      :toggleActivate="changestatus">
-    </CustomTable>
+  <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit"
+    :toggleActivate="changestatus">
+  </CustomTable>
 
-  <editApprentice v-model="isDialogVisible" >
+  <editApprentice v-model="isDialogVisible" title="EDITAR INFORMACION APRENDIZ" labelSend="Guardar"
+ :onclickSend="openclickSendEdit"  >
     <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="fiche"
       option-value="_id" use-input @filter="filterFunction" class="custom-select" use-chips filled></q-select><br>
     <q-input v-model="firstName" label="Nombres Aprendiz" filled /> <br>
@@ -26,7 +27,7 @@
     <q-input v-model="email" label="Email Personal Aprendiz" filled /> <br>
     <q-input v-model="email" label="Email Institucional Aprendiz" filled /> <br>
     <q-input v-model="phone" label="Telefono Aprendiz" filled /> <br>
-    <q-select square filled v-model="tpDocument" :options="options" label="Tipo de Documento" /><br>
+    <q-select square filled v-model="tpDocument" :options="options" label="Tipo de cedula" /><br>
     <q-input v-model="numDocument" label="N° Documento" filled /> <br>
   </editApprentice>
 
@@ -39,7 +40,7 @@ import Header from "../components/header/header.vue";
 import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
 import editApprentice from '../components/modal/dialog.vue';
-import Modality from "./Modality.vue";
+import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
 
 const rows = ref([]);
@@ -50,8 +51,8 @@ let phone = ref('')
 let tpDocument = ref('')
 let numDocument = ref('')
 let fiche = ref('')
+let isDialogVisible = ref(false)
 
-const isDialogVisible = ref(false);
 const options = [
   'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
 ]
@@ -146,9 +147,6 @@ const columns = ref([
   },
 ]);
 
-function openDialogEdit(row) {
-  isDialogVisible.value = true;
-}
 
 async function changestatus(row) {
   if (row.status === 1) {
@@ -159,8 +157,32 @@ async function changestatus(row) {
   row.status = row.status === 1 ? 0 : 1;
 }
 
+function openDialogEdit(row) {
+  isDialogVisible.value = true;
+}
+
 async function handleSend() {
+
+  if (!firstName.value || !lastName.value || !email.value || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
+    notifyWarningRequest('Todos los campos son obligatorios')
+  }
   const response = await postData('/apprentice', {
+    firstname: firstName.value,
+    lastname: lastName.value,
+    email: email.value,
+    phone: phone.value,
+    tpdocument: tpDocument.value,
+    numdocument: numDocument.value,
+    fiche: fiche.value
+  })
+}
+
+
+async function openclickSendEdit() {
+  if (!firstName.value || !lastName.value || !email.value || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
+    notifyWarningRequest('Todos los campos son obligatorios')
+  }
+  const response = await putData(`/apprendice/updateapprenticebyid/${row_id}`, {
     firstname: firstName.value,
     lastname: lastName.value,
     email: email.value,

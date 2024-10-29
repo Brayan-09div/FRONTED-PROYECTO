@@ -11,28 +11,22 @@
       <div class="container-form">
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <label for="rol">Rol</label>
-            <select id="rol" v-model="rol" @change="handleRoleChange" class="input-field">
-              <option value="">Seleccione un rol</option>
-              <option value="APRENDIZ">APRENDIZ</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="INSTRUCTOR">INSTRUCTOR</option>
-            </select>
+            <q-select square filled id="rol" v-model="rol" label="ROL" @update:model-value="handleRoleChange"
+              :options="roles">
+            </q-select>
           </div>
 
-          <div v-if="isRoleSelected">
+          <div v-if="isRol">
             <div class="form-group">
-              <label for="user">Usuario</label>
-              <input type="text" id="user" v-model="user" required class="input-field" />
-              <label for="password">Contraseña</label>
-
-              <div class="password-container">
-                <input :type="isPasswordVisible ? 'text' : 'password'" id="password" v-model="password" required
-                  class="input-field" />
-                <span @click="togglePasswordVisibility" class="toggle-password">
-                  <q-icon :name="isPasswordVisible ? 'visibility' : 'visibility_off'" />
-                </span>
-              </div>
+              <q-input type="text" v-model="email" label="Email" filled /> <br>
+              <q-input type="text" v-if="isConsultorRole" v-model="documento" label="Documento" filled /> <br>
+              <q-input :type="isPwd ? 'password' : 'text'" v-if="isAdminOrInstructorRole"
+                id="password" v-model="password" label="PASSWORD" filled>
+                <template v-slot:append>
+                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                    @click="isPwd = !isPwd" />
+                </template>
+              </q-input>
             </div>
             <button type="submit" class="login-button" :disabled="isLoading">INICIAR SESIÓN</button>
           </div>
@@ -46,54 +40,85 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/ApiClient.js';
 import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
 const router = useRouter();
-const isRoleSelected = ref(false);
-const isPasswordVisible = ref(false);
+// const isPasswordVisible = ref(false);
+
 
 const rol = ref('');
-const user = ref('');
+const email = ref('');
 const password = ref('');
-let isLoading = ref(false);
+const documento = ref('');
 
-const handleRoleChange = () => {
-  isRoleSelected.value = !!rol.value;
-};
+let isPwd = ref(true);
 
-const handleSubmit = async () => {
-  if (!rol.value || !user.value || !password.value) {
+const isConsultorRole = ref(false);
+const isAdminOrInstructorRole = ref(false);
+const isRol = ref(false);
+
+const roles = ref([
+  { label: 'CONSULTOR', value: 'APRENDIZ' },
+  { label: 'ADMINISTRADOR', value: 'ADMIN' },
+  { label: 'INSTRUCTOR', value: 'INSTRUCTOR' }
+]);
+
+// Computed properties para verificar el rol seleccionado
+// const isConsultorRole = computed(() => rol.value === 'APRENDIZ');
+// const isAdminOrInstructorRole = computed(() => rol.value === 'ADMIN' || rol.value === 'INSTRUCTOR');
+// const isRol = computed(() => rol.value !== '');
+
+
+const handleRoleChange = (value) => {
+  // rol.value = value.value; // Almacenar solo el valor del rol seleccionado
+  // console.log('Rol seleccionado:',rol.value);
+
+  rol.value = value.value; // Almacenar solo el valor del rol seleccionado
+  console.log('Rol seleccionado:', rol.value);
+
+  if (value.value === 'APRENDIZ') {
+    isConsultorRole.value = true;
+    isAdminOrInstructorRole.value = false;
+  } else {
+    isConsultorRole.value = false;
+    isAdminOrInstructorRole.value = true;
+  }
+  isRol.value = true;
+}
+
+
+const handleSubmit = async (value) => {
+  if (!rol.value || !email.value || !password.value) {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
-  isLoading.value = true;
+  // isLoading.value = true;
   try {
     const response = await postData('/Repfora/loginAdmin', {
       role: rol.value,
-      email: user.value,
-      password: password.value
+      email: email.value,
+      password: password.value,
+      documento: documento.value
     });
-    notifySuccessRequest('Inicio de sesión exitoso');
+
+     notifySuccessRequest('Inicio de sesión exitoso');
     localStorage.setItem('token', response.token);
     router.push('/layouts');
   } catch (error) {
     console.error('Error en handleSubmit:', error);
-    if (error.response && error.response.data && error.response.data.error) {
-      notifyErrorRequest(`Error: ${error.response.data.error}`);
-    } else {
-      notifyErrorRequest('Error inesperado, inténtalo nuevamente');
-    }
+      notifyErrorRequest(`Error: ${error.response.data.data.msg}`);
+      return
   } finally {
     isLoading.value = false;
   }
 };
 
-const togglePasswordVisibility = () => {
-  isPasswordVisible.value = !isPasswordVisible.value;
-};
+// const togglePasswordVisibility = () => {
+//   isPasswordVisible.value = !isPasswordVisible.value;
+// };
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');

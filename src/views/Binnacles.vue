@@ -1,6 +1,6 @@
 <template>
   <Header title="Bitacoras"></Header>
-  <ButtonAgregate :title="title" nameButton="Agregar"  >
+  <ButtonAgregate :title="title" nameButton="Agregar">
     <q-input v-model="assignament" label="Asignación" filled /> <br>
     <q-input v-model="idinstructor" label="IdIntructor" filled /> <br>
     <q-input v-model="instructor" label="Intructor" filled /> <br>
@@ -10,17 +10,29 @@
     <q-input v-model="user" label="Usuario" filled /> <br>
     <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
   </ButtonAgregate>
-  <tableSelect :props="props" :rows="rows" :columns="columns" :title="title"  :onClickEdit="openDialog"></tableSelect>
-<Dialog v-model="isDialogVisible" title="Editar Bitacora" labelClose="close" aria-label="send" :on :onclickClose="closeDialog" :onclickSend="saveChanges">
-  <q-input v-model="assignament" label="Asignación" filled /> <br>
-    <q-input v-model="idinstructor" label="IdIntructor" filled /> <br>
-    <q-input v-model="instructor" label="Intructor" filled /> <br>
-    <q-input v-model="number" label="Numero" filled /> <br>
-    <q-input v-model="status" label="Estado" filled /> <br>
-    <q-input v-model="observation" label="Observación" filled /> <br>
-    <q-input v-model="user" label="Usuario" filled /> <br>
-    <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
-</Dialog>
+
+  <tableSelect 
+  :props="props" 
+  :rows="rows" 
+  :columns="columns" 
+  :title="title" 
+  :onClickObservation="openClickObservation" 
+  :onClickDetail="openClickDetail" />
+ 
+  <Dialog v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="close" aria-label="send"
+    :onclickClose="closeDialog" :onclickSend="saveChanges">
+    <div class="Observations">
+      <p>No hay observaciones para esta bitacora</p>
+    </div>
+  </Dialog>
+
+  <Dialog v-model="isDialogVisibleDetail" title="DETALLE BITACORA" labelClose="close" aria-label="send"
+    :onclickClose="closeDialog" :onclickSend="saveChanges">
+    <div class="detail">
+      <p>No hay observaciones para esta bitacora</p>
+    </div>
+  </Dialog>
+
 </template>
 
 <script setup>
@@ -29,9 +41,8 @@ import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
 import { getData } from '../services/ApiClient';
 import ButtonAgregate from '../components/modal/modal.vue';
-// import ButtonEdtitar from '../components/modal/modal.vue';
 const title = ref("Lista de Bitacoras");
-import Dialog from '../components/modal/dialog.vue'
+import Dialog from '../components/modal/dialogClose.vue'
 
 let assignament = ref('');
 let idinstructor = ref('');
@@ -42,7 +53,8 @@ let observation = ref('');
 let user = ref('');
 let observationDate = ref('');
 
-const isDialogVisible = ref(false);
+const isDialogVisibleObservation = ref(false);
+const isDialogVisibleDetail = ref(false);
 // onBeforeMount(() => {
 //   loadData();
 // });
@@ -81,7 +93,7 @@ const rows = ref([{
 }]);
 
 const columns = ref([
-{
+  {
     name: "Num",
     label: "N°",
     align: "center",
@@ -108,31 +120,49 @@ const columns = ref([
     align: "center",
     field: "status",
     sortable: true,
-  },{
+  }, {
     name: "observation",
-    label: "Observación ",
+    label: "OBSERVACIONES",
     align: "center",
     field: "observation",
     sortable: true,
-  },{
-    name: "añadir",
-    label: "AÑADIR",
-    align: "center",
-    field: "añadir",
-    sortable: true,
-  },{
+  }, {
     name: "detalle",
-    label: "Detalle",
+    label: "DETALLES",
     align: "center",
     field: "detalle",
     sortable: true,
   },
 ])
-function openDialog(){
-  isDialogVisible.value = true;
+async function openClickObservation() {
+  isDialogVisibleObservation.value = true;
 }
+
+async function openClickDetail() {
+  isDialogVisibleDetail.value = true;
+}
+
 </script>
 
 <style>
-/* Estilos adicionales si es necesario */
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+.Observations, .detail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.Observations, .detail p{
+  font-size: 18px;
+  color: #989595;
+  margin: 0px;
+}
+
 </style>

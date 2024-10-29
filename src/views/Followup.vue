@@ -1,6 +1,6 @@
 <template>
   <Header title="Seguimiento"></Header>
-  <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento" >
+  <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento">
     <q-input v-model="assignament" label="Asignación" filled /> <br>
     <q-input v-model="idinstructor" label="IdIntructor" filled /> <br>
     <q-input v-model="instructor" label="Intructor" filled /> <br>
@@ -12,14 +12,28 @@
     <q-input v-model="user" label="Usuario" filled /> <br>
     <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
   </ButtonAgregate>
-  <tableSelect :props="props" :rows="rows" :columns="columns" :onClickDetail="openDialogDetail">
-  </tableSelect>
-<ModalDialog v-model="isDialogVisible" title="Detalle Seguimiento">
-  <div class="detail" > 
-<p>No hay detalles para este seguimiento</p>
-<p>df</p>
-  </div>
-</ModalDialog>
+
+  <tableSelect 
+  :props="props" 
+  :rows="rows" 
+  :columns="columns" 
+  :onClickDetail="openClickDetail"  
+  :onClickObservation="openClickObservation"/>
+
+  <ModalDialog v-model="isModalDialogVisibleObservation" title="OBSERVACIONES" labelClose="close" aria-label="send"
+    :onclickClose="closeModalDialog" :onclickSend="saveChanges">
+    <div class="Observations">
+      <p>No hay observaciones para esta seguimiento</p>
+    </div>
+  </ModalDialog>
+
+  <ModalDialog v-model="isModalDialogVisibleDetail" title="DETALLE SEGUIMIENTO" labelClose="close" aria-label="send"
+    :onclickClose="closeModalDialog" :onclickSend="saveChanges">
+    <div class="detail">
+      <p>No hay observaciones para esta seguimiento</p>
+    </div>
+  </ModalDialog>
+
 </template>
 
 
@@ -28,7 +42,7 @@ import { ref } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue';
 import ButtonAgregate from '../components/modal/modal.vue';
-import ModalDialog  from '../components/modal/dialog.vue';
+import ModalDialog from '../components/modal/dialogClose.vue';
 
 let assignament = ref('');
 let idinstructor = ref('');
@@ -41,8 +55,8 @@ let observation = ref('');
 let user = ref('');
 let observationDate = ref('');
 
-let isDialogVisible = ref(false)
-
+let isModalDialogVisibleDetail = ref(false)
+let isModalDialogVisibleObservation = ref(false)
 const rows = ref([
   {
     name: "John Doe",
@@ -69,8 +83,8 @@ const rows = ref([
     name: "John Doe",
     number: "12345",
     month: "1",
-    document: "ABC123",
-    status: "1",
+    document: "ABC13",
+    status: "3",
     users: "1",
     user: "johndoe",
     // observation: "Ninguna",
@@ -79,7 +93,7 @@ const rows = ref([
 ])
 
 const columns = ref([
-{
+  {
     name: "Num",
     label: "N°",
     align: "center",
@@ -99,7 +113,7 @@ const columns = ref([
     align: "center",
     field: "number",
     sortable: true,
-  },{
+  }, {
     name: "status",
     label: "ESTADO",
     align: "center",
@@ -112,12 +126,6 @@ const columns = ref([
     align: "center",
     field: "observation",
     sortable: true,
-  },  {
-    name: "añadir",
-    label: "AÑADIR",
-    align: "center",
-    field: "añadir",
-    sortable: true,
   },
   {
     name: "observationDate",
@@ -125,32 +133,28 @@ const columns = ref([
     align: "center",
     field: "observationDate",
     sortable: true,
-  }, 
-    {
+  },
+  {
     name: "detalle",
     label: "DETALLES",
     align: "center",
     field: "detalle",
     sortable: true,
-  },
-  //  {
-  //   name: "editar",
-  //   label: "Esditar",
-  //   align: "center",
-  //   field: "editar",
-  //   sortable: true,
-  // },
+  }
 ])
+async function openClickObservation() {
+  isModalDialogVisibleObservation.value=true
+}
 
-async function openDialogDetail() {
-  isDialogVisible.value = true
+async function openClickDetail() {
+  isModalDialogVisibleDetail.value = true
 }
 </script>
 
 
 <style>
-.detail p{
-padding: 10px;
-background-color: rgb(215, 213, 209);
+.detail p {
+  padding: 10px;
+  background-color: rgb(215, 213, 209);
 }
 </style>

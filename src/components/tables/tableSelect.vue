@@ -12,12 +12,7 @@
             <!-- Columna de Estado -->
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-select :v-model="props.row.status" :options="OptionsStatus" :class="{
-                        'select-Programado': props.row.status === '1',
-                        'select-Ejecutado': props.row.status === '2',
-                        'select-Pendiente': props.row.status === '3',
-                        'select-Verificado': props.row.status === '4'
-                    }" label="Seleccione Estado" dense outlined emit-value map-options>
+                    <q-select v-model="props.row.status"  :options="OptionsStatus" class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
                     </q-select>
                 </q-td>
             </template>
@@ -27,13 +22,6 @@
                 <q-td :props="props">
                     <q-btn @click="onClickObservation(props.row)" color="primary" icon="search" round size="md"
                         aria-label="Buscar" />
-                </q-td>
-            </template>
-            <!-- Columna de añadir -->
-            <template v-slot:body-cell-añadir="props">
-                <q-td :props="props">
-                    <q-btn @click="onClickObservation(props.row)" color="primary" icon="add_circle" round size="md"
-                        aria-label="Añadir" />
                 </q-td>
             </template>
 
@@ -74,12 +62,14 @@ import { ref } from "vue";
 let loading = ref(false);
 let loadingStates = ref({});
 
+
 const OptionsStatus = [
-    { label: 'Programado', value: '1' },
-    { label: 'Ejecutado', value: '2' },
-    { label: 'Pendiente', value: '3' },
-    { label: 'Verificado', value: '4' }
+  { label: 'Programado', value: '1' },
+  { label: 'Ejecutado', value: '2' },
+  { label: 'Pendiente', value: '3' },
+  { label: 'Verificado', value: '4' }
 ];
+
 const props = defineProps({
     rows: {
         type: Array,

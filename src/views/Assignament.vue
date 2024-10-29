@@ -1,5 +1,5 @@
 <template>
-  <Header title="Mis Asignaciones"></Header>
+  <Header title="Asignaciones"></Header>
   <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento">
     <q-input v-model="register" label="Asignación" filled /> <br>
     <q-input v-model="idinstructorFollow" label="Intructor Seguimiento" filled /> <br>
