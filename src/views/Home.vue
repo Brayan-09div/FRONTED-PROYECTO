@@ -4,6 +4,7 @@
     <Sidebar v-model="drawer" />
     <q-page-container>
       <div class="home">
+        <h1 class="titleHome">SEGUIMIENTO ETAPAS PRODUCTIVAS ASIGNADAS Y REGISTRO DE HORAS LABORADAS</h1>
         <div class="cards">
           <UserCard
             v-for="(Card, index) in cards"
@@ -73,6 +74,12 @@ const cards = [
 </script>
 
 <style scoped>
+.home{
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
 .cards { 
   width: 80%;
   margin: 0 auto;
@@ -82,7 +89,17 @@ const cards = [
   margin-top: 20px;
   justify-content: center;
   text-align: center;
-  align-items: stretch; /* Estira los elementos para que tengan la misma altura */
+  align-items: stretch; 
 } 
+
+.titleHome{
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 0px;
+  width: 100%;
+  line-height: 1.2;
+  padding-top: 30px;
+  text-align: center !important;
+}
 </style>
 

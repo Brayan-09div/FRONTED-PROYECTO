@@ -1,18 +1,8 @@
 <template>
-  <!-- <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-green-8'">
+  <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-green-8'">
     <q-toolbar>
       <q-btn flat @click="toggleDrawer" round dense icon="menu" />
       <q-toolbar-title style="font-weight: bold;">REPFORA</q-toolbar-title>
-      <q-btn @click="logout">
-        <q-icon name="logout" style="font-size: 25px;"></q-icon>
-      </q-btn>
-    </q-toolbar>
-  </q-header> -->
-
-  <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'primary'">
-    <q-toolbar>
-      <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-      <q-toolbar-title>Header</q-toolbar-title>
       <q-btn @click="logout">
         <q-icon name="logout" style="font-size: 25px;"></q-icon>
       </q-btn>
@@ -21,21 +11,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-
-let drawer = ref(false);
+const props = defineProps(['toggleDrawer']);
 const router = useRouter();
-const toggleDrawer = (drawer) => {
-  drawer.value = !drawer.value;
-};
-
 
 const logout = () => {
-  router.push('/');
+  router.push('/'); 
 };
-
-
-// export{ drawer };}
 </script>

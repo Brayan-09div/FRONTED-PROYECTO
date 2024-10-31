@@ -17,25 +17,29 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import information from '../views/Information.vue'
 
 const routes = [
-    {path: '/layouts', component: layouts, children:[
-        {path: '/home', component: home},
-        {path: '/apprentices', component: apprentices},
-        {path: '/assignament', component: assignament},
-        {path: '/myAssignament', component:myAssignament},
-        {path: '/fiche', component: fiche},
-        {path: '/binnacles', component: binnacles},
-        {path: '/followup', component: followup},
-        {path: '/instructor', component: instructor},
-        {path: '/modality', component: modality},
-        {path: '/register', component: register},
-        {path: '/userEP', component: userEP},
-        {path: '/informationFicheApprentice', component: informationFicheApprentice},
-        {path: '/information', component: information}
-    ]},
-    
-    {path: '/', component: loguin},
-    {path: '/apprentice', component: loguin},
-]
+    {
+      path: '/layouts',
+      component: layouts,
+      children: [
+        { path: '', redirect: '/layouts/home' },
+        { path: 'home', component: home },
+        { path: 'apprentices', component: apprentices },
+        { path: 'assignament', component: assignament },
+        { path: 'myAssignament', component: myAssignament },
+        { path: 'fiche', component: fiche },
+        { path: 'binnacles', component: binnacles },
+        { path: 'followup', component: followup },
+        { path: 'instructor', component: instructor },
+        { path: 'modality', component: modality },
+        { path: 'register', component: register },
+        { path: 'userEP', component: userEP },
+        { path: 'informationFicheApprentice', component: informationFicheApprentice },
+        { path: 'information', component: information }
+      ]
+    },
+    { path: '/', component: loguin },
+    { path: '/apprentice', component: loguin }
+  ];
 
 export const router = createRouter({
     history: createWebHashHistory(),
