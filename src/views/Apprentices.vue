@@ -14,6 +14,7 @@
     <q-input v-model="modality" icon="settings" label=" Modalidad Etapa Productiva" filled /> <br>
     <q-input icon="school" v-model="modality" label="Modalidad Etapa Productiva" filled /> <br>
   </ModalDialog>
+  <Button id="archivo" nameButton="Subir Archivo"></Button>
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit"
     :toggleActivate="changestatus">
   </CustomTable>
@@ -41,6 +42,7 @@ import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
 import editApprentice from '../components/modal/dialog.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
+import Button from "../components/buttons/Button.vue";
 
 
 const rows = ref([]);
@@ -195,4 +197,9 @@ async function openclickSendEdit() {
 
 </script>
 
-<style></style>
+<style>
+#archivo{
+  margin-top: 2%;
+  margin-left: 1%;
+}
+</style>

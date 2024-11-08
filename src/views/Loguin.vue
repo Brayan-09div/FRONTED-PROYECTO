@@ -4,27 +4,23 @@
       <div class="login-header">
         <h1>REPFORA</h1>
       </div>
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s"
-        alt="Logo SENA" class="logo" />
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s" alt="Logo SENA" class="logo" />
       <h2 class="login-title">LOGIN</h2>
       <hr />
       <div class="container-form">
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <q-select square filled id="rol" v-model="rol" label="ROL" @update:model-value="handleRoleChange"
-              :options="roles">
-            </q-select>
+            <q-select square filled id="rol" v-model="rol" label="ROL" @update:model-value="handleRoleChange" :options="roles"></q-select>
           </div>
 
           <div v-if="isRol">
             <div class="form-group">
               <q-input type="text" v-model="email" label="Email" filled /> <br>
               <q-input type="text" v-if="isConsultorRole" v-model="documento" label="Documento" filled /> <br>
-              <q-input :type="isPwd ? 'password' : 'text'" v-if="isAdminOrInstructorRole"
-                id="password" v-model="password" label="PASSWORD" filled>
+              <!-- Elimina el v-if en el campo de contraseña -->
+              <q-input :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="PASSWORD" filled>
                 <template v-slot:append>
-                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                    @click="isPwd = !isPwd" />
+                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
                 </template>
               </q-input>
             </div>
@@ -38,6 +34,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed } from 'vue';

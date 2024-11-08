@@ -1,5 +1,5 @@
 <template>
-  <Header title="Modalidad EP"></Header>
+    <Header title="Informe Horas Instructores EP"></Header>
 </template>
 
 <script setup>
