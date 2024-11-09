@@ -79,20 +79,6 @@
 
         <q-item 
           clickable 
-          to="/layouts/myAssignament" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveMyAssignment }" 
-          @click="setActive('myAssignment')"
-        >
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>Mis Asignaciones</q-item-section>
-        </q-item>
-
-        <q-item 
-          clickable 
           to="/layouts/assignament" 
           class="menu-item" 
           v-ripple 
@@ -100,9 +86,23 @@
           @click="setActive('assignment')"
         >
           <q-item-section avatar>
-            <q-icon name="person" />
+            <q-icon name="how_to_reg" />
           </q-item-section>
           <q-item-section>Asignaciones</q-item-section>
+        </q-item>
+
+        <q-item 
+          clickable 
+          to="/layouts/myAssignament" 
+          class="menu-item" 
+          v-ripple 
+          :class="{ 'active': isActiveMyAssignment }" 
+          @click="setActive('myAssignment')"
+        >
+          <q-item-section avatar>
+            <q-icon name="how_to_reg" />
+          </q-item-section>
+          <q-item-section>Mis Asignaciones</q-item-section>
         </q-item>
 
         <q-item 
@@ -114,7 +114,7 @@
           @click="setActive('binnacles')"
         >
           <q-item-section avatar>
-            <q-icon name="description" />
+            <q-icon name="fact_check" />
           </q-item-section>
           <q-item-section>Bitacoras</q-item-section>
         </q-item>
@@ -128,9 +128,23 @@
           @click="setActive('followup')"
         >
           <q-item-section avatar>
-            <q-icon name="description" />
+            <q-icon name="contact_page" />
           </q-item-section>
           <q-item-section>Seguimientos</q-item-section>
+        </q-item>
+
+        <q-item 
+          clickable 
+          to="/layouts/modality" 
+          class="menu-item" 
+          v-ripple 
+          :class="{ 'active': isActiveModality }" 
+          @click="setActive('modality')"
+        >
+        <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+          <q-item-section>Modalidad EP</q-item-section>
         </q-item>
 
         <q-item 
@@ -146,6 +160,34 @@
           </q-item-section>
           <q-item-section>Informes</q-item-section>
         </q-item>
+
+        <q-item 
+          clickable 
+          to="/layouts/certificaciones" 
+          class="menu-item" 
+          v-ripple 
+          :class="{ 'active': isActiveCertificaciones }" 
+          @click="setActive('certificaciones')"
+        >
+        <q-item-section avatar>
+            <q-icon name="done_all" />
+          </q-item-section>
+          <q-item-section>Certificaciones</q-item-section>
+        </q-item>
+
+        <q-item 
+          clickable 
+          to="/layouts/horas" 
+          class="menu-item" 
+          v-ripple 
+          :class="{ 'active': isActiveHoras }" 
+          @click="setActive('horas')"
+        >
+        <q-item-section avatar>
+            <q-icon name="more_time" />
+          </q-item-section>
+          <q-item-section>Informe Horas</q-item-section>
+        </q-item>
       </q-list>
     </q-scroll-area>
   </q-drawer>
@@ -158,7 +200,10 @@ const drawer = ref(false);
 const isActiveHome = ref(true); // Establecer el primer botón como activo por defecto
 const isActiveApprentices = ref(false);
 const isActiveFiche = ref(false);
+const isActiveModality = ref(false);
 const isActiveRegister = ref(false);
+const isActiveHoras = ref(false);
+const isActiveCertificaciones = ref(false);
 const isActiveMyAssignment = ref(false);
 const isActiveAssignment = ref(false);
 const isActiveBinnacles = ref(false);
@@ -169,7 +214,10 @@ function setActive(menu) {
   isActiveHome.value = menu === 'home';
   isActiveApprentices.value = menu === 'apprentices';
   isActiveFiche.value = menu === 'fiche';
+  isActiveModality.value = menu === 'modality';
   isActiveRegister.value = menu === 'register';
+  isActiveHoras.value = menu === 'horas';
+  isActiveCertificaciones.value = menu === 'certificaciones';
   isActiveMyAssignment.value = menu === 'myAssignment';
   isActiveAssignment.value = menu === 'assignment';
   isActiveBinnacles.value = menu === 'binnacles';
@@ -193,7 +241,7 @@ function setActive(menu) {
   margin-bottom: 10px;
   margin-left: 15px;
   margin-right: 15px;
-  margin-top: 12px;
+  margin-top: 8px;
   padding: 10px;
   font-weight: bold;
 }
