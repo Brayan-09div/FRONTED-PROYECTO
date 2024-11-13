@@ -88,13 +88,6 @@ const columns = ref([
         sortable: true,
     },
     {
-        name: 'instutionalEamil',
-        label: 'EMAIL INSTITUCIONAL',
-        field: 'instutionalEamil',
-        align: 'center',
-        sortable: true,
-    },
-    {
         name: 'phone',
         label: 'TEL',
         field: 'phone',

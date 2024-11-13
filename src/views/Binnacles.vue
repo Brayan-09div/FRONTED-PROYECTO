@@ -86,7 +86,7 @@ const rows = ref([{
   name: "Alice Johnson",
   number: "11223",
   document: "LMN456",
-  status: "1",
+  status: "2",
   user: "alicejohnson",
   observation: "Ninguna",
   observationDate: "2022-02-02"
@@ -132,7 +132,7 @@ const columns = ref([
     align: "center",
     field: "detalle",
     sortable: true,
-  },
+  }
 ])
 async function openClickObservation() {
   isDialogVisibleObservation.value = true;

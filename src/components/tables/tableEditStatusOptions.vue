@@ -9,6 +9,13 @@
         </q-tr>
       </template>
 
+      <template v-solt:body-cell-optionStatus="props">
+        <q-td :props="props"  class="q-pa-xs text-center" >
+          <q-select v-model="props.rows.status" options="optionStatus" class="" dense  emit-value map-options  >
+          </q-select>
+        </q-td>
+      </template>
+
       <!-- Columna de estado con botón de activación/desactivación -->
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="q-pa-xs text-center">
@@ -25,7 +32,7 @@
         <q-td :props="props" class="opcion-btn">
           <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
             aria-label="Edit Square" />
-          <q-btn class="estado-btn" @click="toggleStatus(props.row)"
+          <q-btn class="estado-btn" @click="onclickStatus(props.row)"
             :icon="props.row.status === 1 ? 'cancel' : 'check_circle'" :color="props.row.status === 1 ? 'red' : 'green'"
             round size="md" :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'" />
         </q-td>
@@ -43,7 +50,6 @@
 
 <script setup>
 import { ref } from "vue";
-let loading = ref(false);
 let loadingStates = ref({});
 
 const props = defineProps({
@@ -67,6 +73,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  onclickStatus: {
+    type: Function,
+    required: true,
+  },
 });
 
 const toggleActivate = async (row) => {
@@ -75,6 +85,18 @@ const toggleActivate = async (row) => {
     await props.toggleActivate(row);
   } finally {
     loadingStates.value[row._id] = false;
+  }
+};
+
+const onclickStatus = async (row) => {
+  loadingStates.value[row._id]= true;
+  try {
+    await props.onclickStatus(row)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loadingStates.value[row._id] = false;
+  
   }
 };
 </script>

@@ -1,7 +1,7 @@
 
 <template>
     <q-drawer
-        v-model="drawer"
+        :v-model="drawer"
         show-if-above
         :width="300"
         :breakpoint="400"
@@ -114,7 +114,26 @@
       </q-drawer>
 </template>
 <script setup>
-import { ref } from "vue";
-const drawer = ref(false);
-const miniState = ref(true);
+
+import { ref, watch, defineEmits } from "vue";
+
+const props = defineProps({
+  drawer:{
+    type:Boolean,
+    required:true
+  }
+}
+);
+
+const emit = defineEmits(['update:drawer']);
+
+const drawer = ref(props.drawer);
+
+watch(() => props.drawer, (newVal) => {
+  drawer.value = newVal;
+});
+
+watch(drawer, (newVal) => {
+  emit('update:drawer', newVal);
+});
 </script>

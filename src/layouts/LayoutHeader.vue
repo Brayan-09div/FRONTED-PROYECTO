@@ -23,14 +23,14 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-
+// import {emit} from 'vue'
 
 let drawer = ref(false);
 const router = useRouter();
-const toggleDrawer = (drawer) => {
-  drawer.value = !drawer.value;
-};
 
+const toggleDrawer = () => {
+  emit('toggle-drawer');
+};
 
 const logout = () => {
   router.push('/');
