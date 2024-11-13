@@ -20,7 +20,7 @@
 
       <q-card-actions align="right">
         <q-btn flat :label="labelSend" icon="save_as" @click="onclickSend" color="white"
-          style="background-color: #2f7d32; font-weight: bold;" />
+          style="background-color: #2F7D32; font-weight: bold;" v-close-popup />
         <q-btn flat :label="labelClose" icon="cancel" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
         
       </q-card-actions>
@@ -100,8 +100,8 @@ const computedModelValue = computed({
 
 #button {
   /* width: 160px; */
-  margin-left: 2%;
-  margin-top: 2%;
+  margin-left: 3%;
+  margin-top: 1%;
   margin-bottom: 0px;
 }
 </style>

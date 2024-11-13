@@ -1,5 +1,5 @@
 <template>
-  <Header title="Modalidad EP"></Header>
+    <Header title="Certificaciones"></Header>
 </template>
 
 <script setup>
