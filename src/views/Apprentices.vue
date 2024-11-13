@@ -1,5 +1,7 @@
 <template>
   <Header title="Aprendices"></Header>
+
+  <div id="buttons">
   <ModalDialog class="formApprentice" :title="modalTitle" v-model="isDialogVisibleModal" nameButton="Crear"
     labelClose="Cerrar" labelSend="Guardar" :onclickClose="handleClose" :onclickSend="handleSend">
 
@@ -50,7 +52,7 @@
         </template>
       </q-input>
 
-      <q-input v-model="idmodality" label=" Modalidad Etapa Productiva" v-show="modality"  filled>
+      <q-input v-model="idmodality" label=" Modalidad Etapa Productiva" filled>
         <template v-slot:prepend>
           <q-icon name="settings" />
         </template>
@@ -58,6 +60,18 @@
     </div>
   </ModalDialog>
 
+  <div class="filterButtons" >
+    <p>Seleccione una opción:</p>
+    <div class="radio-buttons">
+    <radioButtonFiche v-model="radiobuttonlist" label="Ficha" val="Fiche"></radioButtonFiche>
+    <radioButtonAppretice v-model="radiobuttonlist" label="Aprendiz" val="Appretice"></radioButtonAppretice>
+    <radioButtonStatus v-model="radiobuttonlist" label="Estado" val="status"></radioButtonStatus>
+  </div>
+  </div>
+
+  <inputSearch class="search-container"></inputSearch>
+
+</div>
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit"
     :toggleActivate="changestatus" :onclickStatus="changestatusIcon">
   </CustomTable>
@@ -67,14 +81,15 @@
 
 <script setup>
 import CustomTable from "../components/tables/tableEditStatusOptions.vue";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, TransitionGroup } from "vue";
 import Header from "../components/header/header.vue";
 import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
-import editApprentice from '../components/modal/dialog.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
-import Apprentice from "./Apprentice.vue";
-
+import radioButtonAppretice from "../components/radioButtons/radioButton.vue";
+import radioButtonFiche from "../components/radioButtons/radioButton.vue";
+import radioButtonStatus from "../components/radioButtons/radioButton.vue";
+import inputSearch from "../components/input/inputSearch.vue";
 const rows = ref([]);
 
 // Date form Apprentice
@@ -89,18 +104,19 @@ let fiche = ref('')
 let idmodality = ref('')
 let row_id = ref('')
 
+// raadio button
+let radiobuttonlist = ref('Appretice')
 
 // modals
 let isDialogVisibleModal = ref(false)
 let ismodalType = ref(true)
 let modalTitle = ref(ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz')
-let modality = ref(true)
-
-
 
 // filtro de fichas
 const options = ref([]);
 const filterOptions = ref([]);
+
+
 
 const optionsTpC = [
   'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
@@ -207,7 +223,7 @@ function resetForm() {
   tpDocument.value = '';
   numDocument.value = '';
   fiche.value = '';
-  // modality.value = '';
+  idmodality.value = '';
 }
 
 async function changestatus(row) {
@@ -229,8 +245,6 @@ async function changestatusIcon(row) {
   row.status = row.status === 1 ? 0 : 1;
 }
 
-
-
 function openDialogEdit(row) {
   // isDialogVisible.value = true;
   isDialogVisibleModal.value = true;
@@ -247,11 +261,21 @@ function openDialogEdit(row) {
 
 }
 
+function handleClose() {
+  modeltype.value = false
+  resetForm();
+}
+
 async function handleSend() {
-  if (!firstName.value || !lastName.value || !emailPersonal.value || !emailPersonal.value || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
+  if (!firstName.value || !lastName.value ||
+    !emailPersonal.value || !emailPersonal.value
+    || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
     notifyWarningRequest('Todos los campos son obligatorios')
+    isDialogVisibleModal.value = true;
   }
+
   const selectedFiche = filterOptions.value.find((opt) => opt._id === fiche.value); // Aca se Busca los datos de la ficha seleccionada
+
   const apprendiceData = {
     firstName: firstName.value,
     lastName: lastName.value,
@@ -268,30 +292,24 @@ async function handleSend() {
     idModality: idmodality.value
   }
 
-  let result;
+  let response;
   if (ismodalType.value === true) {
-    modality.value = true
-    await postData('/apprendice/addapprentice', apprendiceData)
+    response = await postData('/apprendice/addapprentice', apprendiceData)
   } else {
-    modality.value = false    
-    await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceData);4
+    response = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceData);
   }
-  
 
-    if (result && result.status === 200) {
+  if (response && response.status === 200) {
     notifySuccessRequest(ismodalType.value ? 'Aprendiz creado correctamente' : 'Aprendiz actualizado correctamente');
     isDialogVisibleModal.value = false;
-    ismodalType.value = false;
-     loadData();
-  }else{
-    notifyErrorRequest(`errror: ${error.response.data.error[0].msg}`)
+    resetForm();
+    loadData();
+  } else {
+    notifyErrorRequest(`Error: ${response.data.message}`);
+    isDialogVisibleModal.value = true;
   }
-  if(!result){
-    notifyErrorRequest('Error al crear el aprendiz')
-  }
+  loadData();
 }
-
-
 async function fetchDataFiche() {
   const response = await getData('/repfora/fiches');
 
@@ -318,7 +336,7 @@ async function filterFunctionFiches(val, update) {
   update(() => {
     const needle = val.toLowerCase();
     filterOptions.value = options.value.filter((option) =>
-    option.label.toLowerCase().includes(needle) // Filtramos por label que contiene name - number
+      option.label.toLowerCase().includes(needle) // Filtramos por label que contiene name - number
     );
   });
 }
@@ -342,4 +360,36 @@ async function filterFunctionFiches(val, update) {
   gap: 20px;
   grid-template-columns: 1fr 1fr;
 }
+
+
+.filterButtons p {
+  font-weight: bold;
+  font-size:11px ;
+  margin: 0px;
+}
+
+#buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+/* .search-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+} */
+ 
+
+.search-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
 </style>
