@@ -18,12 +18,12 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'; // Asegúrate de importar useRouter
+import { useRoute, useRouter } from 'vue-router'; 
 import { ref, watch } from 'vue';
 
 const props = defineProps(['toggleDrawer']);
 const route = useRoute(); 
-const router = useRouter(); // Inicializa router
+const router = useRouter();
 
 const isConsultant = ref(route.path === '/consultant');
 
@@ -32,6 +32,6 @@ watch(() => route.path, (newPath) => {
 });
 
 const logout = () => {
-  router.push({ path: '/' }); // Redirige al login usando 'push' correctamente
+  router.push({ path: '/' }); 
 };
 </script>

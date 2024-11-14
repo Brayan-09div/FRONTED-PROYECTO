@@ -197,7 +197,7 @@
 import { ref } from "vue";
 
 const drawer = ref(false);
-const isActiveHome = ref(true); // Establecer el primer botón como activo por defecto
+const isActiveHome = ref(true); 
 const isActiveApprentices = ref(false);
 const isActiveFiche = ref(false);
 const isActiveModality = ref(false);

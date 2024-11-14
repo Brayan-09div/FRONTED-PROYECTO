@@ -16,7 +16,6 @@
         </q-td>
       </template>
 
-      <!-- Columna de estado con botón de activación/desactivación -->
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="q-pa-xs text-center">
           <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
@@ -27,7 +26,6 @@
         </q-td>
       </template>
 
-      <!-- Columna de OPCIONES-->
       <template v-slot:body-cell-opcion="props">
         <q-td :props="props" class="opcion-btn">
           <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
@@ -111,7 +109,6 @@ const onclickStatus = async (row) => {
 
 .custom-header-row {
   background-color: #4caf50;
-  /* Verde para el encabezado */
 }
 
 .custom-header-cell {

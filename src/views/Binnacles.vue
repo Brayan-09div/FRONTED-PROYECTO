@@ -55,14 +55,6 @@ let observationDate = ref('');
 
 const isDialogVisibleObservation = ref(false);
 const isDialogVisibleDetail = ref(false);
-// onBeforeMount(() => {
-//   loadData();
-// });
-// async function loadData() {
-//   const response = await getData('')
-//   rows.value = response
-// }
-
 
 const rows = ref([{
   name: "John Doe",

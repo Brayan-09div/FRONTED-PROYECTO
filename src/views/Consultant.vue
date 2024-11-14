@@ -5,7 +5,7 @@
     <q-page-container class="consultant-page">
       <div class="container">
         <div class="row">
-          <!-- Datos del Aprendiz -->
+
           <div class="card">
             <div class="card-header">
               <q-icon name="person" color="green-7" />
@@ -22,7 +22,6 @@
           </div>
           </div>
 
-          <!-- Información Etapa Productiva -->
           <div class="card">
             <div class="card-header">
               <q-icon name="assignment" color="green-7" />
@@ -39,7 +38,6 @@
         </div>
 
         <div class="row">
-          <!-- Bitácoras y Seguimientos -->
           <div class="card">
             <div class="card-header">
               <q-icon name="folder" color="green-7" />
@@ -57,7 +55,6 @@
           </div>
         </div>
 
-          <!-- Certificación -->
           <div class="card">
             <div class="card-header">
               <q-icon name="assignment_turned_in" color="green-7" />

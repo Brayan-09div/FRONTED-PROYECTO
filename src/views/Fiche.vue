@@ -62,13 +62,10 @@ const columns = ref([
 
     
 async function seeApprentices(row) {
-    // router.push('/layouts/apprentices');
-    //    const response = await getData(`/listapprenticebyfiche/${ficheId}`);
-    // rows.value = response
-    // console.log(response);
+  
     router.push({
     path: '/layouts/apprentices',
-    query: { ficheId: row._id }  // Pass the fiche ID as a query parameter
+    query: { ficheId: row._id } 
   });
     
 

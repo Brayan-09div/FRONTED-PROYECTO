@@ -14,7 +14,6 @@
       name: "Num",
       label: "N°",
       field: "Num",
-      // align: "center",
     },
     {
       name: "name",

@@ -16,10 +16,9 @@
           <div v-if="isRol">
             <div class="form-group">
               <q-input type="text" v-model="email" label="Email" filled /> <br>
-              <!-- Mostrar el campo de documento solo si el rol es CONSULTOR -->
+              
               <q-input type="text" v-if="rol === 'CONSULTOR'" v-model="documento" label="Documento" filled />
               
-              <!-- Mostrar el campo de contraseña solo si el rol no es CONSULTOR -->
               <q-input v-if="rol !== 'CONSULTOR'" :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="Password" filled>
                 <template v-slot:append>
                   <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
@@ -121,7 +120,7 @@ const forgotPassword = () => {
   align-items: center;
   height: 100vh;
   background-color: #f0f0f0;
-  margin: 0; /* Asegúrate de que no haya márgenes */
+  margin: 0; 
 }
 
 .login-box {
