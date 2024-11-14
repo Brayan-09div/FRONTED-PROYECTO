@@ -245,8 +245,11 @@ async function changestatusIcon(row) {
   row.status = row.status === 1 ? 0 : 1;
 }
 
+function openCloseModal(){
+  isDialogVisibleModal.value = false;
+}
+
 function openDialogEdit(row) {
-  // isDialogVisible.value = true;
   isDialogVisibleModal.value = true;
   ismodalType.value = false;
   firstName.value = row.firstName;
@@ -258,7 +261,6 @@ function openDialogEdit(row) {
   numDocument.value = row.numDocument;
   fiche.value = row.fiche.idFiche;
   row_id = row._id;
-
 }
 
 function handleClose() {
@@ -292,20 +294,20 @@ async function handleSend() {
     idModality: idmodality.value
   }
 
-  let response;
+  let result;
   if (ismodalType.value === true) {
-    response = await postData('/apprendice/addapprentice', apprendiceData)
+     await postData('/apprendice/addapprentice', apprendiceData)
   } else {
-    response = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceData);
+   await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceData);
   }
 
-  if (response && response.status === 200) {
+  if (result && result.status === 200) {
     notifySuccessRequest(ismodalType.value ? 'Aprendiz creado correctamente' : 'Aprendiz actualizado correctamente');
     isDialogVisibleModal.value = false;
     resetForm();
     loadData();
   } else {
-    notifyErrorRequest(`Error: ${response.data.message}`);
+    notifyErrorRequest(`Error: ${error.response.data}`);
     isDialogVisibleModal.value = true;
   }
   loadData();
