@@ -1,5 +1,5 @@
 <template>
-  <q-btn id="button" color="green-8" @click="computedModelValue = true" class="q-mb-md">
+  <q-btn id="button" color="green-8" @click="openModalButton" class="q-mb-md">
     <q-icon name="add_circle" />
     <span style="font-weight: bold !important; margin-left: 5px;">{{ nameButton }}</span>
   </q-btn>
@@ -64,6 +64,10 @@ const props = defineProps({
     required: true
   },
   onclickSend: {
+    type: Function,
+    required: true
+  },
+  openModalButton: {
     type: Function,
     required: true
   }

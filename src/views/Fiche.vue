@@ -1,26 +1,26 @@
 <template>
     <Header title="Fichas"></Header>
-    <ficheTable :rows="rows" :columns="columns" props="props" :toggleSeeApprentice="seeApprentices"></ficheTable>
+    <ficheTable :rows="rows" :props="props" :columns="columns" props="props" :toggleSeeApprentice="seeApprentices"></ficheTable>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount} from 'vue';
 import Header from '../components/header/header.vue';
 import ficheTable from '../components/tables/tableFiche.vue';
 import { router } from '../router/routers';
+import { getData } from '../services/ApiClient';
 
-const rows = ref([
-    {
-        name: 'ADO',
-        program: '2711689',
-        status: 1,
-    },
-    {
-        name: 'GESTION DE MERCADOS',
-        program: '2811689',
-        status: 0,
+
+
+onBeforeMount(() =>{
+    loadDataFiches();
+})
+
+async function loadDataFiches() {
+        const response = await getData('/repfora/fiches');
+        rows.value = response
     }
-]);
+const rows = ref([]);
 
 const columns = ref([
     {
@@ -33,14 +33,14 @@ const columns = ref([
     {
         name: 'name',
         label: 'NOMBRE FICHA',
-        field: 'name',
+        field: row => row.program.name,
         align: 'center',
         sortable: true,
     },
     {
-        name: 'codigo',
+        name: 'code',
         label: 'COD.FICHA',
-        field: 'program',
+        field: row => row.program.code,
         align: 'center',
         sortable: true,
     },
@@ -59,8 +59,19 @@ const columns = ref([
         sortable: true,
     }])
 
-async function seeApprentices() {
-    router.push('/informationFicheApprentice')
+
+    
+async function seeApprentices(row) {
+    // router.push('/layouts/apprentices');
+    //    const response = await getData(`/listapprenticebyfiche/${ficheId}`);
+    // rows.value = response
+    // console.log(response);
+    router.push({
+    path: '/layouts/apprentices',
+    query: { ficheId: row._id }  // Pass the fiche ID as a query parameter
+  });
+    
+
 }
 
 </script>

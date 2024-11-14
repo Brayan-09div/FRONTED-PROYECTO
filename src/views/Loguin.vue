@@ -75,13 +75,24 @@ const handleSubmit = async () => {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
+  let loginUrl;
+  if (rol.value === 'CONSULTOR') {
+    loginUrl = '/apprendice/loginApprentice';
+  } else if (rol.value === 'ADMIN') {
+    loginUrl = '/Repfora/loginAdmin';
+  } else if (rol.value === 'INSTRUCTOR') {
+    loginUrl = '/Repfora/loginInstructors';
+  } else {
+    notifyErrorRequest('Rol no válido');
+    return;
+  }
 
   try {
-    const response = await postData('/Repfora/loginAdmin', {
+    const response = await postData(loginUrl, {
       role: rol.value,
-      email: email.value,
-      documento: rol.value === 'CONSULTOR' ? documento.value : undefined,
-      password: rol.value !== 'CONSULTOR' ? password.value : undefined,
+    email: email.value,
+    numDocument: rol.value === 'CONSULTOR' ? documento.value : undefined,
+    password: rol.value !== 'CONSULTOR' ? password.value : undefined,
     });
 
     notifySuccessRequest('Inicio de sesión exitoso');
