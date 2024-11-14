@@ -20,7 +20,7 @@
 
       <q-card-actions align="right">
         <q-btn flat :label="labelSend" icon="save_as" @click="onclickSend" color="white"
-          style="background-color: #2F7D32; font-weight: bold;" v-close-popup />
+          style="background-color: #2F7D32; font-weight: bold;" />
         <q-btn flat :label="labelClose" icon="cancel" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
         
       </q-card-actions>
