@@ -8,8 +8,7 @@
             </q-th>
           </q-tr>
         </template>
-  
-        <!-- Columna de estado con botón de activación/desactivación -->
+
         <template v-slot:body-cell-status="props">
           <q-td :props="props" class="q-pa-xs text-center">
             <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
@@ -19,7 +18,7 @@
             </q-btn>
           </q-td>
         </template>  
-        <!-- columna de   N° -->
+
         <template v-slot:body-cell-Num="props">
           <q-td :props="props" class="q-pa-xs text-center">
             {{ props.pageIndex + 1 }}
@@ -72,7 +71,6 @@
   
   .custom-header-row {
     background-color: #4caf50;
-    /* Verde para el encabezado */
   }
   
   .custom-header-cell {

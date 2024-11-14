@@ -66,7 +66,6 @@ const rows = ref([
     status: "1",
     users: "1",
     user: "johndoe",
-    // observation: "Ninguna",
     observationDate: "2022-02-02"
   }, {
     name: "John Doe",
@@ -76,7 +75,6 @@ const rows = ref([
     status: "1",
     users: "1",
     user: "johndoe",
-    // observation: "Ninguna",
     observationDate: "2022-02-02"
   },
   {
@@ -87,7 +85,6 @@ const rows = ref([
     status: "3",
     users: "1",
     user: "johndoe",
-    // observation: "Ninguna",
     observationDate: "2022-02-02"
   }
 ])

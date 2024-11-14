@@ -9,14 +9,12 @@
                 </q-tr>
             </template>
 
-            <!-- Columna de Estado -->
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-select v-model="props.row.status"  :options="OptionsStatus" class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
                     </q-select>
                 </q-td>
             </template>
-            <!-- Columna de Obsevación -->
 
             <template v-slot:body-cell-observation="props">
                 <q-td :props="props">
@@ -25,7 +23,6 @@
                 </q-td>
             </template>
 
-            <!-- Columna de OPCIONES-->
             <template v-slot:body-cell-opcion="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round
@@ -38,7 +35,6 @@
 
             </template>
 
-            <!-- Columna de Detalle-->
             <template v-slot:body-cell-detalle="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn class="edit-btn" @click="onClickDetail(props.row)" color="primary" icon="search" round size="md"
@@ -46,7 +42,6 @@
                 </q-td>
             </template>
 
-            <!-- columna de Num -->
              <template v-slot:body-cell-Num="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     {{ props.pageIndex + 1 }}
@@ -121,7 +116,6 @@ const toggleActivate = async (row) => {
 
 .custom-header-row {
     background-color: #4caf50;
-    /* Verde para el encabezado */
 }
 
 .custom-header-cell {

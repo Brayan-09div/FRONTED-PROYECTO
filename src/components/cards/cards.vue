@@ -71,6 +71,6 @@ const props = defineProps({
 .card-image {
   width: 56%;
   margin-top: 10px !important;
-  margin: 0 auto; /* Centra la imagen horizontalmente */
+  margin: 0 auto;
 }
 </style>

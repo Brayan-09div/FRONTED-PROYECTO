@@ -10,11 +10,10 @@
   
 
 <style>
-/*  */
+
 .fixed-bottom {
-  position: fixed; /* Asegúrate de que esté fijo */
+  position: fixed;
   bottom: 0;
-  /* width: 100%; */
-  z-index: 10; /* Asegúrate de que esté por encima de otros elementos */
+  z-index: 10;
 }
 </style>

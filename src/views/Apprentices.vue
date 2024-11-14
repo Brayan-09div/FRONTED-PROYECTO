@@ -10,7 +10,7 @@
 
           <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
             option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips  :rules="[
-                  (val) => !!val || 'La ficha es obligatoria'  //Asegúrese de que haya un archivo seleccionado
+                  (val) => !!val || 'La ficha es obligatoria'
                 ]"
             filled > <template v-slot:prepend class="custom-select">
               <q-icon name="abc" />
@@ -104,14 +104,6 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-// onMounted(async () => {
-
-//   if (ficheId) {
-//    await loadData(ficheId)
-//   }else{
-//     loadData();
-//   }
-// });
 
 onBeforeMount(() => {
 loadData()
@@ -133,10 +125,10 @@ const loadData = async () => {
   rows.value = response;
 }
 
-// Variables
+
 const rows = ref([]);
 
-// Date form Apprentice
+
 let firstName = ref('')
 let lastName = ref('')
 let emailPersonal = ref('')
@@ -148,21 +140,20 @@ let fiche = ref('')
 let idmodality = ref('')
 let row_id = ref('')
 
-// raadio button
+
 let radiobuttonlist = ref('');
 let searchValue = ref('')
 let searchLabel = ref('')
 
-// modals
 let isDialogVisibleModal = ref(false)
 let ismodalType = ref(true)
 let modalTitle = ref(ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz')
 
-// filtro de fichas
+
 const options = ref([]);
 const filterOptions = ref([]);
 
-// visivilidad del input
+
 let inputIdmodality = ref(false)
 
 
@@ -228,14 +219,14 @@ const columns = ref([
     name: "fiche.name",
     align: "center",
     label: "FICHA",
-    field: row => row.fiche.name, // Accede al nombre de la ficha
+    field: row => row.fiche.name, 
     sortable: true,
   },
   {
     name: "fiche.number",
     align: "center",
     label: "COD.FICHA",
-    field: row => row.fiche.number, // Accede al número de la ficha
+    field: row => row.fiche.number, 
     sortable: true,
   },
   {
@@ -254,7 +245,7 @@ const columns = ref([
   }
 ]);
 
-// Validaciones con rules
+
 const ruleNameAppretice = (val) => !!val || "Este campo es requerido";
 const ruleLastNameAppretice = (val) => !!val || "Este campo es requerido";
 const ruleTpAppretice = (val) => !!val || "Este campo es requerido";
@@ -295,10 +286,6 @@ async function changestatusIcon(row) {
   }
   row.status = row.status === 1 ? 0 : 1;
 }
-
-// function openCloseModal(){
-//   isDialogVisibleModal.value = false;
-// }
 
 function openButtonCreate() {
   ismodalType.value = true;
@@ -381,7 +368,7 @@ const handleSend = async () => {
     } else {
       result = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceDataUpdate);
     }
-    // Consideramos cualquier respuesta como exitosa si no hay un error explícito
+    
     notifySuccessRequest(ismodalType.value ? 'Aprendiz creado correctamente' : 'Aprendiz actualizado correctamente');
     isDialogVisibleModal.value = false;
     ismodalType.value = false;
@@ -394,16 +381,16 @@ const handleSend = async () => {
 };
 
 
-// filtro de fichas
+
 async function fetchDataFiche() {
   const response = await getData('/repfora/fiches');
-  options.value = response.map(option => ({   //aca es donde se guardan todas las opciones
-    _id: option._id, // Este será el valor del <q-select>
-    label: `${option.program.name} - ${option.program.code}`, // Crea un campo `label` con la combinación deseada
-    name: option.program.name, // Se guarda el Nombre de la ficha
-    number: option.program.code, // Se guarda el Código de la ficha
+  options.value = response.map(option => ({   
+    _id: option._id, 
+    label: `${option.program.name} - ${option.program.code}`, 
+    name: option.program.name, 
+    number: option.program.code, 
   }));
-  filterOptions.value = options.value; // Opciones iniciales filtrada
+  filterOptions.value = options.value; 
 
 }
 
@@ -420,12 +407,12 @@ async function filterFunctionFiches(val, update) {
   update(() => {
     const needle = val.toLowerCase();
     filterOptions.value = options.value.filter((option) =>
-      option.label.toLowerCase().includes(needle) // Filtramos por label que contiene name - number
+      option.label.toLowerCase().includes(needle) 
     );
   });
 }
 
-// Función para actualizar el label del input de búsqueda
+
 function updateSearchLabel() {
   if (radiobuttonlist.value === 'fiche') {
     searchLabel.value = 'Buscar por ficha';
@@ -438,7 +425,7 @@ function updateSearchLabel() {
   }
 }
 
-// listar por radio button
+
 async function listApprenticeForFiches() {
   const response = await getData(`/apprendice/listapprenticebyfiche/${searchValue.value}`);
   rows.value = response;
@@ -456,7 +443,7 @@ async function listApprenticeForStatus() {
 }
 
 const handleRadioChange = async () => {
-  // Función para actualizar el label del input de búsqueda
+
   updateSearchLabel()
   if (radiobuttonlist.value === 'Fiche') {
     searchLabel.value = 'Buscar por ficha';
@@ -473,7 +460,6 @@ const handleRadioChange = async () => {
 }
 
 
-// Buscardor ractivo 
 const searchApprentices = async () => {
   if (radioButtonAppretice.value === 'Fiche') {
     await listApprenticeForFiches();
@@ -499,9 +485,7 @@ const searchApprentices = async () => {
 .formEditApprentice {
   display: flex;
   flex-direction: column;
-  /* display: grid; */
   gap: 20px;
-  /* grid-template-columns: 1fr 1fr; */
 }
 
 

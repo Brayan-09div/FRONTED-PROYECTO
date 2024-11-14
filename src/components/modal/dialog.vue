@@ -49,17 +49,12 @@ const props = defineProps({
   }
 });
 
-
-// Definir el evento que emitirá el valor del dialog
 const emit = defineEmits(['update:modelValue']);
 
-// Definir el computed que controlará el valor del dialog
 const computedModelValue = computed({
-  // va a retornar el valor del dialog
   get() {
     return props.modelValue;
   },
-  // va a emitir el valor del dialog permitiendo abrir y cerrar el dialog
   set(value) {
     emit('update:modelValue', value);
   }

@@ -102,10 +102,4 @@ const computedModelValue = computed({
   width: 950px !important;
 }
 
-#button {
-  /* width: 160px; */
-  /* margin-left: 3%;
-  margin-top: 1%;
-  margin-bottom: 0px; */
-}
 </style>

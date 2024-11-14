@@ -9,7 +9,6 @@
                 </q-tr>
             </template>
 
-            <!-- Columna de estado con botón de activación/desactivación -->
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
@@ -20,7 +19,6 @@
                 </q-td>
             </template>
 
-            <!-- Columna de viste de aprendices -->
             <template v-slot:body-cell-seeApprentice="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn @click="toggleSeeApprentice(props.row)" icon="visibility" color="primary" round size="md"
@@ -29,7 +27,6 @@
                 </q-td>
             </template>
 
-            <!-- columna de N° -->
              <template v-slot:body-cell-Num="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     {{ props.pageIndex + 1 }}
@@ -87,7 +84,6 @@ const toggleActivate = async (row) => {
 
 .custom-header-row {
     background-color: #4caf50;
-    /* Verde para el encabezado */
 }
 
 .custom-header-cell {

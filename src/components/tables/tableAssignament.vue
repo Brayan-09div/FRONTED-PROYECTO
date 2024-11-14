@@ -9,7 +9,6 @@
                 </q-tr>
             </template>
 
-            <!-- columns Bitacoras -->
             <template v-slot:body-cell-binnacle="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn @click="toggleBinnacle(props.row)" icon="add_circle" color="primary" round size="md"></q-btn>
@@ -72,7 +71,6 @@ const props = defineProps({
 
 .custom-header-row {
   background-color: #4caf50;
-  /* Verde para el encabezado */
 }
 
 .custom-header-cell {
