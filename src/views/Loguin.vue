@@ -121,6 +121,7 @@ const forgotPassword = () => {
   align-items: center;
   height: 100vh;
   background-color: #f0f0f0;
+  margin: 0; /* Asegúrate de que no haya márgenes */
 }
 
 .login-box {
