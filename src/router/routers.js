@@ -13,6 +13,7 @@ import home from '../views/Home.vue'
 import horas from '../views/Horas.vue'
 import layouts from '../views/Layout.vue'
 import certificaciones from '../views/Certificaciones.vue'
+import consultant from '../views/Consultant.vue'
 import informationFicheApprentice from '../views/InformationFicheApprentice.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import information from '../views/Information.vue'
@@ -41,7 +42,8 @@ const routes = [
       ]
     },
     { path: '/', component: loguin },
-    { path: '/apprentices', component: loguin }
+    { path: '/apprentices', component: loguin },
+    { path: '/consultant', component: consultant}
   ];
 
 export const router = createRouter({

@@ -16,9 +16,11 @@
           <div v-if="isRol">
             <div class="form-group">
               <q-input type="text" v-model="email" label="Email" filled /> <br>
-              <q-input type="text" v-if="isConsultorRole" v-model="documento" label="Documento" filled /> <br>
-              <!-- Elimina el v-if en el campo de contraseña -->
-              <q-input :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="PASSWORD" filled>
+              <!-- Mostrar el campo de documento solo si el rol es CONSULTOR -->
+              <q-input type="text" v-if="rol === 'CONSULTOR'" v-model="documento" label="Documento" filled />
+              
+              <!-- Mostrar el campo de contraseña solo si el rol no es CONSULTOR -->
+              <q-input v-if="rol !== 'CONSULTOR'" :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="Password" filled>
                 <template v-slot:append>
                   <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
                 </template>
@@ -37,14 +39,12 @@
 
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/ApiClient.js';
 import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
 const router = useRouter();
-// const isPasswordVisible = ref(false);
-
 
 const rol = ref('');
 const email = ref('');
@@ -54,68 +54,49 @@ const documento = ref('');
 let isPwd = ref(true);
 
 const isConsultorRole = ref(false);
-const isAdminOrInstructorRole = ref(false);
 const isRol = ref(false);
 
 const roles = ref([
-  { label: 'CONSULTOR', value: 'APRENDIZ' },
+  { label: 'CONSULTOR', value: 'CONSULTOR' },
   { label: 'ADMINISTRADOR', value: 'ADMIN' },
   { label: 'INSTRUCTOR', value: 'INSTRUCTOR' }
 ]);
 
-// Computed properties para verificar el rol seleccionado
-// const isConsultorRole = computed(() => rol.value === 'APRENDIZ');
-// const isAdminOrInstructorRole = computed(() => rol.value === 'ADMIN' || rol.value === 'INSTRUCTOR');
-// const isRol = computed(() => rol.value !== '');
-
-
 const handleRoleChange = (value) => {
-  // rol.value = value.value; // Almacenar solo el valor del rol seleccionado
-  // console.log('Rol seleccionado:',rol.value);
-
-  rol.value = value.value; // Almacenar solo el valor del rol seleccionado
+  rol.value = value.value;
   console.log('Rol seleccionado:', rol.value);
 
-  if (value.value === 'APRENDIZ') {
-    isConsultorRole.value = true;
-    isAdminOrInstructorRole.value = false;
-  } else {
-    isConsultorRole.value = false;
-    isAdminOrInstructorRole.value = true;
-  }
+  isConsultorRole.value = rol.value === 'CONSULTOR';
   isRol.value = true;
-}
+};
 
-
-const handleSubmit = async (value) => {
-  if (!rol.value || !email.value || !password.value) {
+const handleSubmit = async () => {
+  if (!rol.value || !email.value || (rol.value !== 'CONSULTOR' && !password.value)) {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
-  // isLoading.value = true;
+
   try {
     const response = await postData('/Repfora/loginAdmin', {
       role: rol.value,
       email: email.value,
-      password: password.value,
-      documento: documento.value
+      documento: rol.value === 'CONSULTOR' ? documento.value : undefined,
+      password: rol.value !== 'CONSULTOR' ? password.value : undefined,
     });
 
-     notifySuccessRequest('Inicio de sesión exitoso');
+    notifySuccessRequest('Inicio de sesión exitoso');
     localStorage.setItem('token', response.token);
-    router.push('/layouts');
+
+    if (rol.value === 'CONSULTOR') {
+      router.push('/consultant');
+    } else {
+      router.push('/layouts');
+    }
   } catch (error) {
     console.error('Error en handleSubmit:', error);
-      notifyErrorRequest(`Error: ${error.response.data.data.msg}`);
-      return
-  } finally {
-    isLoading.value = false;
+    notifyErrorRequest(`Error: ${error.response.data.data.msg}`);
   }
 };
-
-// const togglePasswordVisibility = () => {
-//   isPasswordVisible.value = !isPasswordVisible.value;
-// };
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');
@@ -203,6 +184,7 @@ const forgotPassword = () => {
 .login-button {
   width: 30%;
   padding: 10px;
+  margin-top: 25px;
   background-color: #2F7D32;
   color: white;
   border: none;
