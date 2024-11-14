@@ -62,7 +62,7 @@
           </q-input>
         </div>
       </ModalDialog>
-      <buttonuploadFile></buttonuploadFile>
+      <buttonuploadFile nameButton="Subir"></buttonuploadFile>
     </div>
 
     <div class="buttonssearch">
