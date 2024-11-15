@@ -20,8 +20,8 @@ async function loadDataFiches() {
         const response = await getData('/repfora/fiches');
         rows.value = response
     }
-const rows = ref([]);
 
+const rows = ref([]);
 const columns = ref([
     {
         name: 'Num',
@@ -58,11 +58,7 @@ const columns = ref([
         align: 'seeApprentice',
         sortable: true,
     }])
-
-
-    
 async function seeApprentices(row) {
-  
     router.push({
     path: '/layouts/apprentices',
     query: { ficheId: row._id } 

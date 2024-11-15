@@ -9,53 +9,57 @@
         <div class="formApprentice">
 
           <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
-            option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips  :rules="[
-                  (val) => !!val || 'La ficha es obligatoria'
-                ]"
-            filled > <template v-slot:prepend class="custom-select">
+            option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips
+            :rules="[
+              (val) => !!val || 'La ficha es obligatoria'
+            ]" filled> <template v-slot:prepend class="custom-select">
               <q-icon name="abc" />
             </template>
           </q-select>
 
-          <q-input v-model="firstName" label="Nombres Aprendiz"  :rules="[ruleNameAppretice]" filled>
+          <q-input v-model="firstName" label="Nombres Aprendiz" :rules="[ruleNameAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="abc" />
             </template>
           </q-input>
 
-          <q-input v-model="lastName" label="Apellidos Aprendiz"  :rules="[ruleLastNameAppretice]" filled before="person">
+          <q-input v-model="lastName" label="Apellidos Aprendiz" :rules="[ruleLastNameAppretice]" filled
+            before="person">
             <template v-slot:prepend>
               <q-icon name="abc" />
             </template>
           </q-input>
 
-          <q-select square filled v-model="tpDocument" :options="optionsTpC"  :rules="[ruleTpAppretice]" label="Tipo de Documento" />
+          <q-select square filled v-model="tpDocument" :options="optionsTpC" :rules="[ruleTpAppretice]"
+            label="Tipo de Documento" />
 
-          <q-input v-model="numDocument" label="N° Documento"  :rules="[ruleNumberAppretice]" filled>
+          <q-input v-model="numDocument" label="N° Documento" :rules="[ruleNumberAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="pin" />
             </template>
           </q-input>
 
-          <q-input v-model="emailPersonal" label="Email Personal Aprendiz"  :rules="[ruleEmailPersonalAppretice]" filled>
+          <q-input v-model="emailPersonal" label="Email Personal Aprendiz" :rules="[ruleEmailPersonalAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
-          <q-input v-model="emailIntitutional" label="Email Institucional Aprendiz"  :rules="[ruleEmailInstitutionalAppretice]" filled>
+          <q-input v-model="emailIntitutional" label="Email Institucional Aprendiz"
+            :rules="[ruleEmailInstitutionalAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
-          <q-input v-model="phone" label="Telefono Aprendiz"  :rules="[rulephoneAppretice]" filled>
+          <q-input v-model="phone" label="Telefono Aprendiz" :rules="[rulephoneAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="pin" />
             </template>
           </q-input>
 
-          <q-input v-model="idmodality" v-show="inputIdmodality" label=" Modalidad Etapa Productiva"  :rules="[ruleModalityAppretice]" filled>
+          <q-input v-model="idmodality" v-show="inputIdmodality" label=" Modalidad Etapa Productiva"
+            :rules="[ruleModalityAppretice]" filled>
             <template v-slot:prepend>
               <q-icon name="settings" />
             </template>
@@ -100,29 +104,28 @@ import radioButtonFiche from "../components/radioButtons/radioButton.vue";
 import radioButtonStatus from "../components/radioButtons/radioButton.vue";
 import inputSearch from "../components/input/inputSearch.vue";
 import buttonuploadFile from "../components/buttons/Button.vue";
+import axios from "axios";
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
 
 onBeforeMount(() => {
-loadData()
+  loadData()
 });
-
-
-onMounted(() => {
-  loadDataApprenticeFiche();
-});
-
-const loadDataApprenticeFiche = async () => {
-  const ficheId = route.query.ficheId;
-  const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);
-  rows.value = response;
-}
 
 const loadData = async () => {
- const response = await getData('/apprendice/listallapprentice');
-  rows.value = response;
+  const ficheId = route.query.ficheId
+  console.log(ficheId);
+  
+  if (ficheId) {
+    const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);
+    console.log(response)
+    rows.value = response.apprentices
+  } else {
+    const response = await getData('/apprendice/listallapprentice');
+    rows.value = response;
+  }
 }
 
 
@@ -219,14 +222,14 @@ const columns = ref([
     name: "fiche.name",
     align: "center",
     label: "FICHA",
-    field: row => row.fiche.name, 
+    field: row => row.fiche.name,
     sortable: true,
   },
   {
     name: "fiche.number",
     align: "center",
     label: "COD.FICHA",
-    field: row => row.fiche.number, 
+    field: row => row.fiche.number,
     sortable: true,
   },
   {
@@ -318,7 +321,7 @@ function handleClose() {
 
 
 const handleSend = async () => {
-  if(ruleNameAppretice.value || ruleLastNameAppretice.value || ruleTpAppretice.value || ruleNumberAppretice.value || ruleEmailPersonalAppretice.value || ruleEmailInstitutionalAppretice.value || rulephoneAppretice.value || ruleModalityAppretice.value){
+  if (ruleNameAppretice.value || ruleLastNameAppretice.value || ruleTpAppretice.value || ruleNumberAppretice.value || ruleEmailPersonalAppretice.value || ruleEmailInstitutionalAppretice.value || rulephoneAppretice.value || ruleModalityAppretice.value) {
     return;
   }
   if (!firstName.value || !lastName.value || !emailPersonal.value || !emailIntitutional.value
@@ -368,7 +371,7 @@ const handleSend = async () => {
     } else {
       result = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceDataUpdate);
     }
-    
+
     notifySuccessRequest(ismodalType.value ? 'Aprendiz creado correctamente' : 'Aprendiz actualizado correctamente');
     isDialogVisibleModal.value = false;
     ismodalType.value = false;
@@ -384,13 +387,13 @@ const handleSend = async () => {
 
 async function fetchDataFiche() {
   const response = await getData('/repfora/fiches');
-  options.value = response.map(option => ({   
-    _id: option._id, 
-    label: `${option.program.name} - ${option.program.code}`, 
-    name: option.program.name, 
-    number: option.program.code, 
+  options.value = response.map(option => ({
+    _id: option._id,
+    label: `${option.program.name} - ${option.program.code}`,
+    name: option.program.name,
+    number: option.program.code,
   }));
-  filterOptions.value = options.value; 
+  filterOptions.value = options.value;
 
 }
 
@@ -407,7 +410,7 @@ async function filterFunctionFiches(val, update) {
   update(() => {
     const needle = val.toLowerCase();
     filterOptions.value = options.value.filter((option) =>
-      option.label.toLowerCase().includes(needle) 
+      option.label.toLowerCase().includes(needle)
     );
   });
 }

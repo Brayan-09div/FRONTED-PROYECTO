@@ -42,8 +42,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/ApiClient.js';
 import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '../composables/useNotify.js';
+import { useAuthStore } from "../stores/useAuth.js"
 
 const router = useRouter();
+const authStore = useAuthStore()
 
 const rol = ref('');
 const email = ref('');
@@ -95,7 +97,7 @@ const handleSubmit = async () => {
     });
 
     notifySuccessRequest('Inicio de sesión exitoso');
-    localStorage.setItem('token', response.token);
+    authStore.setToken(response.token);
 
     if (rol.value === 'CONSULTOR') {
       router.push('/consultant');
@@ -104,9 +106,20 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('Error en handleSubmit:', error);
-    notifyErrorRequest(`Error: ${error.response.data.data.msg}`);
+    let messageError = 'Error desconocido. Por favor, inténtelo más tarde.'
+    if(error.response){
+      if(error.response.data){
+        if(error.response.data.errors && error.response.data.errors.length > 0){
+          messageError = error.response.data.errors[0].msg
+        }else if(error.response.data.data && error.response.data.data.msg){
+          messageError = error.response.data.data.msg
+        }
+      }
+    }
+    notifyErrorRequest(messageError)
   }
-};
+}
+
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');
