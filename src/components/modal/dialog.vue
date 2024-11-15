@@ -1,5 +1,5 @@
 <template>
-    <q-dialog v-model="fixed" transition-show="rotate" transition-hide="rotate">
+  <q-dialog v-model="computedModelValue" transition-show="rotate" transition-hide="rotate" persistent>
     <q-card>
       <q-card-section class="title">
         <div class="text-h6 text-center">{{ title }}</div>
@@ -8,29 +8,23 @@
       <q-separator />
 
       <q-card-section>
-        <slot>
-        </slot>
+        <slot></slot>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat :label="labelClose" @click="onclickClose" color="red-8" v-close-popup />
-        <q-btn flat :label="labelSend" @click="onclickSend" color="white" style="background-color: #2f7d32;"
-          v-close-popup />
+        <q-btn flat icon="save_as" :label="labelSend"  @clicK="onclickSend" color="white" style="background-color: #2f7d32;" v-close-popup />
+        <q-btn flat icon="cancel" :label="labelClose" @clicK="onclicClose" color="red-8" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
-
 <script setup>
-import { ref } from 'vue';
-
-let fixed = ref(false);
-
+import { computed } from 'vue';
 const props = defineProps({
-fixed : {
+  modelValue: {
     type: Boolean,
     required: true
   },
@@ -49,15 +43,23 @@ fixed : {
     required: true,
     default: 'Enviar'
   },
-  onclickClose: {
-    type: Function,
-    required: true
-  },
   onclickSend: {
     type: Function,
     required: true
   }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
+const computedModelValue = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
+
 </script>
 
 <style>
@@ -65,7 +67,6 @@ fixed : {
   background-color: #2f7d32;
   color: white;
 }
-
 .q-card {
   width: 400px;
 }

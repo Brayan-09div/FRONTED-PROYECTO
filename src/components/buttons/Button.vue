@@ -1,12 +1,8 @@
 <template>
-    <!-- <q-btn
-      :label="label"
-      :color="color"
-      :icon="icon"
-      :to="to"
-      v-ripple
-    /> -->
-    <q-btn push color="green-8" @click="onclickButton" :label="nameButton" />
+   <q-btn id="buttonbasic" color="green-8" @click="fixed = true" class="q-mb-md">
+    <q-icon name="unarchive" />
+    <span style="font-weight: bold !important; margin-left: 5px;">{{ nameButton }}</span>
+  </q-btn>
   </template>
   
   <script setup>

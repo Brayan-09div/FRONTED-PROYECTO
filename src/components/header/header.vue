@@ -16,14 +16,17 @@ const router = useRouter();
 const props = defineProps({
   title:{
     type:String,
-    Required:true,
+    required:true,
     default:'Title'
-  }
-  
+  },
+  Salir:{
+    type:Function,
+    required:true
+  } 
 })
 
 const Salir = async () => {
-  router.replace("/")
+  router.replace("/layouts/home")
 }
 
 </script>
@@ -38,8 +41,8 @@ const Salir = async () => {
 }
 
 #programas {
-  font-size: 35px;
-  font-weight: bold;
+  font-size: 37px;
+  font-weight: 700;
   text-align: center;
   flex-grow: 1;
   padding-top: 20px;
@@ -54,10 +57,10 @@ const Salir = async () => {
   justify-content: center;
   align-items: center;
   border: none;
-  background-color: rgb(8, 73, 55);
+  background-color: #2F7D32;
   color: white;
   margin-left: 3%;
-  margin-top: 2%;
+  margin-top: 20px;
   cursor: pointer;
   position: absolute;
 }
@@ -70,7 +73,7 @@ hr {
   width: 95%;
   border: 2px solid #2F7D32;
   margin: 0 auto;
-  margin-top: -20px;
+  margin-top: 0px;
   margin-bottom: 0px;
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <q-btn id="button" color="green-8" @click="fixed = true" class="q-mb-md">
-    <q-icon name="add" />
+  <q-btn id="button" color="green-8" @click="openModalButton" class="q-mb-md">
+    <q-icon name="add_circle" />
     <span style="font-weight: bold !important; margin-left: 5px;">{{ nameButton }}</span>
   </q-btn>
 
-  <q-dialog v-model="fixed" transition-show="rotate" transition-hide="rotate">
+  <q-dialog v-model="computedModelValue" transition-show="rotate" transition-hide="rotate" persistent>
     <q-card>
       <q-card-section class="title">
-        <div class="text-h6 text-center">{{ title }}</div>
+        <div class="titleStyle text-h6 text-center" >{{ title }}</div>
       </q-card-section>
 
       <q-separator />
@@ -19,9 +19,10 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat :label="labelClose" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
-        <q-btn flat :label="labelSend" @click="onclickSend" color="white"
-          style="background-color: #2f7d32; font-weight: bold;" v-close-popup />
+        <q-btn flat :label="labelSend" icon="save_as" @click="onclickSend" color="white"
+          style="background-color: #2F7D32; font-weight: bold;" />
+        <q-btn flat :label="labelClose" icon="cancel" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
+        
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -29,11 +30,15 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref,computed} from 'vue';
 
-let fixed = ref(false);
+// let apprentice = ref({})
 
 const props = defineProps({
+  modelValue:{
+    type: Boolean,
+    required: true
+  },
   nameButton: {
     type: String,
     required: true,
@@ -61,24 +66,40 @@ const props = defineProps({
   onclickSend: {
     type: Function,
     required: true
+  },
+  openModalButton: {
+    type: Function,
+    required: true
   }
 });
+
+const emit = defineEmits(['update:modelValue']);
+const computedModelValue = computed({
+  get() {
+    return props.modelValue
+  },
+  set(value){
+    emit('update:modelValue', value)
+  }
+})
+
+
+
 </script>
 
-<style>
+<style scoped>
 .title {
   background-color: #2f7d32;
   color: white;
+
+}
+.titleStyle{
+  font-weight: 900  !important;
+   font-size: 28px  !important;
 }
 
 .q-card {
-  width: 450px;
+  width: 950px !important;
 }
 
-#button {
-  width: 160px;
-  margin-left: 2%;
-  margin-top: 2%;
-  margin-bottom: 0px;
-}
 </style>

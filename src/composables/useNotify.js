@@ -9,6 +9,7 @@ export const notifyErrorRequest = (msg, position = "top") => {
     position: position,
     timeout: 4500,
   });
+  return
 };
 
 export const notifySuccessRequest = (msg, position = "top") => {
@@ -19,6 +20,7 @@ export const notifySuccessRequest = (msg, position = "top") => {
     position: position,
     timeout: 3500,
   });
+  return
 };
 
 
@@ -31,4 +33,5 @@ export const notifyWarningRequest = (msg, position = "top") => {
     position: position,
     timeout: 18000,
   });
+  return
 }

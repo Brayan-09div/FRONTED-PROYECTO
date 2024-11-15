@@ -1,107 +1,112 @@
 <template>
   <Header title="Asignaciones"></Header>
-
-  <!-- <div style="display: flex; justify-content: center; padding:10px">
-    <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog" :toggleActivate="changestatus"></CustomTable>
-    <q-dialog v-model="alert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Alert</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </div> -->
+  <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento">
+    <q-input v-model="register" label="Asignación" filled /> <br>
+    <q-input v-model="idinstructorFollow" label="Intructor Seguimiento" filled /> <br>
+    <q-input v-model="idinstructortechnical" label="Intructor Tecnico" filled /> <br>
+    <q-input v-model="idinstructorProyec" label="Intructor Proyecto" filled /> <br>
+    <q-input v-model="certificationDoc" label="certificationDoc" filled /> <br>
+    <q-input v-model="judymentPhoto" label="judymentPhoto" filled /> <br>
+  </ButtonAgregate>
+    <TableOptions :rows="rows" :props="props" :columns="columns" :title="title"
+    :toggleActivate="changestatus" ></TableOptions>
 </template>
 
 <script setup>
-import CustomTable from "../components/tables/Tables.vue"
 import { ref } from "vue"
 import Header from '../components/header/Header.vue';
-
-let title = ref("Asignaciones")
-let alert = ref(false)
+import ButtonAgregate from '../components/modal/modal.vue';
+import TableOptions from "../components/tables/tableStatus.vue";
 
 const columns = ref([
-  {
-    name: "numero",
-    label: "Numero de factura",
+{
+    name: "Num",
+    label: "N°",
     field: "numero",
     align: "center",
   },
   {
-    name: "fecha",
+    name: "register",
+    label: "REGISTRO",
+    field: "numero",
+    align: "resgister",
+  },
+  {
+    name: "followUpInstructor",
     required: true,
-    label: "Fecha de factura",
+    label: "INSTRUCTOR SEGUIMIENTO",
     align: "center",
-    field: "fecha",
+    field: "followUpInstructor",
     sortable: true,
   },
   {
-    name: "comprador",
+    name: "technicalInstructor",
     align: "center",
-    label: "Nombre comprdor",
-    field: "comprador",
+    label: "INTRUCTOR TECNICO",
+    field: "technicalInstructor",
     sortable: true,
   },
-  { name: "total", label: "Valor Total", align: "center", field: "total" },
-  { name: "estado", label: "Estado", align: "center", field: "estado" },
-  { name: "editar", label: "Editar", align: "center", field: "editar" },
-  { name: "activar", label: "Activar/Desactivar", align: "center", field: "activar" },
+  {
+    name: "projectInstructor",
+    label: "INTRUCTOR PROYECTO",
+    align: "center",
+    field: "projectInstructor"
+  },
+  {
+    name: "certificationDoc",
+    label: "DOCUMENTO CERTIFICACION",
+    align: "center",
+    field: "certificationDoc"
+  }, {
+    name: "judymentPhoto",
+    label: "FOTO",
+    align: "center",
+    field: "judymentPhoto"
+  }, {
+    name: "status",
+    label: "ACTIVAR/DESACTIVAR",
+    align: "center",
+    field: "status"
+  }
 ]);
 
 const rows = ref([
   {
     numero: "123",
-    fecha: "19-02-2024",
-    comprador: "Alex Guevara",
-    total: 334000,
-    estado: 1
+    followUpInstructor: "Juan Perez",
+    technicalInstructor: "Andres Hernandez",
+    projectInstructor: "Julian Duran",
+    certificationDoc: "Cerificado",
+    judymentPhoto: "Foto",
+    status: "1"
   },
   {
     numero: "124",
-    fecha: "20-02-2024",
-    comprador: "Luis Medina",
-    total: 334000,
-    estado: 1
+    followUpInstructor: "Juan Perez",
+    technicalInstructor: "Juan Perez",
+    projectInstructor: "Juan Perez",
+    certificationDoc: "Cerificado",
+    judymentPhoto: "Foto",
+    status: 1
   },
   {
     numero: "125",
-    fecha: "21-02-2024",
-    comprador: "Alfredo Gutierrez",
-    total: 334000,
+    followUpInstructor: "Juan Perez",
+    technicalInstructor: "Juan Perez",
+    projectInstructor: "Juan Perez",
+    certificationDoc: "Cerificado",
+    judymentPhoto: "Foto",
     estado: 0
-  },
-  {
-    numero: "126",
-    fecha: "22-02-2024",
-    comprador: "Matias Garnica",
-    total: 334000,
-    estado: 0
-  },
-  {
-    numero: "127",
-    fecha: "23-02-2024",
-    comprador: "Cristian Tarasona",
-    total: 334000,
-    estado: 0
-  },
+  }
 ]);
 
-function openDialog(row){
-  alert.value=true
+function openDialog(row) {
+  alert.value = true
   console.log(row);
 }
 
-function changestatus(row){
-  row.estado = row.estado === 1 ? 0 : 1; 
+function changestatus(row) {
+  row.estado = row.estado === 1 ? 0 : 1;
 }
 
 </script>
