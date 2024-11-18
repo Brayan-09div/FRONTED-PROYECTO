@@ -1,25 +1,105 @@
 <template>
   <Header title="Asignaciones"></Header>
-  <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento">
-    <q-input v-model="register" label="Asignación" filled /> <br>
-    <q-input v-model="idinstructorFollow" label="Intructor Seguimiento" filled /> <br>
-    <q-input v-model="idinstructortechnical" label="Intructor Tecnico" filled /> <br>
-    <q-input v-model="idinstructorProyec" label="Intructor Proyecto" filled /> <br>
-    <q-input v-model="certificationDoc" label="certificationDoc" filled /> <br>
-    <q-input v-model="judymentPhoto" label="judymentPhoto" filled /> <br>
-  </ButtonAgregate>
-    <TableOptions :rows="rows" :props="props" :columns="columns" :title="title"
-    :toggleActivate="changestatus" ></TableOptions>
+
+  <div id="buttons-container">
+    <div class="buttons">
+      <ButtonAgregate class="formAssignament " v-model="isDialogVisibleModalAssignament" nameButton="Crear"
+        :title="labelTitle" :openModalButton="onclickButtonCreate" :onclickSend="handleSendCreate"
+        :onclickClose="handleCole" :labelSend="Guardar" :labelClose="cerrar">
+
+        <div class="formAssinament">
+
+          <q-input v-model="firstName" label="Nombre Aprendiz" v-show="apprenticeName"
+            :rules="[(val) => !!val || 'Este campo Nombres Aprendiz es obligatorio']" filled>
+            <template v-slot:prepend>
+              <q-icon name="abc" />
+            </template>
+          </q-input>
+
+          <q-input v-model="idinstructorFollow" label="Intructor de Seguimiento"
+            :rules="[(val) => !!val || 'Este campo  Instructor de Seguimiento es obligatorio']" filled>
+            <template v-slot:prepend>
+              <q-icon name="abc" />
+            </template>
+          </q-input>
+
+          <q-input v-model="idinstructortechnical" label="Intructor de Técnico"
+            :rules="[(val) => !!val || 'Este campo Instructoe Técnico es obligatorio']" filled>
+            <template v-slot:prepend>
+              <q-icon name="abc" />
+            </template>
+          </q-input>
+
+
+          <q-input v-model="idinstructorproject" label="Instructor de Proyecto"
+            :rules="[(val) => !!val || 'Este campo Instructor de Proyecto es obligatorio']" filled>
+            <template v-slot:prepend>
+              <q-icon name="abc" />
+            </template>
+          </q-input>
+        </div>
+      </ButtonAgregate>
+    </div>
+
+    <div class="buttonsSearch">
+      <div class="filterButtons">
+        <p>Seleccione una opción:</p>
+        <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice"
+          @update:model-value="handleRadioChange" />
+        <radioButtonInsFollow v-model="radioButtonList" label="Inst. Seguimiento" val="instFollow"
+          @update:model-value="handleRadioChange" />
+        <radioButtonInstTechnical v-model="radioButtonList" label="Inst. Tecnico" val="instTechnical"
+          @update:model-value="handleRadioChange" />
+        <radioButtonInstProject v-model="radioButtonList" label="Inst. Proyecto" val="instProject"
+          @update:model-value="handleRadioChange" />
+
+      </div>
+      <inputSearch class="search-container" v-model="searchValue" :label="searchLabel" @input="searchApprentices" />
+    </div>
+  </div>
+  <TableOptions :rows="rows" :props="props" :columns="columns" :title="title" :toggleActivate="changestatus"
+    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd">
+  </TableOptions>
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onBeforeMount } from 'vue';
 import Header from '../components/header/Header.vue';
 import ButtonAgregate from '../components/modal/modal.vue';
-import TableOptions from "../components/tables/tableStatus.vue";
+import TableOptions from "../components/tables/tableStatusSearchCreateAdd.vue";
+import radioButtonApprentice from "../components/radioButtons/radioButton.vue";
+import radioButtonInsFollow from "../components/radioButtons/radioButton.vue";
+import radioButtonInstTechnical from "../components/radioButtons/radioButton.vue";
+import radioButtonInstProject from "../components/radioButtons/radioButton.vue";
+import inputSearch from "../components/input/inputSearch.vue";
+import { getData, putData, postData } from "../services/ApiClient.js";
+import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
+
+
+onBeforeMount(async () => {
+  await loadDataAssignament();
+})
+
+//  formulario
+let firstName = ref('');
+let idinstructorFollow = ref('');
+let idinstructortechnical = ref('');
+let idinstructorproject = ref('')
+
+// radio buttons
+let searchValue = ref('');
+let searchLabel = ref('Ingrese el nombre o el número de documento');
+let radioButtonList = ref('');
+
+// modals
+let isDialogVisibleModalAssignament = ref(false);
+let apprenticeName = ref(false)
+let labelTitle = ref('');
+
+const rows = ref([]);
 const columns = ref([
-{
+  {
     name: "Num",
     label: "N°",
     field: "numero",
@@ -27,86 +107,310 @@ const columns = ref([
   },
   {
     name: "register",
-    label: "REGISTRO",
-    field: "numero",
+    label: "NOMBRE APRENDIZ",
+    field: row => row.idApprentice[0] && row.idApprentice.length > 0 ? row.idApprentice[0].firstName + " " +
+      row.idApprentice[0].lastName : 'No asignado',
     align: "resgister",
   },
   {
-    name: "followUpInstructor",
-    required: true,
-    label: "INSTRUCTOR SEGUIMIENTO",
+    name: "numApprentice",
+    label: "N° APREDIZ",
+    field: row => row.idApprentice ? row.idApprentice.length : 0,
     align: "center",
-    field: "followUpInstructor",
+
+  },
+  {
+    name: "program",
+    required: true,
+    label: "PROGRAMA",
+    align: "center",
+    field: row => row.idApprentice && row.idApprentice.length > 0 && row.idApprentice[0].fiche ?
+      row.idApprentice[0].fiche.name : 'No asignado',
     sortable: true,
   },
   {
-    name: "technicalInstructor",
+    name: "modality",
     align: "center",
-    label: "INTRUCTOR TECNICO",
-    field: "technicalInstructor",
+    label: "MODALIDAD",
+    field: row => row.idModality ? row.idModality.name : 'Modalidad no Asignada',
     sortable: true,
   },
   {
     name: "projectInstructor",
-    label: "INTRUCTOR PROYECTO",
+    label: "INS. SEGUIMIENTO",
     align: "center",
-    field: "projectInstructor"
+    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].followUpInstructor ?
+      row.assignment[0].followUpInstructor[0].name : 'No asignado',
+    sortable: true,
   },
   {
-    name: "certificationDoc",
-    label: "DOCUMENTO CERTIFICACION",
-    align: "center",
-    field: "certificationDoc"
+    name: "instTechnical",
+    label: "INS. TECNICO",
+    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].technicalInstructor ?
+      row.assignment[0].technicalInstructor[0].name : 'No asignado',
   }, {
-    name: "judymentPhoto",
-    label: "FOTO",
+    name: "instProject",
+    label: "INS. PROYECTO",
     align: "center",
-    field: "judymentPhoto"
+    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].projectInstructor ?
+      row.assignment[0].projectInstructor[0].name : 'No asignado',
+    sortable: true,
   }, {
     name: "status",
     label: "ACTIVAR/DESACTIVAR",
     align: "center",
     field: "status"
+  }, {
+    name: "binnacle",
+    label: "BITÁCORAS",
+    align: "center",
+  }, {
+    name: "follow",
+    label: "SEGUIMIENTO",
+    align: "center",
+  }, {
+    name: "options",
+    label: "OPCIONES",
+    align: "center",
   }
 ]);
 
-const rows = ref([
-  {
-    numero: "123",
-    followUpInstructor: "Juan Perez",
-    technicalInstructor: "Andres Hernandez",
-    projectInstructor: "Julian Duran",
-    certificationDoc: "Cerificado",
-    judymentPhoto: "Foto",
-    status: "1"
-  },
-  {
-    numero: "124",
-    followUpInstructor: "Juan Perez",
-    technicalInstructor: "Juan Perez",
-    projectInstructor: "Juan Perez",
-    certificationDoc: "Cerificado",
-    judymentPhoto: "Foto",
-    status: 1
-  },
-  {
-    numero: "125",
-    followUpInstructor: "Juan Perez",
-    technicalInstructor: "Juan Perez",
-    projectInstructor: "Juan Perez",
-    certificationDoc: "Cerificado",
-    judymentPhoto: "Foto",
-    estado: 0
+
+async function loadDataAssignament() {
+  const response = await getData('/register/listallassignment');
+  // console.log(response.data);
+  rows.value = response.data
+}
+
+
+async function searchApprentice() {
+  try {
+    const response = await getData(`/register/listregisterbyapprentice/${searchValue.value}`);
+    rows.value = response.data;
+  } catch (error) {
+    const messageError = error.response?.data?.error || 'Error al buscar el aprendiz';
+    notifyErrorRequest(messageError);
   }
-]);
-
-function openDialog(row) {
-  alert.value = true
-  console.log(row);
+}
+async function searchInstFllow() {
+  try {
+    const response = await getData(`/register/listassigmentbyfollowupinstructor/${searchValue.value}`);
+    rows.value = response.data;
+  } catch (error) {
+    const messageError = error.response?.data?.error || 'Error al buscar el instructor de seguimiento';
+    notifyErrorRequest(messageError);
+  }
 }
 
-function changestatus(row) {
-  row.estado = row.estado === 1 ? 0 : 1;
+async function searchInstTechnical() {
+  try {
+    const response = await getData(`/register/listassigmentbytechnicalinstructor/${searchValue.value}`);
+    rows.value = response.data;
+  } catch (error) {
+    const messageError = error.response?.data?.error || 'Error al buscar el instructor técnico';
+    notifyErrorRequest(messageError);
+  }
 }
 
+async function searchInstProject() {
+  try {
+    const response = await getData(`/register/listassigmentbyprojectinstructor/${searchValue.value}`);
+    rows.value = response.data;
+  } catch (error) {
+    const messageError = error.response?.data?.error || 'Error al buscar el instructor de proyecto';
+    notifyErrorRequest(messageError);
+  }
+}
+
+async function handleRadioChange() {
+  validationSearch()
+  if (radioButtonList.value === 'apprentice') {
+    searchApprentice()
+  } else if (radioButtonList.value === 'instFollow') {
+    searchInstFllow()
+  } else if (radioButtonList.value === 'instTechnical') {
+    searchInstTechnical()
+  } else if (radioButtonList.value === 'instProject') {
+    searchInstProject()
+  } else {
+    loadDataAssignament()
+  }
+  clearRadioButtons()
+  clearSearch()
+}
+
+const searchApprentices = async (row) => {
+  if (radioButtonList.value === 'apprentice') {
+    searchApprentice()
+  } else if (radioButtonList.value === 'instFollow') {
+    searchInstFllow()
+  } else if (radioButtonList.value === 'instTechnical') {
+    searchInstTechnical()
+  } else if (radioButtonList.value === 'instProject') {
+    searchInstProject()
+  } else {
+    loadDataAssignament()
+  }
+}
+
+// limpiar campos de busqueda
+function clearSearch() {
+  searchValue.value = '';
+  searchLabel.value = 'Buscar';
+}
+
+// limpiar radio buttons
+function clearRadioButtons() {
+  radioButtonList.value = '';
+}
+// validaciones de campo de busqueda
+function validationSearch() {
+  if (searchValue.value === '') {
+    notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    clearRadioButtons()
+    return;
+  }
+}
+
+function onclickButtonCreate() {
+  isDialogVisibleModalAssignament.value = true;
+  apprenticeName.value = true;
+  labelTitle.value = 'CREAR UNA ASIGNACIÓN';
+}
+
+function onclickButtonAdd() {
+  isDialogVisibleModalAssignament.value = true;
+  apprenticeName.value = false;
+  labelTitle.value = 'Añadir UNA ASIGNACIÓN';
+}
+
+function onclickButtonEdit() {
+  isDialogVisibleModalAssignament.value = true;
+  apprenticeName.value = false;
+  labelTitle.value = 'EDITAR UNA ASIGNACIÓN';
+}
+
+async function handleSendCreate() {
+  if (labelTitle.value === 'CREAR UNA ASIGNACIÓN') {
+    validationDateFormCreate();
+    handleSendCreateAssignament();
+  } else if (labelTitle.value === 'EDITAR UNA ASIGNACIÓN') {
+    validationDateFormEditAndAdd();
+    handleSendEdit();
+  } else if (labelTitle.value === 'Añadir UNA ASIGNACIÓN') {
+    validationDateFormEditAndAdd();
+    handleSendAdd();
+  }
+}
+
+function validationDateFormCreate() {
+  if (firstName.value === '' || idinstructorFollow.value === '' || idinstructortechnical.value === '' || idinstructorproject.value === '') {
+    notifyWarningRequest('Todos los campos son obligatorios');
+    return;
+  }
+}
+function validationDateFormEditAndAdd() {
+  if (idinstructorFollow.value === '' || idinstructortechnical.value === '' || idinstructorproject.value === '') {
+    notifyWarningRequest('Todos los campos son obligatorios');
+    return;
+  }
+}
+
+async function handleSendCreateAssignament() {
+  const dataAssignamen = {
+    firstName: firstName.value,
+    idinstructorFollow: idinstructorFollow.value,
+    idinstructortechnical: idinstructortechnical.value,
+    idinstructorproject: idinstructorproject.value,
+  }
+
+  const response = await postData(`/register/createassignment/${id}`, dataAssignamen);
+  console.log(response);
+
+  if (response.status === 200) {
+    notifySuccessRequest('Asignación creada correctamente');
+    loadDataAssignament();
+    isDialogVisibleModalAssignament.value = false;
+  } else {
+    const messageError = error.response.data.erorrs[0].msg || 'Error al crear la asignación';
+    notifyErrorRequest(messageError);
+  }
+}
+
+
+async function handleSendEdit() {
+  const dataAssignament = {
+    idinstructorFollow: idinstructorFollow.value,
+    idinstructortechnical: idinstructortechnical.value,
+    idinstructorproject: idinstructorproject.value,
+  }
+
+  const response = await putData(`/register/updateassignment/${id}`, dataAssignament);
+  console.log(response);
+
+  if (response.status === 200) {
+    notifySuccessRequest('Asignación actualizada correctamente');
+    loadDataAssignament();
+    isDialogVisibleModalAssignament.value = false;
+  } else {
+    const messageError = error.response.data.erorrs[0].msg || 'Error al actualizar la asignación';
+    notifyErrorRequest(messageError);
+  }
+}
+
+
+async function handleSendAdd() {
+  const dataAssignament = {
+    idinstructorFollow: idinstructorFollow.value,
+    idinstructortechnical: idinstructortechnical.value,
+    idinstructorproject: idinstructorproject.value,
+  }
+  const response = await putData(`/register/addassignment/${id}`, dataAssignament);
+  console.log(response);
+
+  if (reposne.status === 200) {
+    notifySuccessRequest('Asignación añadida correctamente');
+    loadDataAssignament();
+    isDialogVisibleModalAssignament.value = false;
+  } else {
+    const messageError = error.response.data.erorrs[0].msg || 'Error al añadir la asignación';
+    notifyErrorRequest(messageError);
+  }
+
+}
 </script>
+
+
+<style scoped>
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+#buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+
+}
+
+.filterButtons p {
+  font-weight: bold;
+  font-size: 11px;
+  margin: 0px;
+}
+
+
+.formAssinament {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.buttonsSearch {
+  display: flex;
+  gap: 20px;
+}
+</style>

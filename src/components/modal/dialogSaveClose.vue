@@ -9,8 +9,8 @@
 
       <q-card-section>
         <slot>
-          <div class="Observations">
-            <p>{{ informationBinnacles }}</p>
+          <div class="q-pa-md" style="max-width: 500px">
+            <q-input v-model="text" filled type="textarea" :label="labelTextArea" />
           </div>
         </slot>
       </q-card-section>
@@ -18,6 +18,8 @@
       <q-separator />
 
       <q-card-actions align="right">
+        <q-btn flat icon="save_as" :label="labelSend" @clicK="onclickSend" color="white"
+          style="background-color: #2f7d32;" />
         <q-btn class="close custom-btn" flat icon="cancel" color="grey-8" :label="labelClose" v-close-popup />
       </q-card-actions>
     </q-card>
@@ -41,11 +43,16 @@ const props = defineProps({
     required: true,
     default: 'Cerrar'
   },
-  informationBinnacles: {
+  labelTextArea:{
     type: String,
     required: true,
-    default: 'No hay información..........'
-  }
+    default: 'Escriba..........'
+  },
+  labelSend: {
+    type: String,
+    required: true,
+    default: 'Enviar'
+  },
 
 });
 

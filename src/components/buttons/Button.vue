@@ -1,7 +1,7 @@
 <template>
    <q-btn id="buttonbasic" color="green-8" @click="fixed = true" class="q-mb-md">
     <q-icon name="unarchive" />
-    <span style="font-weight: bold !important; margin-left: 5px;">{{ nameButton }}</span>
+    <span style="font-weight: bold !important; ">{{ nameButton }}</span>
   </q-btn>
   </template>
   

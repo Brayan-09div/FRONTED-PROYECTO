@@ -12,58 +12,65 @@
             option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips
             :rules="[
               (val) => !!val || 'La ficha es obligatoria'
-            ]" filled> <template v-slot:prepend class="custom-select">
+            ]" filled>
+            <template v-slot:prepend class="custom-select">
               <q-icon name="abc" />
             </template>
           </q-select>
 
-          <q-input v-model="firstName" label="Nombres Aprendiz" :rules="[ruleNameAppretice]" filled>
+          <q-input v-model="firstName" label="Nombres Aprendiz"
+            :rules="[(val) => !!val || 'Este campo Nombres Aprendiz es obligatorio']" filled>
             <template v-slot:prepend>
               <q-icon name="abc" />
             </template>
           </q-input>
 
-          <q-input v-model="lastName" label="Apellidos Aprendiz" :rules="[ruleLastNameAppretice]" filled
-            before="person">
+          <q-input v-model="lastName" label="Apellidos Aprendiz"
+            :rules="[(val) => !!val || 'Este campo Apellidos Aprendiz es obligatorio']" filled before="person">
             <template v-slot:prepend>
               <q-icon name="abc" />
             </template>
           </q-input>
 
-          <q-select square filled v-model="tpDocument" :options="optionsTpC" :rules="[ruleTpAppretice]"
-            label="Tipo de Documento" />
+          <q-select square filled v-model="tpDocument" :options="optionsTpC"
+            :rules="[(val) => !!val || 'Este campo Tipo de Documento es obligatorio ']" label="Tipo de Documento" />
 
-          <q-input v-model="numDocument" label="N° Documento" :rules="[ruleNumberAppretice]" filled>
+          <q-input v-model="numDocument" label="N° Documento"
+            :rules="[(val) => !!val || 'Este campo Numero de Documento es obligatorio ']" filled>
             <template v-slot:prepend>
               <q-icon name="pin" />
             </template>
           </q-input>
 
-          <q-input v-model="emailPersonal" label="Email Personal Aprendiz" :rules="[ruleEmailPersonalAppretice]" filled>
+          <q-input v-model="emailPersonal" label="Email Personal Aprendiz"
+            :rules="[(val) => !!val || 'Este campo Email personal es obligatorio ']" filled>
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
           <q-input v-model="emailIntitutional" label="Email Institucional Aprendiz"
-            :rules="[ruleEmailInstitutionalAppretice]" filled>
+            :rules="[(val) => !!val || 'Este campo Email Institucional es obligatorio ']" filled>
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
-          <q-input v-model="phone" label="Telefono Aprendiz" :rules="[rulephoneAppretice]" filled>
+          <q-input v-model="phone" label="Telefono Aprendiz"
+            :rules="[(val) => !!val || 'Este campo Telefono es obligatorio ']" filled>
             <template v-slot:prepend>
               <q-icon name="pin" />
             </template>
           </q-input>
 
-          <q-input v-model="idmodality" v-show="inputIdmodality" label=" Modalidad Etapa Productiva"
-            :rules="[ruleModalityAppretice]" filled>
-            <template v-slot:prepend>
-              <q-icon name="settings" />
+          <q-select v-model="idmodality" :options="filterOptionsModality" label="Modalidad Etapa Productiva" emit-value
+            map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
+            class="custom-select" use-chips v-show="modality" :rules="[
+              (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
+            ]" filled> <template v-slot:prepend class="custom-select">
+              <q-icon name="abc" />
             </template>
-          </q-input>
+          </q-select>
         </div>
       </ModalDialog>
       <buttonuploadFile nameButton="Subir"></buttonuploadFile>
@@ -85,8 +92,8 @@
       <inputSearch class="search-container" v-model="searchValue" :label="searchLabel" @input="searchApprentices" />
     </div>
   </div>
-  <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit"
-    :toggleActivate="changestatus" :onclickStatus="changestatusIcon">
+  <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
+    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter">
   </CustomTable>
 
 
@@ -94,7 +101,7 @@
 
 <script setup>
 import CustomTable from "../components/tables/tableEditStatusOptions.vue";
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import Header from "../components/header/header.vue";
 import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
@@ -114,24 +121,11 @@ onBeforeMount(() => {
   loadData()
 });
 
-const loadData = async () => {
-  const ficheId = route.query.ficheId
-  console.log(ficheId);
-  
-  if (ficheId) {
-    const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);
-    console.log(response)
-    rows.value = response.apprentices
-  } else {
-    const response = await getData('/apprendice/listallapprentice');
-    rows.value = response;
-  }
-}
 
-
+const isLoading = ref(true);
 const rows = ref([]);
 
-
+// Campos del formulario
 let firstName = ref('')
 let lastName = ref('')
 let emailPersonal = ref('')
@@ -142,31 +136,55 @@ let numDocument = ref('')
 let fiche = ref('')
 let idmodality = ref('')
 let row_id = ref('')
+let modality = ref(false)
 
-
+// radio buttons
 let radiobuttonlist = ref('');
 let searchValue = ref('')
-let searchLabel = ref('')
+let searchLabel = ref('Ingrese el nombre o el número de documento')
 
+// Modal
 let isDialogVisibleModal = ref(false)
 let ismodalType = ref(true)
 let modalTitle = ref(ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz')
 
-
+// filtros fichas
 const options = ref([]);
 const filterOptions = ref([]);
 
+// filtros modalidades
+const optionsModality = ref([]);
+const filterOptionsModality = ref([]);
+
 
 let inputIdmodality = ref(false)
-
-
 
 const optionsTpC = [
   'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
 ]
 
+const loadData = async () => {
+  isLoading.value = true;
+  const ficheId = route.query.ficheId
+  console.log(ficheId);
+  try {
+    if (ficheId) {
+      const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);
+      console.log(response)
+      rows.value = response.apprentices
+    } else {
+      const response = await getData('/apprendice/listallapprentice');
+      rows.value = response;
+    }
+  } catch (error) {
+    notifyErrorRequest('Error al cargar los datos');
+  } finally {
+    isLoading.value = false;
+  }
 
 
+
+}
 
 const columns = ref([
   {
@@ -248,17 +266,6 @@ const columns = ref([
   }
 ]);
 
-
-const ruleNameAppretice = (val) => !!val || "Este campo es requerido";
-const ruleLastNameAppretice = (val) => !!val || "Este campo es requerido";
-const ruleTpAppretice = (val) => !!val || "Este campo es requerido";
-const ruleNumberAppretice = (val) => !!val || "Este campo es requerido";
-const ruleEmailPersonalAppretice = (val) => !!val || "Este campo es requerido";
-const ruleEmailInstitutionalAppretice = (val) => !!val || "Este campo es requerido";
-const rulephoneAppretice = (val) => !!val || "Este campo es requerido";
-const ruleModalityAppretice = (val) => !!val || "Este campo es requerido";
-
-
 function resetForm() {
   firstName.value = '';
   lastName.value = '';
@@ -270,16 +277,6 @@ function resetForm() {
   fiche.value = '';
   idmodality.value = '';
 }
-
-async function changestatus(row) {
-  if (row.status === 1) {
-    await putData(`/apprendice/disableapprentice/${row._id}`);
-  } else {
-    await putData(`/apprendice/enableapprentice/${row._id}`);
-  }
-  row.status = row.status === 1 ? 0 : 1;
-}
-
 
 async function changestatusIcon(row) {
   if (row.status === 1) {
@@ -321,9 +318,7 @@ function handleClose() {
 
 
 const handleSend = async () => {
-  if (ruleNameAppretice.value || ruleLastNameAppretice.value || ruleTpAppretice.value || ruleNumberAppretice.value || ruleEmailPersonalAppretice.value || ruleEmailInstitutionalAppretice.value || rulephoneAppretice.value || ruleModalityAppretice.value) {
-    return;
-  }
+
   if (!firstName.value || !lastName.value || !emailPersonal.value || !emailIntitutional.value
     || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
     notifyWarningRequest('Todos los campos son obligatorios');
@@ -378,13 +373,13 @@ const handleSend = async () => {
     resetForm();
     await loadData();
   } catch (error) {
-    notifyErrorRequest(`Error: ${error.response.data.errors[0].msg} || ${error.response.data.message}  || 'Ocurrió un error inesperado' `);
+    const messageError = error.response.data.errors[0].msg || error.response.data.message || 'Ocurrió un error inesperado';
+    notifyErrorRequest(messageError);
     ismodalType.value = false;
   }
 };
 
-
-
+//filtro de fichas
 async function fetchDataFiche() {
   const response = await getData('/repfora/fiches');
   options.value = response.map(option => ({
@@ -396,7 +391,6 @@ async function fetchDataFiche() {
   filterOptions.value = options.value;
 
 }
-
 fetchDataFiche();
 
 async function filterFunctionFiches(val, update) {
@@ -414,55 +408,82 @@ async function filterFunctionFiches(val, update) {
     );
   });
 }
+// filtro de modalidades
+async function fetchDataModality() {
+  const response = await getData('/modality/listallmodality');
 
-
-function updateSearchLabel() {
-  if (radiobuttonlist.value === 'fiche') {
-    searchLabel.value = 'Buscar por ficha';
-  } else if (radiobuttonlist.value === 'apprentice') {
-    searchLabel.value = 'Buscar por aprendiz';
-  } else if (radiobuttonlist.value === 'status') {
-    searchLabel.value = 'Buscar por estado';
-  } else {
-    searchLabel.value = 'Buscar';
-  }
+  optionsModality.value = response
+  filterOptionsModality.value = optionsModality.value;
 }
+
+fetchDataModality()
+
+async function filterFunctionModality(val, update) {
+  if (val === "") {
+    update(() => {
+      filterOptionsModality.value = filterOptionsModality.value
+    })
+    return
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsModality.value = optionsModality.value.filter((option) =>
+      option.name.toLowerCase().includes(needle)
+    );
+  });
+}
+
+
+
 
 
 async function listApprenticeForFiches() {
-  const response = await getData(`/apprendice/listapprenticebyfiche/${searchValue.value}`);
-  rows.value = response;
-}
-
-async function listApprenticeForApprentice() {
-  const response = await getData(`/apprendice/listapprenticebyid/${searchValue.value}`);
-  rows.value = response;
-}
-
-async function listApprenticeForStatus() {
-  const response = await getData(`/apprendice/listapprenticebystatus/${searchValue.value}`);
-  rows.value = response.data;
-  console.log(response);
-}
-
-const handleRadioChange = async () => {
-
-  updateSearchLabel()
-  if (radiobuttonlist.value === 'Fiche') {
-    searchLabel.value = 'Buscar por ficha';
-    await listApprenticeForFiches();
-  } else if (radiobuttonlist.value === 'Appretice') {
-    searchLabel.value = 'Buscar por aprendiz';
-    await listApprenticeForApprentice();
-  } else if (radiobuttonlist.value === 'Status') {
-    searchLabel.value = 'Buscar por estado';
-    await listApprenticeForStatus();
-  } else {
-    searchLabel.value = 'Buscar';
+  try {
+    const response = await getData(`/apprendice/listapprenticebyfiche/${searchValue.value}`);
+    console.log(response);
+    rows.value = response.apprentices;
+  } catch (error) {
+    notifyErrorRequest('No se encontraron aprendices con la ficha ingresada');
   }
 }
 
+async function listApprenticeForApprentice() {
 
+  try {
+    const response = await getData(`/apprendice/listapprenticebyid/${searchValue.value}`);
+    console.log(response);
+    rows.value = [response];
+  } catch (error) {
+    notifyErrorRequest('No se encontraron aprendices con el número de documento ingresado');
+  }
+
+}
+
+async function listApprenticeForStatus() {
+  try {
+     const response = await getData(`/apprendice/listapprenticebystatus/${searchValue.value}`);
+  console.log(response);
+  rows.value = response.apprentices;
+  } catch (error) {
+    notifyErrorRequest('No se encontraron aprendices con el estado ingresado'); 
+  }
+}
+
+const handleRadioChange = async () => {
+  validateSearch()
+  if (radiobuttonlist.value === 'Fiche') {
+    await listApprenticeForFiches();
+  } else if (radiobuttonlist.value === 'Appretice') {
+
+    await listApprenticeForApprentice();
+  } else if (radiobuttonlist.value === 'Status') {
+    await listApprenticeForStatus();
+  }
+  clearSearch();
+  clearRadioButtons()
+
+}
 const searchApprentices = async () => {
   if (radioButtonAppretice.value === 'Fiche') {
     await listApprenticeForFiches();
@@ -474,23 +495,41 @@ const searchApprentices = async () => {
 };
 
 
+// limpiar campos de busqueda
+function clearSearch() {
+  searchValue.value = '';
+}
+
+// limpiar radio buttons
+function clearRadioButtons() {
+  radiobuttonlist.value = '';
+}
+// validaciones de campo de busqueda
+function validateSearch() {
+  if (searchValue.value === '') {
+    notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    clearRadioButtons()
+    return;
+  }
+
+}
+
+
 
 </script>
 
-<style>
+<style scoped>
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
 }
 
-.formApprentice,
-.formEditApprentice {
+.formApprentice {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 5px;
 }
-
 
 .filterButtons p {
   font-weight: bold;
@@ -502,27 +541,18 @@ const searchApprentices = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 20px;
+  margin: 20px;
 }
 
 .buttons {
+  width: 100%;
   display: flex;
   gap: 20px;
 }
 
 .buttonssearch {
+  width: 100%;
   display: flex;
   gap: 20px;
-}
-
-
-
-.search-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
 }
 </style>

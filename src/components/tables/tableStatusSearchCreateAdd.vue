@@ -9,6 +9,12 @@
                 </q-tr>
             </template>
 
+            <template v-slot:body-cell-Num="props">
+                <q-td :props="props" class="q-pa-xs text-center">
+                    {{ props.pageIndex + 1 }}
+                </q-td>
+            </template>
+
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
@@ -19,27 +25,38 @@
                 </q-td>
             </template>
 
-            <template v-slot:body-cell-Num="props">
-                <q-td :props="props" class="q-pa-xs text-center">
-                    {{ props.pageIndex + 1 }}
+            <template v-slot:body-cell-binnacle="props">
+                <q-td>
+                    <q-btn @click="onClickSearchBinnacle(props.row)" color="primary" icon="search" round size="md"
+                        aria-label="Buscar" />
                 </q-td>
             </template>
 
+            <template v-slot:body-cell-follow="props">
+                <q-td>
+                    <q-btn @click="onClickSearchFollow(props.row)" color="primary" icon="search" round size="md"
+                        aria-label="Buscar" />
+                </q-td>
+            </template>
+
+            <template v-slot:body-cell-options="props">
+                <q-td :props="props" class="q-pa-xs ">
+                    <div class="optionsEditAdd-btn">
+                        <q-btn @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
+                            aria-label="edit_square" />
+
+                        <q-btn class="edit-btn" @click="onClickAdd(props.row)" color="primary" icon="add_circle"
+                            round size="md" aria-label="add_circle" />
+                    </div>
+                </q-td>
+            </template>
         </q-table>
     </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-let loading = ref(false);
 let loadingStates = ref({});
-
-const OptionsStatus = [
-    { label: 'Programado', value: '1' },
-    { label: 'Ejecutado', value: '2' },
-    { label: 'Pendiente', value: '3' },
-    { label: 'Verificado', value: '4' }
-];
 const props = defineProps({
     rows: {
         type: Array,
@@ -61,10 +78,11 @@ const props = defineProps({
         type: Function,
         required: true,
     },
-    onClickObservation: {
+    onClickAdd: {
         type: Function,
         required: true,
-    }
+    },
+
 });
 
 const toggleActivate = async (row) => {
@@ -98,7 +116,10 @@ const toggleActivate = async (row) => {
     font-weight: 700;
 }
 
-.edit-btn {
-    background-color: #1c4b33 !important;
+.optionsEditAdd-btn{
+    display: flex;
+    gap: 10px;
 }
+
+
 </style>

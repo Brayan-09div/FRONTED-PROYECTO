@@ -1,10 +1,12 @@
 <template>
     <Header title="Fichas"></Header>
-    <ficheTable :rows="rows" :props="props" :columns="columns" props="props" :toggleSeeApprentice="seeApprentices"></ficheTable>
+    <ficheTable :rows="filteredRows" 
+    :props="props" 
+    :columns="columns" props="props" :toggleSeeApprentice="seeApprentices"   v-model:filter="filter" ></ficheTable>
 </template>
 
 <script setup>
-import { ref, onBeforeMount} from 'vue';
+import { ref, onBeforeMount, computed} from 'vue';
 import Header from '../components/header/header.vue';
 import ficheTable from '../components/tables/tableFiche.vue';
 import { router } from '../router/routers';
@@ -15,6 +17,7 @@ import { getData } from '../services/ApiClient';
 onBeforeMount(() =>{
     loadDataFiches();
 })
+let filter = ref('');
 
 async function loadDataFiches() {
         const response = await getData('/repfora/fiches');
@@ -58,13 +61,27 @@ const columns = ref([
         align: 'seeApprentice',
         sortable: true,
     }])
+
+
 async function seeApprentices(row) {
     router.push({
     path: '/layouts/apprentices',
     query: { ficheId: row._id } 
-  });
-    
-
+  }); 
 }
 
+const filteredRows = computed(() => {
+  if (!filter.value) {
+    return rows.value;
+  }
+  const searchTerm = filter.value.toLowerCase();
+  return rows.value.filter(row => 
+    row.program.name.toLowerCase().includes(searchTerm) ||
+    row.program.code.toLowerCase().includes(searchTerm)
+  );
+});
+
+
 </script>
+
+<style></style>

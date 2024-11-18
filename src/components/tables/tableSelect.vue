@@ -11,34 +11,20 @@
 
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-select v-model="props.row.status"  :options="OptionsStatus" class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
+                    <q-select v-model="props.row.status" @update:model-value="value => onclickSelectOptions(props.row, value)" :options="options" class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
                     </q-select>
                 </q-td>
             </template>
 
             <template v-slot:body-cell-observation="props">
-                <q-td :props="props">
-                    <q-btn @click="onClickObservation(props.row)" color="primary" icon="search" round size="md"
+                <q-td :props="props" class="q-pa-xs ">
+                    <div class="observation-btn">
+                    <q-btn @click="onClickSeeObservation(props.row)" color="primary" icon="search" round size="md"
                         aria-label="Buscar" />
-                </q-td>
-            </template>
 
-            <template v-slot:body-cell-opcion="props">
-                <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round
-                        size="md" aria-label="Edit Square" />
-                    <q-btn class="estado-btn" @click="toggleStatus(props.row)"
-                        :icon="props.row.status === 1 ? 'cancel' : 'check_circle'"
-                        :color="props.row.status === 1 ? 'red' : 'green'" round size="md"
-                        :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'" />
-                </q-td>
-
-            </template>
-
-            <template v-slot:body-cell-detalle="props">
-                <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn class="edit-btn" @click="onClickDetail(props.row)" color="primary" icon="search" round size="md"
-                        aria-label="search" />
+                    <q-btn class="edit-btn" @click="onClickCreateObservation(props.row)" color="primary" icon="add_circle" round size="md"
+                        aria-label="add_circle" />
+                    </div>
                 </q-td>
             </template>
 
@@ -58,12 +44,12 @@ let loading = ref(false);
 let loadingStates = ref({});
 
 
-const OptionsStatus = [
-  { label: 'Programado', value: '1' },
-  { label: 'Ejecutado', value: '2' },
-  { label: 'Pendiente', value: '3' },
-  { label: 'Verificado', value: '4' }
-];
+// const OptionsStatus = [
+//   { label: 'Programado', value: '1' },
+//   { label: 'Ejecutado', value: '2' },
+//   { label: 'Pendiente', value: '3' },
+//   { label: 'Verificado', value: '4' }
+// ];
 
 const props = defineProps({
     rows: {
@@ -86,24 +72,24 @@ const props = defineProps({
         type: Function,
         required: true,
     },
-    onClickObservation: {
+    onClickCreateObservation: {
         type: Function,
         required: true,
     },
-    onClickDetail:{
+    onClickSeeObservation:{
+        type: Function,
+        required: true,
+    },
+    options: {
+        type: Array,
+        required: true,
+    },
+    onclickSelectOptions: {
         type: Function,
         required: true,
     }
 });
 
-const toggleActivate = async (row) => {
-    loadingStates.value[row._id] = true;
-    try {
-        await props.toggleActivate(row);
-    } finally {
-        loadingStates.value[row._id] = false;
-    }
-};
 </script>
 
 <style scoped>
@@ -130,4 +116,22 @@ const toggleActivate = async (row) => {
 .edit-btn {
     background-color: #1c4b33 !important;
 }
+.q-pa-xs{
+    /* display: flex; */
+    gap: 10px;
+}
+/* .observation-cell {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+} */
+
+.observation-btn{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
 </style>

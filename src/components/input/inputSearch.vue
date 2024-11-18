@@ -1,5 +1,5 @@
 <template>
-    <q-input outlined v-model="computedModelValueInput" :label="label" :dense="dense" style="width: 450px;"  />
+    <q-input outlined v-model="computedModelValueInput" :label="label" :dense="dense" style="width: 300px;"  />
 </template>
 
 <script setup>

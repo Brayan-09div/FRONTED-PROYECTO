@@ -1,17 +1,16 @@
 <template>
   <Header title="Seguimiento"></Header>
-  <ButtonAgregate nameButton="Agregar" title="Agregar Seguimiento">
-    <q-input v-model="assignament" label="Asignación" filled /> <br>
-    <q-input v-model="idinstructor" label="IdIntructor" filled /> <br>
-    <q-input v-model="instructor" label="Intructor" filled /> <br>
-    <q-input v-model="number" label="Numero" filled /> <br>
-    <q-input v-model="month" label="Mes" filled /> <br>
-    <q-input v-model="document" label="Documento" filled /> <br>
-    <q-input v-model="status" label="Estado" filled /> <br>
-    <q-input v-model="observation" label="Observación" filled /> <br>
-    <q-input v-model="user" label="Usuario" filled /> <br>
-    <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
-  </ButtonAgregate>
+ <div>
+  <q-select v-model="apprentice" :options="filterOptionsAprentice" label="Modalidad Etapa Productiva" emit-value
+            map-options option-label="" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
+            class="custom-select" use-chips v-show="modality" :rules="[
+              (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
+            ]" filled> <template v-slot:prepend class="custom-select">
+              <q-icon name="abc" />
+            </template>
+          </q-select>
+ </div>
+  
 
   <tableSelect 
   :props="props" 
@@ -43,6 +42,7 @@ import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue';
 import ButtonAgregate from '../components/modal/modal.vue';
 import ModalDialog from '../components/modal/dialogClose.vue';
+import Apprentices from './Apprentices.vue';
 
 let assignament = ref('');
 let idinstructor = ref('');

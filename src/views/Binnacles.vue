@@ -1,89 +1,61 @@
 <template>
   <Header title="Bitacoras"></Header>
-  <ButtonAgregate :title="title" nameButton="Agregar">
-    <q-input v-model="assignament" label="Asignación" filled /> <br>
-    <q-input v-model="idinstructor" label="IdIntructor" filled /> <br>
-    <q-input v-model="instructor" label="Intructor" filled /> <br>
-    <q-input v-model="number" label="Numero" filled /> <br>
-    <q-input v-model="status" label="Estado" filled /> <br>
-    <q-input v-model="observation" label="Observación" filled /> <br>
-    <q-input v-model="user" label="Usuario" filled /> <br>
-    <q-input v-model="observationDate" label="Fecha de la Observación" filled /> <br>
-  </ButtonAgregate>
-
-  <tableSelect 
-  :props="props" 
-  :rows="rows" 
-  :columns="columns" 
-  :title="title" 
-  :onClickObservation="openClickObservation" 
-  :onClickDetail="openClickDetail" />
- 
-  <Dialog v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="close" aria-label="send"
-    :onclickClose="closeDialog" :onclickSend="saveChanges">
-    <div class="Observations">
-      <p>No hay observaciones para esta bitacora</p>
+  <div id="container-buttons">
+    <div class="searchButtons">
+      <div>
+      <radioButtonInstructor v-model="radioButtonList" label="Instructor" val="instructor" @update:model-value="handleRadioChange" />
+      <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice" @update:model-value="handleRadioChange" />
     </div>
-  </Dialog>
-
-  <Dialog v-model="isDialogVisibleDetail" title="DETALLE BITACORA" labelClose="close" aria-label="send"
-    :onclickClose="closeDialog" :onclickSend="saveChanges">
-    <div class="detail">
-      <p>No hay observaciones para esta bitacora</p>
+      <inputSearch  class="searchInput" v-model="searchValue" label="Ingrede el nombre o el numero de documento"
+      @input="searchBinnacles" />
     </div>
-  </Dialog>
+  </div>
+
+  <tableSelect :props="props" :rows="rows" :columns="columns" :title="title" :options="OptionsStatus"
+    :onClickSeeObservation="openClickSeeObservation" :onClickCreateObservation="openClickCreateObservation"
+    :onclickSelectOptions="onclickSelectOptions" />
+
+  <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
+    labelSend="Guardad" :onclickClose="closeDialog" :onclickSend="saveChanges"
+    :informationBinnacles="observationBinnacles">
+
+  </dialogSeeObservation>
+
+  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
+    labelSend="handleSend" :onclickClose="closeDialog" :onclickSend="handleSend"
+    labelTextArea="Escriba esta odservación para esta Bitácora">
+  </dialogCreateObservation>
 
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, handleError } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
-import { getData } from '../services/ApiClient';
+import { getData, postData, putData } from '../services/ApiClient';
 import ButtonAgregate from '../components/modal/modal.vue';
 const title = ref("Lista de Bitacoras");
-import Dialog from '../components/modal/dialogClose.vue'
+import dialogSeeObservation from '../components/modal/dialogClose.vue'
+import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
+import inputSearch from '../components/input/inputSearch.vue';
+import radioButtonInstructor from '../components/radioButtons/radioButton.vue';
+import radioButtonApprentice from '../components/radioButtons/radioButton.vue';
+import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
-let assignament = ref('');
-let idinstructor = ref('');
-let instructor = ref('');
-let number = ref('');
-let status = ref('');
-let observation = ref('');
-let user = ref('');
-let observationDate = ref('');
 
+let searchValue = ref('');
+let radioButtonList = ref('');
+
+
+let observationBinnacles = ref('');
 const isDialogVisibleObservation = ref(false);
-const isDialogVisibleDetail = ref(false);
+const isDialogVisibleCreateObservation = ref(false);
 
-const rows = ref([{
-  name: "John Doe",
-  number: "12345",
-  document: "ABC123",
-  status: "1",
-  user: "johndoe",
-  observation: "Ninguna",
-  observationDate: "2022-02-02"
-},
-{
-  name: "Jane Smith",
-  number: "67890",
-  document: "XYZ789",
-  status: "1",
-  user: "janesmith",
-  observation: "Ninguna",
-  observationDate: "2022-02-02"
-},
-{
-  name: "Alice Johnson",
-  number: "11223",
-  document: "LMN456",
-  status: "2",
-  user: "alicejohnson",
-  observation: "Ninguna",
-  observationDate: "2022-02-02"
-}]);
+onBeforeMount(async () => {
+  await loadDataBinnacles();
+})
 
+const rows = ref([]);
 const columns = ref([
   {
     name: "Num",
@@ -96,7 +68,7 @@ const columns = ref([
     name: "name",
     label: "ETAPA PRODUCTIVA ASIGNADA",
     align: "center",
-    field: "name",
+    field: row => row.observation.user,
     sortable: true,
   },
   {
@@ -104,6 +76,13 @@ const columns = ref([
     label: "N° BITACORA",
     align: "center",
     field: "number",
+    sortable: true,
+  },
+  {
+    name: "user",
+    label: "NOMBRE INSTRUCTOR",
+    align: "center",
+    field: row => row.instructor.name,
     sortable: true,
   },
   {
@@ -118,31 +97,127 @@ const columns = ref([
     align: "center",
     field: "observation",
     sortable: true,
-  }, {
-    name: "detalle",
-    label: "DETALLES",
-    align: "center",
-    field: "detalle",
-    sortable: true,
   }
 ])
-async function openClickObservation() {
-  isDialogVisibleObservation.value = true;
+async function loadDataBinnacles() {
+  const response = await getData('/binnacles/listallbinnacles');
+  rows.value = response
 }
 
-async function openClickDetail() {
-  isDialogVisibleDetail.value = true;
+async function openClickSeeObservation(row) {
+  isDialogVisibleObservation.value = true;
+  if (!row.observation.observation) {
+    observationBinnacles.value = 'No hay observaciones para esta bitacora';
+  } else {
+    observationBinnacles.value = row.observation.observation;
+  }
+}
+async function openClickCreateObservation() {
+  isDialogVisibleCreateObservation.value = true;
+}
+
+async function handleSend() {
+  const response = await postData('')
+}
+
+const OptionsStatus = [
+  { label: 'Programado', value: '1' },
+  { label: 'Ejecutado', value: '2' },
+  { label: 'Pendiente', value: '3' },
+  { label: 'Verificado', value: '4' }
+];
+
+async function onclickSelectOptions(row, value) {
+  try {
+    const response = await putData(`/binnacles/updatestatus/${row._id}/${OptionsStatus.value}`, {
+      status: row.value
+
+    });
+    const index = rows.value.findIndex(r => r._id === row._id);
+    if (index !== -1) {
+      rows.value[index].status = value; // Actualiza solo el estado de la fila modificada
+    }
+    console.log("Estado actualizado:", response.data);
+  } catch (error) {
+    console.error("Error al actualizar el estado:", error);
+  }
+}
+
+
+async function searchInstructor() {
+  try {
+    const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
+    console.log(response);
+    // rows.value = response
+  } catch (error) {
+    const messageError = error.response.data.error || 'Error al buscar ficha'
+    notifyErrorRequest(messageError)
+  }
+}
+
+async function searchApprentice() {
+  try {
+    const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
+    console.log(response);
+    // rows.value = response
+  } catch (error) {
+    const messageError = error.response.data.errors[0].msg || 'Error al buscar aprendiz'
+    console.log(messageError);
+
+    notifyErrorRequest(messageError)
+  }
+}
+
+
+function handleRadioChange() {
+  validationSearch()
+  if (radioButtonList.value === 'instructor') {
+    searchInstructor()
+  } else if (radioButtonList.value === 'apprentice') {
+    searchApprentice()
+  }
+  clearSearch()
+  clearRadioButtons()
+}
+
+function searchBinnacles() {
+  if (radioButtonList.value === 'instructor') {
+    searchInstructor()
+  } else if (radioButtonList.value === 'apprentice') {
+    searchApprentice()
+  }
+}
+
+// limpiar campos de busqueda
+function clearSearch() {
+  searchValue.value = '';
+}
+
+// limpiar radio buttons
+function clearRadioButtons() {
+  radioButtonList.value = '';
+}
+
+// validaciones de campo de busqueda
+function validationSearch() {
+  if (searchValue.value === '') {
+    notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    clearRadioButtons()
+    return;
+  }
 }
 
 </script>
 
 <style>
-*{
+* {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
 }
-.Observations, .detail {
+
+.Observations,
+.detail {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,10 +226,22 @@ async function openClickDetail() {
   background-color: #f0f0f0;
 }
 
-.Observations, .detail p{
+.Observations,
+.detail p {
   font-size: 18px;
   color: #989595;
   margin: 0px;
 }
+#container-buttons {
+ display: flex;
+ justify-content: flex-end;
+ margin: 20px;
 
+}
+.searchButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
 </style>

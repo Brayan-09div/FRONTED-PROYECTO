@@ -14,7 +14,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat icon="save_as" :label="labelSend"  @clicK="onclickSend" color="white" style="background-color: #2f7d32;" v-close-popup />
+        <q-btn flat icon="save_as" :label="labelSend"  @clicK="onclickSend" color="white" style="background-color: #2f7d32;" />
         <q-btn flat icon="cancel" :label="labelClose" @clicK="onclicClose" color="red-8" v-close-popup />
       </q-card-actions>
     </q-card>
