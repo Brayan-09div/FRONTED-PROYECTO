@@ -408,6 +408,7 @@ async function filterFunctionFiches(val, update) {
     );
   });
 }
+
 // filtro de modalidades
 async function fetchDataModality() {
   const response = await getData('/modality/listallmodality');
@@ -555,4 +556,5 @@ function validateSearch() {
   display: flex;
   gap: 20px;
 }
+
 </style>

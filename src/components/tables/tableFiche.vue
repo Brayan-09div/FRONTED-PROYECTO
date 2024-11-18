@@ -1,12 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-table 
-        :rows="rows" 
-        :columns="columns" 
-        row-key="name"
-        :filter="filter" 
-        flat 
-        bordered class="q-table-custom">
+        <q-table :rows="rows" :columns="columns" row-key="name" :filter="filter" flat bordered class="q-table-custom">
             <template v-slot:header="props">
                 <q-tr :props="props" class="custom-header-row">
                     <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -37,19 +31,16 @@
                 </q-td>
             </template>
 
-            <template v-slot:top-right>
-                <q-input borderless dense debounce="300" v-model="localFilter" @update:model-value="updateFilter" placeholder="Search">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
-            </template>
+            <template v-slot:loading>
+        <q-inner-loading :showing="loading" color="primary" />
+      </template>
+
         </q-table>
     </div>
 </template>
 
 <script setup>
-import {  ref,watch} from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
     rows: {
@@ -69,19 +60,23 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    loading: {
+    type: Boolean,
+    required: true,
+  }
 });
 
 const emit = defineEmits(['update:filter']);
-  
-  const localFilter = ref(props.filter);
-  
-  watch(() => props.filter, (newValue) => {
+
+const localFilter = ref(props.filter);
+
+watch(() => props.filter, (newValue) => {
     localFilter.value = newValue;
-  });
-  
-  function updateFilter(value) {
+});
+
+function updateFilter(value) {
     emit('update:filter', value);
-  }
+}
 </script>
 
 <style scoped>

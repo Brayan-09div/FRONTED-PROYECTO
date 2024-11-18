@@ -1,37 +1,29 @@
 <template>
   <Header title="Seguimiento"></Header>
- <div>
-  <q-select v-model="apprentice" :options="filterOptionsAprentice" label="Modalidad Etapa Productiva" emit-value
-            map-options option-label="" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
-            class="custom-select" use-chips v-show="modality" :rules="[
-              (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
-            ]" filled> <template v-slot:prepend class="custom-select">
-              <q-icon name="abc" />
-            </template>
-          </q-select>
- </div>
-  
+  <div id="container-search">
+    <q-select v-model="apprentice" :options="filterOptionsApprentice" label="Buscar Aprendiz" emit-value map-options
+      option-label="label" option-value="_id" :use-input="!followup" @filter="filterFunctionsApprentice" use-chips
+      :rules="[(val) => !!val || 'El Modalidad Etapa Productiva es obligatorio']" filled
+      @update:model-value="searchApprentice"/>
 
-  <tableSelect 
-  :props="props" 
-  :rows="rows" 
-  :columns="columns" 
-  :onClickDetail="openClickDetail"  
-  :onClickObservation="openClickObservation"/>
+  </div>
 
-  <ModalDialog v-model="isModalDialogVisibleObservation" title="OBSERVACIONES" labelClose="close" aria-label="send"
-    :onclickClose="closeModalDialog" :onclickSend="saveChanges">
-    <div class="Observations">
-      <p>No hay observaciones para esta seguimiento</p>
-    </div>
-  </ModalDialog>
 
-  <ModalDialog v-model="isModalDialogVisibleDetail" title="DETALLE SEGUIMIENTO" labelClose="close" aria-label="send"
-    :onclickClose="closeModalDialog" :onclickSend="saveChanges">
-    <div class="detail">
-      <p>No hay observaciones para esta seguimiento</p>
-    </div>
-  </ModalDialog>
+
+
+  <tableSelect :props="props" :rows="rows" :columns="columns" :onClickSeeObservation="openClickSeeObservation"
+    :onClickCreateObservation="openClickCreateObservation" />
+
+  <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
+    labelSend="Guardad" :onclickClose="closeDialog" :onclickSend="saveChanges"
+    :informationBinnacles="observationBinnacles">
+
+  </dialogSeeObservation>
+
+  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
+    labelSend="handleSend" :onclickClose="closeDialog" :onclickSend="handleSend"
+    labelTextArea="Escriba esta odservación para esta Bitácora">
+  </dialogCreateObservation>
 
 </template>
 
@@ -40,54 +32,45 @@
 import { ref } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue';
-import ButtonAgregate from '../components/modal/modal.vue';
 import ModalDialog from '../components/modal/dialogClose.vue';
-import Apprentices from './Apprentices.vue';
+import { getData } from '../services/ApiClient';
+import dialogSeeObservation from '../components/modal/dialogClose.vue'
+import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
+import { formatDate } from '../utils/changeDateFormat';
 
-let assignament = ref('');
-let idinstructor = ref('');
-let instructor = ref('');
-let number = ref('');
-let month = ref('');
-let document = ref('');
-let status = ref('');
-let observation = ref('');
-let user = ref('');
-let observationDate = ref('');
+let isDialogVisibleCreateObservation = ref(false)
+let isDialogVisibleObservation = ref(false)
+
+// filtro
+let filterOptionsApprentice = ref([]);
+let optionsApprentice = ref([]);
+let followup = ref(false);
 
 let isModalDialogVisibleDetail = ref(false)
 let isModalDialogVisibleObservation = ref(false)
+
 const rows = ref([
   {
     name: "John Doe",
     number: "12345",
-    month: "1",
-    document: "ABC123",
     status: "1",
-    users: "1",
-    user: "johndoe",
     observationDate: "2022-02-02"
   }, {
     name: "John Doe",
     number: "12345",
-    month: "1",
-    document: "ABC123",
     status: "1",
-    users: "1",
-    user: "johndoe",
+
     observationDate: "2022-02-02"
   },
   {
     name: "John Doe",
     number: "12345",
-    month: "1",
-    document: "ABC13",
     status: "3",
-    users: "1",
-    user: "johndoe",
     observationDate: "2022-02-02"
   }
 ])
+
+
 
 const columns = ref([
   {
@@ -126,32 +109,100 @@ const columns = ref([
   },
   {
     name: "observationDate",
-    label: "PROXIMO SEGUIMIENTO",
+    label: "Fecha",
     align: "center",
-    field: "observationDate",
-    sortable: true,
-  },
-  {
-    name: "detalle",
-    label: "DETALLES",
-    align: "center",
-    field: "detalle",
+    field: row => formatDate(row.observationDate),
     sortable: true,
   }
 ])
+
+async function loadDataFollowup() {
+  const response = await getData('/followup/listallfollowup');
+  rows.value = response
+}
+
+
 async function openClickObservation() {
-  isModalDialogVisibleObservation.value=true
+  isModalDialogVisibleObservation.value = true
 }
 
 async function openClickDetail() {
   isModalDialogVisibleDetail.value = true
 }
+
+
+async function openClickSeeObservation(row) {
+  isDialogVisibleObservation.value = true;
+  if (!row.observation.observation) {
+    observationBinnacles.value = 'No hay observaciones para esta bitacora';
+  } else {
+    observationBinnacles.value = row.observation.observation;
+  }
+}
+async function openClickCreateObservation() {
+  isDialogVisibleCreateObservation.value = true;
+}
+
+
+
+async function fetchDataApprentice() {
+  const response = await getData('/apprendice/listallapprentice');
+  optionsApprentice.value = response.map(option => ({
+    _id: option._id,
+    label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
+    document: option.numDocument,
+    name: `${option.firstName} ${option.lastName}`
+
+  }));
+  filterOptionsApprentice.value = optionsApprentice.value;
+
+}
+fetchDataApprentice();
+
+async function filterFunctionsApprentice(val, update) {
+  if (val === " ") {
+    update(() => {
+      filterOptionsApprentice.value = filterOptionsApprentice.value;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsApprentice.value = optionsApprentice.value.filter((option) =>
+      option.label.toLowerCase().includes(needle) ||
+      option.numDocument.toLowerCase().includes(needle)
+    );
+  });
+}
+
+
+async function searchApprentice(apprenticeId) {
+  if (!apprenticeId) return;
+  try {
+    const response = await getData(`/apprendice/${apprenticeId}`);
+    // Actualiza los datos en la tabla con la información del aprendiz seleccionado
+    rows.value = [response];
+  } catch (error) {
+    console.error("Error al buscar el aprendiz:", error);
+  }
+}
+
+
 </script>
 
 
-<style>
-.detail p {
-  padding: 10px;
-  background-color: rgb(215, 213, 209);
+<style scoped>
+
+#container-search {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
+  margin-bottom: auto;
+}
+
+.custom-select {
+  width: 400px;
+  /* Ajusta el tamaño del select */
 }
 </style>

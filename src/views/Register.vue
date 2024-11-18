@@ -216,6 +216,7 @@ function searchRegister() {
   }
 }
 
+
 // limpiar campos de busqueda
 function clearSearch() {
   searchValue.value = '';

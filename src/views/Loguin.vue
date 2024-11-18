@@ -17,7 +17,7 @@
             <div class="form-group">
               <q-input type="text" v-model="email" label="Email" filled /> <br>
               
-              <q-input type="text" v-if="rol === 'CONSULTOR'" v-model="documento" label="Documento" filled />
+              <q-input type="text" v-if="rol === 'CONSULTOR'" v-model="document" label="Documento" filled />
               
               <q-input v-if="rol !== 'CONSULTOR'" :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="Password" filled>
                 <template v-slot:append>
@@ -25,7 +25,7 @@
                 </template>
               </q-input>
             </div>
-            <button type="submit" class="login-button" :disabled="isLoading">INICIAR SESIÓN</button>
+            <button type="submit" class="login-button" >INICIAR SESIÓN</button>
           </div>
         </form>
       </div>
@@ -50,7 +50,7 @@ const authStore = useAuthStore()
 const rol = ref('');
 const email = ref('');
 const password = ref('');
-const documento = ref('');
+const document = ref('');
 
 let isPwd = ref(true);
 
@@ -72,7 +72,7 @@ const handleRoleChange = (value) => {
 };
 
 const handleSubmit = async () => {
-  if (!rol.value || !email.value || (rol.value !== 'CONSULTOR' && !password.value)) {
+  if (!rol.value || !email.value || (rol.value !== 'ADMIN' && !document.value) || (rol.value !== 'CONSULTOR' && !password.value)) {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
@@ -92,7 +92,7 @@ const handleSubmit = async () => {
     const response = await postData(loginUrl, {
       role: rol.value,
     email: email.value,
-    numDocument: rol.value === 'CONSULTOR' ? documento.value : undefined,
+    numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
     password: rol.value !== 'CONSULTOR' ? password.value : undefined,
     });
 
@@ -112,7 +112,7 @@ const handleSubmit = async () => {
         if(error.response.data.errors && error.response.data.errors.length > 0){
           messageError = error.response.data.errors[0].msg
         }else if(error.response.data.data && error.response.data.data.msg){
-          messageError = error.response.data.data.msg
+          messageError = 'Usuario/contraseña incorrectos. Intenta nuevamente.'
         }
       }
     }

@@ -32,21 +32,18 @@
 import { ref, onBeforeMount, handleError } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
-import { getData, postData, putData } from '../services/ApiClient';
-import ButtonAgregate from '../components/modal/modal.vue';
-const title = ref("Lista de Bitacoras");
 import dialogSeeObservation from '../components/modal/dialogClose.vue'
 import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
 import inputSearch from '../components/input/inputSearch.vue';
 import radioButtonInstructor from '../components/radioButtons/radioButton.vue';
 import radioButtonApprentice from '../components/radioButtons/radioButton.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
-
+import { getData, postData, putData } from '../services/ApiClient';
 
 let searchValue = ref('');
 let radioButtonList = ref('');
 
-
+const title = ref("Lista de Bitacoras");
 let observationBinnacles = ref('');
 const isDialogVisibleObservation = ref(false);
 const isDialogVisibleCreateObservation = ref(false);
