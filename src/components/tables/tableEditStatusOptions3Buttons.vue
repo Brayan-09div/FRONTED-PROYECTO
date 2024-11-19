@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom">
+        <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom" :londing="londing">
             <template v-slot:header="props">
                 <q-tr :props="props" class="custom-header-row">
                     <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -32,8 +32,8 @@
                         </q-btn>
 
 
-                        <q-fab v-model="options[props.row._id]" class="small-fab" label-position="top" external-label color="primary"
-                            icon="keyboard_arrow_right" direction="left" :hide-label="hideLabels">
+                        <q-fab v-model="options[props.row._id]" class="small-fab" label-position="top" external-label
+                            color="primary" icon="keyboard_arrow_right" direction="left" :hide-label="hideLabels">
                             <q-fab-action :hide-label="hideLabels" external-label label-position="top" color="primary"
                                 @click="onClick" icon="search" label="Asignación" />
                             <q-fab-action :hide-label="hideLabels" external-label label-position="top" color="primary"
@@ -47,13 +47,17 @@
                 </q-td>
             </template>
 
-
             <template v-slot:body-cell-Num="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     {{ props.pageIndex + 1 }}
                 </q-td>
             </template>
 
+            
+            <template v-slot:loading>
+                <q-inner-loading :showing="loading" color="primary" />
+            </template>
+ 
         </q-table>
     </div>
 </template>
@@ -89,6 +93,11 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    loading: {
+        type: Boolean,
+        required: true,
+    }
+
 });
 
 

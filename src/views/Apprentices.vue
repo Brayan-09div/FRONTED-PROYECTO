@@ -93,7 +93,7 @@
     </div>
   </div>
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
-    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter">
+    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter" :londing="londing">
   </CustomTable>
 
 
@@ -115,6 +115,8 @@ import axios from "axios";
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
+
+let londing = ref(true)
 
 
 onBeforeMount(() => {
@@ -174,6 +176,8 @@ const loadData = async () => {
       rows.value = response.apprentices
     } else {
       const response = await getData('/apprendice/listallapprentice');
+      console.log(response);
+      
       rows.value = response;
     }
   } catch (error) {

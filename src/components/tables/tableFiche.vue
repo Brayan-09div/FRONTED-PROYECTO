@@ -1,6 +1,7 @@
 <template>
     <div class="q-pa-md">
-        <q-table :rows="rows" :columns="columns" row-key="name" :filter="filter" flat bordered class="q-table-custom" :loading="loading">
+        <q-table :rows="rows" :columns="columns" row-key="name" :filter="filter" flat bordered class="q-table-custom"
+            :loading="loading">
             <template v-slot:header="props">
                 <q-tr :props="props" class="custom-header-row">
                     <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -32,9 +33,9 @@
             </template>
 
             <template v-slot:loading>
-        <q-inner-loading :showing="loading" color="primary" />
-      </template>
-
+                <q-inner-loading :showing="loading" color="primary" />
+            </template>
+            
         </q-table>
     </div>
 </template>
@@ -61,9 +62,9 @@ const props = defineProps({
         default: '',
     },
     loading: {
-    type: Boolean,
-    required: true,
-  }
+        type: Boolean,
+        required: true,
+    }
 });
 
 const emit = defineEmits(['update:filter']);

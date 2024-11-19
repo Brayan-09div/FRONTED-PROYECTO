@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom">
+        <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom" :londig="londig">
             <template v-slot:header="props">
                 <q-tr :props="props" class="custom-header-row">
                     <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -11,7 +11,9 @@
 
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-select v-model="props.row.status" @update:model-value="value => onclickSelectOptions(props.row, value)" :options="options" class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
+                    <q-select v-model="props.row.status"
+                        @update:model-value="value => onclickSelectOptions(props.row, value)" :options="options"
+                        class="status-select" label="Seleccione Estado" dense outlined emit-value map-options>
                     </q-select>
                 </q-td>
             </template>
@@ -19,20 +21,24 @@
             <template v-slot:body-cell-observation="props">
                 <q-td :props="props" class="q-pa-xs ">
                     <div class="observation-btn">
-                    <q-btn @click="onClickSeeObservation(props.row)" color="primary" icon="search" round size="md"
-                        aria-label="Buscar" />
+                        <q-btn @click="onClickSeeObservation(props.row)" color="primary" icon="search" round size="md"
+                            aria-label="Buscar" />
 
-                    <q-btn class="edit-btn" @click="onClickCreateObservation(props.row)" color="primary" icon="add_circle" round size="md"
-                        aria-label="add_circle" />
+                        <q-btn class="edit-btn" @click="onClickCreateObservation(props.row)" color="primary"
+                            icon="add_circle" round size="md" aria-label="add_circle" />
                     </div>
                 </q-td>
             </template>
 
-             <template v-slot:body-cell-Num="props">
+            <template v-slot:body-cell-Num="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     {{ props.pageIndex + 1 }}
                 </q-td>
-             </template>
+            </template>
+
+            <template v-slot:loading>
+                <q-inner-loading :showing="loading" color="primary" />
+            </template>
 
         </q-table>
     </div>
@@ -40,9 +46,6 @@
 
 <script setup>
 import { ref } from "vue";
-let loading = ref(false);
-let loadingStates = ref({});
-
 
 // const OptionsStatus = [
 //   { label: 'Programado', value: '1' },
@@ -76,7 +79,7 @@ const props = defineProps({
         type: Function,
         required: true,
     },
-    onClickSeeObservation:{
+    onClickSeeObservation: {
         type: Function,
         required: true,
     },
@@ -87,7 +90,11 @@ const props = defineProps({
     onclickSelectOptions: {
         type: Function,
         required: true,
-    }
+    },
+    loading: {
+    type: Boolean,
+    required: true,
+  }
 });
 
 </script>
@@ -116,10 +123,12 @@ const props = defineProps({
 .edit-btn {
     background-color: #1c4b33 !important;
 }
-.q-pa-xs{
+
+.q-pa-xs {
     /* display: flex; */
     gap: 10px;
 }
+
 /* .observation-cell {
     display: flex;
     gap: 10px;
@@ -127,11 +136,10 @@ const props = defineProps({
     align-items: center;
 } */
 
-.observation-btn{
+.observation-btn {
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
 }
-
 </style>
