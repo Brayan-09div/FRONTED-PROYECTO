@@ -30,14 +30,6 @@ const loading = ref(true); // Estado de carga
 
 let filter = ref('');
 
-
-// async function loadDataFiches() {
-//     loading.value = true;
-//     const response = await getData('/repfora/fiches');
-//     rows.value = response
-//     loading.value = false;
-// }
-
 async function loadDataFiches() {
   loading.value = true; // Inicia el estado de carga
   try {
