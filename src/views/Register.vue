@@ -32,8 +32,13 @@
     </div>
   </div>
 
-  <tableRegister :props="props" :rows="rows" :columns="columns" :onClickEdit="openDialogEdit"
-    :onclickStatus="changeStatus" />
+  <tableRegister 
+  :props="props" 
+  :rows="rows" 
+  :columns="columns" 
+  :onClickEdit="openDialogEdit"
+  :onclickStatus="changeStatus"
+  :loading="loading" />
 </template>
 
 
@@ -49,7 +54,7 @@ import inputSearch from '../components/input/inputSearch.vue';
 import { formatDate } from '../utils/changeDateFormat';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
-
+// formulario de registro
 let idApprentice = ref('')
 let idModality = ref('')
 let startDate = ref('')
@@ -64,8 +69,12 @@ let hour = ref('')
 let businessProyectHour = ref('')
 let productiveProjectHour = ref('')
 
+// radio buttons
 let searchValue = ref('')
 let radioButtonList = ref('')
+
+// spiner
+let loading = ref(false)
 
 
 const optionsSeeSearch = ref(false)
@@ -136,9 +145,17 @@ const columns = ref([
 ]);
 
 async function loadData() {
-  const response = await getData('/register/listallregister')
-  console.log(response);
-  rows.value = response.data
+  loading.value = true
+  try {
+    const response = await getData('/register/listallregister')
+    console.log(response);
+    rows.value = response.data
+  } catch (error) {
+    notifyErrorRequest('Error al cargar los registros')
+  }finally{
+    loading.value = false
+  }
+
 }
 async function changestatus(row) {
   if (rows.status === 200) {
@@ -235,10 +252,10 @@ function validationSearch() {
     return;
   }
 }
-async function changeStatus(row){
-  if(row.status === 1){
+async function changeStatus(row) {
+  if (row.status === 1) {
     await putData(`/register/disableregister/${row._id}`)
-  }else{
+  } else {
     await putData(`/register/enableregister/${row._id}`)
   }
 

@@ -58,7 +58,7 @@
     </div>
   </div>
   <TableOptions :rows="rows" :props="props" :columns="columns" :title="title" :toggleActivate="changestatus"
-    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd">
+    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd" :loading="loading">
   </TableOptions>
 </template>
 
@@ -74,8 +74,6 @@ import radioButtonInstProject from "../components/radioButtons/radioButton.vue";
 import inputSearch from "../components/input/inputSearch.vue";
 import { getData, putData, postData } from "../services/ApiClient.js";
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
-
-
 
 onBeforeMount(async () => {
   await loadDataAssignament();
@@ -97,6 +95,9 @@ let isDialogVisibleModalAssignament = ref(false);
 let apprenticeName = ref(false)
 let labelTitle = ref('');
 
+// spiner
+let loading = ref(false);
+
 const rows = ref([]);
 const columns = ref([
   {
@@ -108,8 +109,8 @@ const columns = ref([
   {
     name: "register",
     label: "NOMBRE APRENDIZ",
-    field: row => row.idApprentice[0] && row.idApprentice.length > 0 ? row.idApprentice[0].firstName + " " +
-      row.idApprentice[0].lastName : 'No asignado',
+    // field: row => row.idApprentice[0] && row.idApprentice.length > 0 ? row.idApprentice[0].firstName + " " +
+    //   row.idApprentice[0].lastName : 'No asignado',
     align: "resgister",
   },
   {
@@ -177,9 +178,15 @@ const columns = ref([
 
 
 async function loadDataAssignament() {
-  const response = await getData('/register/listallassignment');
-  // console.log(response.data);
-  rows.value = response.data
+  loading.value = true;
+  try {
+    const response = await getData('/register/listallassignment');
+    rows.value = response.data
+  } catch (error) {
+    notifyErrorRequest('Error al cargar las asignaciones');
+  }finally{
+    loading.value = false;
+  }
 }
 
 

@@ -3,17 +3,19 @@
   <div id="container-buttons">
     <div class="searchButtons">
       <div>
-      <radioButtonInstructor v-model="radioButtonList" label="Instructor" val="instructor" @update:model-value="handleRadioChange" />
-      <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice" @update:model-value="handleRadioChange" />
-    </div>
-      <inputSearch  class="searchInput" v-model="searchValue" label="Ingrede el nombre o el numero de documento"
-      @input="searchBinnacles" />
+        <radioButtonInstructor v-model="radioButtonList" label="Instructor" val="instructor"
+          @update:model-value="handleRadioChange" />
+        <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice"
+          @update:model-value="handleRadioChange" />
+      </div>
+      <inputSearch class="searchInput" v-model="searchValue" label="Ingrede el nombre o el numero de documento"
+        @input="searchBinnacles" />
     </div>
   </div>
 
   <tableSelect :props="props" :rows="rows" :columns="columns" :title="title" :options="OptionsStatus"
     :onClickSeeObservation="openClickSeeObservation" :onClickCreateObservation="openClickCreateObservation"
-    :onclickSelectOptions="onclickSelectOptions" />
+    :onclickSelectOptions="onclickSelectOptions" :loading="loading" />
 
   <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
     labelSend="Guardad" :onclickClose="closeDialog" :onclickSend="saveChanges"
@@ -39,6 +41,7 @@ import radioButtonInstructor from '../components/radioButtons/radioButton.vue';
 import radioButtonApprentice from '../components/radioButtons/radioButton.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 import { getData, postData, putData } from '../services/ApiClient';
+import { Loading } from 'quasar';
 
 let searchValue = ref('');
 let radioButtonList = ref('');
@@ -51,6 +54,9 @@ const isDialogVisibleCreateObservation = ref(false);
 onBeforeMount(async () => {
   await loadDataBinnacles();
 })
+
+// spiner
+let loading = ref(false);
 
 const rows = ref([]);
 const columns = ref([
@@ -97,8 +103,16 @@ const columns = ref([
   }
 ])
 async function loadDataBinnacles() {
-  const response = await getData('/binnacles/listallbinnacles');
-  rows.value = response
+  loading.value = true;
+  try {
+    const response = await getData('/binnacles/listallbinnacles');
+    rows.value = response
+  } catch (error) {
+    notifyErrorRequest('Error al cargar las bitacoras')
+  }finally{
+    loading.value = false
+  }
+
 }
 
 async function openClickSeeObservation(row) {
@@ -145,7 +159,7 @@ async function searchInstructor() {
   try {
     const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
     console.log(response);
-    // rows.value = response
+    rows.value = response
   } catch (error) {
     const messageError = error.response.data.error || 'Error al buscar ficha'
     notifyErrorRequest(messageError)
@@ -156,11 +170,10 @@ async function searchApprentice() {
   try {
     const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
     console.log(response);
-    // rows.value = response
+    rows.value = response
   } catch (error) {
     const messageError = error.response.data.errors[0].msg || 'Error al buscar aprendiz'
     console.log(messageError);
-
     notifyErrorRequest(messageError)
   }
 }
@@ -229,12 +242,14 @@ function validationSearch() {
   color: #989595;
   margin: 0px;
 }
+
 #container-buttons {
- display: flex;
- justify-content: flex-end;
- margin: 20px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
 
 }
+
 .searchButtons {
   display: flex;
   gap: 20px;

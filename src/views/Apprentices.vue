@@ -19,7 +19,7 @@
           </q-select>
 
           <q-input v-model="firstName" label="Nombres Aprendiz"
-            :rules="[(val) => !!val || 'Este campo Nombres Aprendiz es obligatorio']" filled>
+          :rules="[(val) => !!val || 'Este campo Nombre es obligatorio ']"  filled>
             <template v-slot:prepend>
               <q-icon name="abc" />
             </template>
@@ -93,7 +93,8 @@
     </div>
   </div>
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
-    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter" :londing="londing">
+    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter"
+    :loading="loading">
   </CustomTable>
 
 
@@ -111,22 +112,15 @@ import radioButtonFiche from "../components/radioButtons/radioButton.vue";
 import radioButtonStatus from "../components/radioButtons/radioButton.vue";
 import inputSearch from "../components/input/inputSearch.vue";
 import buttonuploadFile from "../components/buttons/Button.vue";
-import axios from "axios";
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-let londing = ref(true)
-
+let loading = ref(true)
 
 onBeforeMount(() => {
   loadData()
 });
-
-
-const isLoading = ref(true);
-const rows = ref([]);
-
 // Campos del formulario
 let firstName = ref('')
 let lastName = ref('')
@@ -139,6 +133,12 @@ let fiche = ref('')
 let idmodality = ref('')
 let row_id = ref('')
 let modality = ref(false)
+let inputIdmodality = ref(false)
+
+// opciones de tipo de documento
+const optionsTpC = [
+  'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
+]
 
 // radio buttons
 let radiobuttonlist = ref('');
@@ -159,14 +159,8 @@ const optionsModality = ref([]);
 const filterOptionsModality = ref([]);
 
 
-let inputIdmodality = ref(false)
-
-const optionsTpC = [
-  'C.C', 'T.I', 'C.E', 'S.C.R', 'P.A'
-]
-
 const loadData = async () => {
-  isLoading.value = true;
+  loading.value = true
   const ficheId = route.query.ficheId
   console.log(ficheId);
   try {
@@ -177,19 +171,17 @@ const loadData = async () => {
     } else {
       const response = await getData('/apprendice/listallapprentice');
       console.log(response);
-      
+
       rows.value = response;
     }
   } catch (error) {
     notifyErrorRequest('Error al cargar los datos');
   } finally {
-    isLoading.value = false;
+    loading.value = false
   }
-
-
-
 }
 
+const rows = ref([]);
 const columns = ref([
   {
     name: "Num",
@@ -294,6 +286,7 @@ async function changestatusIcon(row) {
 function openButtonCreate() {
   ismodalType.value = true;
   isDialogVisibleModal.value = true;
+  modality.value = true
   inputIdmodality.value = true;
   modalTitle.value = ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz';
   resetForm();
@@ -320,17 +313,30 @@ function handleClose() {
   resetForm();
 }
 
+// validar los campos que no tenga valores vacios
+
+function validateAndTrim() {
+  firstName.value = firstName.value.replace(/\s+/g, ' ') // Elimina espacios al principio y al final
+  lastName.value = lastName.value.replace(/\s+/g, ' ')
+  emailPersonal.value = emailPersonal.value.trim()
+  emailIntitutional.value = emailIntitutional.value.trim()
+  phone.value = phone.value.trim()
+  tpDocument.value = tpDocument.value.trim()
+  numDocument.value = numDocument.value.trim()
+  fiche.value = fiche.value.trim()
+}
 
 const handleSend = async () => {
-
+  validateAndTrim()
   if (!firstName.value || !lastName.value || !emailPersonal.value || !emailIntitutional.value
-    || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
+    || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value ) {
     notifyWarningRequest('Todos los campos son obligatorios');
     return;
   }
 
-  const selectedFiche = filterOptions.value.find((opt) => opt._id === fiche.value);
 
+
+  const selectedFiche = filterOptions.value.find((opt) => opt._id === fiche.value);
   const apprendiceData = {
     firstName: firstName.value,
     lastName: lastName.value,
@@ -360,7 +366,6 @@ const handleSend = async () => {
       number: selectedFiche.number,
     },
   };
-
 
   try {
     let result;
@@ -467,11 +472,11 @@ async function listApprenticeForApprentice() {
 
 async function listApprenticeForStatus() {
   try {
-     const response = await getData(`/apprendice/listapprenticebystatus/${searchValue.value}`);
-  console.log(response);
-  rows.value = response.apprentices;
+    const response = await getData(`/apprendice/listapprenticebystatus/${searchValue.value}`);
+    console.log(response);
+    rows.value = response.apprentices;
   } catch (error) {
-    notifyErrorRequest('No se encontraron aprendices con el estado ingresado'); 
+    notifyErrorRequest('No se encontraron aprendices con el estado ingresado');
   }
 }
 
@@ -560,5 +565,4 @@ function validateSearch() {
   display: flex;
   gap: 20px;
 }
-
 </style>
