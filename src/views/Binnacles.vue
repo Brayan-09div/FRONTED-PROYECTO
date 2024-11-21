@@ -36,7 +36,7 @@ import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
 import dialogSeeObservation from '../components/modal/dialogClose.vue'
 import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
-import inputSearch from '../components/input/inputSearch.vue';
+// import inputSearch from '../components/input/inputSearch.vue';
 import radioButtonInstructor from '../components/radioButtons/radioButton.vue';
 import radioButtonApprentice from '../components/radioButtons/radioButton.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
@@ -106,6 +106,8 @@ async function loadDataBinnacles() {
   loading.value = true;
   try {
     const response = await getData('/binnacles/listallbinnacles');
+    console.log(response);
+    
     rows.value = response
   } catch (error) {
     notifyErrorRequest('Error al cargar las bitacoras')
@@ -120,7 +122,7 @@ async function openClickSeeObservation(row) {
   if (!row.observation.observation) {
     observationBinnacles.value = 'No hay observaciones para esta bitacora';
   } else {
-    observationBinnacles.value = row.observation.observation;
+    observationBinnacles.value = row.response.observation.observation;
   }
 }
 async function openClickCreateObservation() {

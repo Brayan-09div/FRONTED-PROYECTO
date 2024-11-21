@@ -19,7 +19,7 @@
       <q-input v-model="productiveProjectHour" label="Horas de Proyecto Productivo" filled /> <br>
     </createRegister>
 
-    <div class="buttonsSearch">
+    <div class="AllButtonsSearch">
       <div class="filterRadioButtons">
         <p>Realizar filtro por:</p>
         <radioButtonFiche v-model="radioButtonList" label="Ficha" val="fiche" @update:model-value="handleRadioChange">
@@ -27,18 +27,16 @@
         <radioButtonAppretice v-model="radioButtonList" label="Aprendiz" val="apprentice"
           @update:model-value="handleRadioChange"></radioButtonAppretice>
       </div>
-      <inputSearch class="searchInput" v-model="searchValue" label="Ingrede el nombre o el numero de documento"
-        @input="searchRegister"></inputSearch>
+      <div class="inputButtonSearch">
+        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+        <buttonSelect :onclickButton="searchDateRegister" />
+      </div>
     </div>
   </div>
 
-  <tableRegister 
-  :props="props" 
-  :rows="rows" 
-  :columns="columns" 
-  :onClickEdit="openDialogEdit"
-  :onclickStatus="changeStatus"
-  :loading="loading" />
+  <tableRegister :props="props" :rows="rows" :columns="columns" :onClickEdit="openDialogEdit"
+    :onclickStatus="changeStatus" :loading="loading" />
 </template>
 
 
@@ -50,8 +48,10 @@ import { getData, postData, putData } from '../services/ApiClient';
 import tableRegister from '../components/tables/tableEditStatusOptions3Buttons.vue'
 import radioButtonAppretice from '../components/radioButtons/radioButton.vue';
 import radioButtonFiche from '../components/radioButtons/radioButton.vue';
-import inputSearch from '../components/input/inputSearch.vue';
 import { formatDate } from '../utils/changeDateFormat';
+import buttonSelect from '../components/buttons/buttonSearch.vue';
+import inputSelect from '../components/input/inputSelect.vue';
+
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
 // formulario de registro
@@ -72,6 +72,8 @@ let productiveProjectHour = ref('')
 // radio buttons
 let searchValue = ref('')
 let radioButtonList = ref('')
+let filterOptionsSearch = ref([])
+let optionSearch = ref([])
 
 // spiner
 let loading = ref(false)
@@ -152,7 +154,7 @@ async function loadData() {
     rows.value = response.data
   } catch (error) {
     notifyErrorRequest('Error al cargar los registros')
-  }finally{
+  } finally {
     loading.value = false
   }
 
@@ -196,8 +198,14 @@ async function searchFiche() {
     const response = await getData(`/register/listregisterbyfiche/${searchValue.value}`)
     rows.value = response.data
   } catch (error) {
-    const messageError = error.response.data.error || 'Error al buscar ficha'
-    notifyErrorRequest(messageError)
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      const messageError = error.response.data.error || 'Error al buscar ficha'
+      notifyErrorRequest(messageError)
+    }
+    loadData()
+
   }
 }
 
@@ -206,52 +214,91 @@ async function searchApprentice() {
     const response = await getData(`/register/listregisterbyapprentice/${searchValue.value}`)
     console.log(response);
     rows.value = response.data
+
+    if (response.data.length === 0) {
+      notifyErrorRequest('No se encontraron registros')
+      loadData()
+    }
+
   } catch (error) {
-    const messageError = error.response.data.errors[0].msg || 'Error al buscar aprendiz'
-    console.log(messageError);
-
-    notifyErrorRequest(messageError)
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      notifyErrorRequest('Error al buscar aprendiz')
+    }
+    loadData()
   }
 }
 
-function handleRadioChange() {
-  validationSearch()
+const handleRadioChange = async () => {
+
   if (radioButtonList.value === 'fiche') {
-    searchFiche()
+    const response = await getData('/repfora/fiches');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.program.name} - ${option.program.code}`,
+    }));
+    filterOptionsSearch.value = optionSearch.value;
   } else if (radioButtonList.value === 'apprentice') {
-    searchApprentice()
+    const response = await getData('/apprendice/listallapprentice');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
+      numDocument: option.numDocument
+    }));
+    filterOptionsSearch.value = optionSearch.value;
   }
-  clearSearch()
-  clearRadioButtons()
+  clearSearch();
 }
-
-function searchRegister() {
-  if (radioButtonList.value === 'fiche') {
-    searchFiche()
-  } else if (radioButtonList.value === 'apprentice') {
-    searchApprentice()
-  }
-}
-
 
 // limpiar campos de busqueda
 function clearSearch() {
   searchValue.value = '';
 }
 
-// limpiar radio buttons
-function clearRadioButtons() {
-  radioButtonList.value = '';
-}
-
-// validaciones de campo de busqueda
 function validationSearch() {
   if (searchValue.value === '') {
     notifyWarningRequest('El campo de busqueda no puede estar vacio');
-    clearRadioButtons()
     return;
   }
 }
+
+async function fetchDataSearch() {
+  handleRadioChange()
+}
+
+fetchDataSearch()
+async function filterFunctionSearch(val, update) {
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsSearch.value = optionSearch.value.filter((option) =>
+      option.label.toLowerCase().includes(needle)
+    );
+  });
+}
+
+async function searchDateRegister() {
+
+  if (radioButtonList.value === 'fiche') {
+    await searchFiche();
+  } else if (radioButtonList.value === 'apprentice') {
+    await searchApprentice();
+  }
+  clearSearch();
+}
+
+
+
+// // limpiar campos de busqueda
+// function clearSearch() {
+//   searchValue.value = '';
+// }
+
+// // limpiar radio buttons
+// function clearRadioButtons() {
+//   radioButtonList.value = '';
+// }
+
 async function changeStatus(row) {
   if (row.status === 1) {
     await putData(`/register/disableregister/${row._id}`)
@@ -295,8 +342,15 @@ async function changeStatus(row) {
   gap: 5px;
 }
 
-.buttonsSearch {
+.AllButtonsSearch {
   display: flex;
   gap: 20px;
+}
+
+.inputButtonSearch {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

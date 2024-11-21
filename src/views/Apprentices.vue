@@ -6,75 +6,74 @@
         labelClose="Cerrar" labelSend="Guardar" :onclickClose="handleClose" :onclickSend="handleSend"
         :openModalButton="openButtonCreate">
 
-      
-          <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
-            option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips
-            :rules="[
-              (val) => !!val || 'La ficha es obligatoria'
-            ]" filled>
-            <template v-slot:prepend class="custom-select">
-              <q-icon name="abc" />
-            </template>
-          </q-select>
 
-          <q-input v-model="firstName" label="Nombres Aprendiz"
-          :rules="[(val) => !!val || 'Este campo Nombre es obligatorio ']"  filled>
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
+        <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
+          option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips :rules="[
+            (val) => !!val || 'La ficha es obligatoria'
+          ]" filled>
+          <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
 
-          <q-input v-model="lastName" label="Apellidos Aprendiz"
-            :rules="[(val) => !!val || 'Este campo Apellidos Aprendiz es obligatorio']" filled before="person">
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
+        <q-input v-model="firstName" label="Nombres Aprendiz"
+          :rules="[(val) => !!val || 'Este campo Nombre es obligatorio ']" filled>
+          <template v-slot:prepend>
+            <q-icon name="abc" />
+          </template>
+        </q-input>
 
-          <q-select square filled v-model="tpDocument" :options="optionsTpC"
-            :rules="[(val) => !!val || 'Este campo Tipo de Documento es obligatorio ']" label="Tipo de Documento" />
+        <q-input v-model="lastName" label="Apellidos Aprendiz"
+          :rules="[(val) => !!val || 'Este campo Apellidos Aprendiz es obligatorio']" filled before="person">
+          <template v-slot:prepend>
+            <q-icon name="abc" />
+          </template>
+        </q-input>
 
-          <q-input v-model="numDocument" label="N° Documento"
-            :rules="[(val) => !!val || 'Este campo Numero de Documento es obligatorio ']" filled>
-            <template v-slot:prepend>
-              <q-icon name="pin" />
-            </template>
-          </q-input>
+        <q-select square filled v-model="tpDocument" :options="optionsTpC"
+          :rules="[(val) => !!val || 'Este campo Tipo de Documento es obligatorio ']" label="Tipo de Documento" />
 
-          <q-input v-model="emailPersonal" label="Email Personal Aprendiz"
-            :rules="[(val) => !!val || 'Este campo Email personal es obligatorio ']" filled>
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
-          </q-input>
+        <q-input v-model="numDocument" label="N° Documento"
+          :rules="[(val) => !!val || 'Este campo Numero de Documento es obligatorio ']" filled>
+          <template v-slot:prepend>
+            <q-icon name="pin" />
+          </template>
+        </q-input>
 
-          <q-input v-model="emailIntitutional" label="Email Institucional Aprendiz"
-            :rules="[(val) => !!val || 'Este campo Email Institucional es obligatorio ']" filled>
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
-          </q-input>
+        <q-input v-model="emailPersonal" label="Email Personal Aprendiz"
+          :rules="[(val) => !!val || 'Este campo Email personal es obligatorio ']" filled>
+          <template v-slot:prepend>
+            <q-icon name="mail" />
+          </template>
+        </q-input>
 
-          <q-input v-model="phone" label="Telefono Aprendiz"
-            :rules="[(val) => !!val || 'Este campo Telefono es obligatorio ']" filled>
-            <template v-slot:prepend>
-              <q-icon name="pin" />
-            </template>
-          </q-input>
+        <q-input v-model="emailIntitutional" label="Email Institucional Aprendiz"
+          :rules="[(val) => !!val || 'Este campo Email Institucional es obligatorio ']" filled>
+          <template v-slot:prepend>
+            <q-icon name="mail" />
+          </template>
+        </q-input>
 
-          <q-select v-model="idmodality" :options="filterOptionsModality" label="Modalidad Etapa Productiva" emit-value
-            map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
-            class="custom-select" use-chips v-show="modality" :rules="[
-              (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
-            ]" filled> <template v-slot:prepend class="custom-select">
-              <q-icon name="abc" />
-            </template>
-          </q-select>
+        <q-input v-model="phone" label="Telefono Aprendiz"
+          :rules="[(val) => !!val || 'Este campo Telefono es obligatorio ']" filled>
+          <template v-slot:prepend>
+            <q-icon name="pin" />
+          </template>
+        </q-input>
+
+        <q-select v-model="idmodality" :options="filterOptionsModality" label="Modalidad Etapa Productiva" emit-value
+          map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
+          class="custom-select" use-chips v-show="modality" :rules="[
+            (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
+          ]" filled> <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
       </ModalDialog>
       <buttonuploadFile nameButton="Subir"></buttonuploadFile>
     </div>
 
-    <div class="buttonssearch">
+    <div class="AllInputButtonsSearch">
       <div class="filterButtons">
         <p>Seleccione una opción:</p>
         <div class="radio-buttons">
@@ -87,22 +86,17 @@
         </div>
       </div>
 
-      <q-select v-model="searchValue" :options="filterOptionsSearch" label="Buscar" emit-value map-options
-        option-label="name" option-value="_id" :use-input="!Search" @filter="filterFunctionSearch" class="custom-select"
-        filled>
-        <button @click="bucar">buscar</button>
-        <template v-slot:prepend>
-          <q-icon name="search" />
-        </template>
-      </q-select>
+      <div class="InputButtonsSearch">
 
-      <!-- <inputSearch class="search-container" v-model="searchValue" @input="searchApprentices" :label="searchLabel" :options="filterOptionsSearch" emit-value
-      map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionSearch" />-->
+        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+        <buttonSearch  :onclickButton="bucar" />
+      </div>
+
     </div>
-  </div> 
+  </div>
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
-    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter"
-    :loading="loading">
+    :toggleActivate="changestatus" :onclickStatus="changestatusIcon" :loading="loading">
   </CustomTable>
 
 
@@ -110,7 +104,7 @@
 
 <script setup>
 import CustomTable from "../components/tables/tableEditStatusOptions.vue";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, h } from "vue";
 import Header from "../components/header/header.vue";
 import { getData, postData, putData } from '../services/ApiClient.js';
 import ModalDialog from '../components/modal/modal.vue';
@@ -118,9 +112,10 @@ import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '
 import radioButtonAppretice from "../components/radioButtons/radioButton.vue";
 import radioButtonFiche from "../components/radioButtons/radioButton.vue";
 import radioButtonStatus from "../components/radioButtons/radioButton.vue";
-import inputSearch from "../components/input/inputSearch.vue";
-import buttonuploadFile from "../components/buttons/Button.vue";
+import inputSelect from "../components/input/inputSelect.vue";
 import { useRoute } from 'vue-router';
+import InputSelect from "../components/input/inputSelect.vue"
+import buttonSearch from "../components/buttons/buttonSearch.vue";
 
 const route = useRoute();
 
@@ -204,7 +199,7 @@ const columns = ref([
   {
     name: "firstName",
     label: "NOMBRE APRENDIZ",
-    field: "firstName",
+    field: row => row ? `${row.firstName} ${row.lastName}` : 'No hay datos',
     align: "center",
     sortable: true,
   },
@@ -340,7 +335,7 @@ function validateAndTrim() {
 const handleSend = async () => {
   validateAndTrim()
   if (!firstName.value || !lastName.value || !emailPersonal.value || !emailIntitutional.value
-    || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value ) {
+    || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
     notifyWarningRequest('Todos los campos son obligatorios');
     return;
   }
@@ -460,7 +455,13 @@ async function listApprenticeForFiches() {
     console.log(response);
     rows.value = response.apprentices;
   } catch (error) {
-    notifyErrorRequest('No se encontraron aprendices con la ficha ingresada');
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      notifyErrorRequest(`No se encontraron aprendices en la ficha seleccionada`);
+    }
+    loadData()
+
   }
 }
 
@@ -471,7 +472,12 @@ async function listApprenticeForApprentice() {
     console.log(response);
     rows.value = [response];
   } catch (error) {
-    notifyErrorRequest('No se encontraron aprendices con el número de documento ingresado');
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      notifyErrorRequest('No se encontraron aprendices con el número de documento ingresado');
+    }
+    loadData()
   }
 
 }
@@ -482,82 +488,79 @@ async function listApprenticeForStatus() {
     console.log(response);
     rows.value = response.apprentices;
   } catch (error) {
-    notifyErrorRequest('No se encontraron aprendices con el estado ingresado');
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      notifyErrorRequest(`No se encontraron aprendices con el estado seleccionado`);
+    }
+    loadData()
   }
 }
+
 
 const handleRadioChange = async () => {
-  validateSearch()
+  // validationSearch()
   if (radiobuttonlist.value === 'Fiche') {
-    await listApprenticeForFiches();
+    const response = await getData('/repfora/fiches');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.program.name} - ${option.program.code}`,
+    }));
+    filterOptionsSearch.value = optionSearch.value;
   } else if (radiobuttonlist.value === 'Appretice') {
-
-    await listApprenticeForApprentice();
+    const response = await getData('/apprendice/listallapprentice');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
+      numDocument: option.numDocument
+    }));
+    filterOptionsSearch.value = optionSearch.value;
   } else if (radiobuttonlist.value === 'Status') {
-    await listApprenticeForStatus();
+    optionSearch.value = [
+      { label: 'Activo', _id: 1 },
+      { label: 'Inactivo', _id: 0 }
+    ];
+    filterOptionsSearch.value = optionSearch.value;
   }
   clearSearch();
-  clearRadioButtons()
-
 }
-const searchApprentices = async () => {
-  if (radioButtonAppretice.value === 'Fiche') {
-    await listApprenticeForFiches();
-  } else if (radioButtonAppretice.value === 'Appretice') {
-    await listApprenticeForApprentice();
-  } else if (radioButtonAppretice.value === 'Status') {
-    await listApprenticeForStatus();
-  }
-};
 
 // limpiar campos de busqueda
 function clearSearch() {
   searchValue.value = '';
 }
 
-// limpiar radio buttons
-function clearRadioButtons() {
-  radiobuttonlist.value = '';
+function validationSearch() {
+  if (searchValue.value === '') {
+    notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    return;
+  }
 }
 
-
-
-
 async function fetchDataSearch() {
-  // const response = await getData('/apprendice/listallapprentice')
-
-  if(radiobuttonlist.value === 'Fiche'){
-    const response = await getData('/repfora/fiches');
-
-  }else if(radiobuttonlist.value === 'Appretice'){
-    const response = await getData('/apprendice/listallapprentice');
-
-    
-  }else if(radiobuttonlist.value === 'Status'){
-    const response = await getData('/apprendice/listallapprentice');
-  }
-
-  
-  optionSearch.value = response.map(option => ({
-    _id: option._id,
-    label: `${option.program.name} - ${option.program.code}`,
-    name: option.program.name,
-    number: option.program.code,
-  }));
-  filterOptionsSearch.value = optionSearch.value;
-  
+  handleRadioChange()
 }
 
 fetchDataSearch()
-
 async function filterFunctionSearch(val, update) {
-
   update(() => {
     const needle = val.toLowerCase();
     filterOptionsSearch.value = optionSearch.value.filter((option) =>
-      option.name.toLowerCase().includes(needle)
+      option.label.toLowerCase().includes(needle)
     );
   });
+}
+
+async function bucar() {
+  validationSearch()
+  if (radiobuttonlist.value === 'Fiche') {
+    await listApprenticeForFiches();
+  } else if (radiobuttonlist.value === 'Appretice') {
+    await listApprenticeForApprentice();
+  } else if (radiobuttonlist.value === 'Status') {
+    await listApprenticeForStatus();
+  }
+  clearSearch();
 }
 
 
@@ -595,10 +598,17 @@ async function filterFunctionSearch(val, update) {
   gap: 20px;
 }
 
-.buttonssearch {
+.AllInputButtonsSearch {
   width: 100%;
   display: flex;
   justify-content: flex-end;
   gap: 20px;
+}
+
+.InputButtonsSearch {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>
