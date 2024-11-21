@@ -6,8 +6,7 @@
         labelClose="Cerrar" labelSend="Guardar" :onclickClose="handleClose" :onclickSend="handleSend"
         :openModalButton="openButtonCreate">
 
-        <div class="formApprentice">
-
+      
           <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
             option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips
             :rules="[
@@ -71,7 +70,6 @@
               <q-icon name="abc" />
             </template>
           </q-select>
-        </div>
       </ModalDialog>
       <buttonuploadFile nameButton="Subir"></buttonuploadFile>
     </div>
@@ -89,9 +87,19 @@
         </div>
       </div>
 
-      <inputSearch class="search-container" v-model="searchValue" :label="searchLabel" @input="searchApprentices" />
+      <q-select v-model="searchValue" :options="filterOptionsSearch" label="Buscar" emit-value map-options
+        option-label="name" option-value="_id" :use-input="!Search" @filter="filterFunctionSearch" class="custom-select"
+        filled>
+        <button @click="bucar">buscar</button>
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+      </q-select>
+
+      <!-- <inputSearch class="search-container" v-model="searchValue" @input="searchApprentices" :label="searchLabel" :options="filterOptionsSearch" emit-value
+      map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionSearch" />-->
     </div>
-  </div>
+  </div> 
   <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
     :toggleActivate="changestatus" :onclickStatus="changestatusIcon" row-key="name" :v-model="filter"
     :loading="loading">
@@ -143,7 +151,8 @@ const optionsTpC = [
 // radio buttons
 let radiobuttonlist = ref('');
 let searchValue = ref('')
-let searchLabel = ref('Ingrese el nombre o el número de documento')
+let filterOptionsSearch = ref([])
+let optionSearch = ref([])
 
 // Modal
 let isDialogVisibleModal = ref(false)
@@ -157,6 +166,8 @@ const filterOptions = ref([]);
 // filtros modalidades
 const optionsModality = ref([]);
 const filterOptionsModality = ref([]);
+
+
 
 
 const loadData = async () => {
@@ -370,7 +381,6 @@ const handleSend = async () => {
   try {
     let result;
     if (ismodalType.value) {
-
       result = await postData('/apprendice/addapprentice', apprendiceData);
     } else {
       result = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceDataUpdate);
@@ -444,10 +454,6 @@ async function filterFunctionModality(val, update) {
   });
 }
 
-
-
-
-
 async function listApprenticeForFiches() {
   try {
     const response = await getData(`/apprendice/listapprenticebyfiche/${searchValue.value}`);
@@ -504,7 +510,6 @@ const searchApprentices = async () => {
   }
 };
 
-
 // limpiar campos de busqueda
 function clearSearch() {
   searchValue.value = '';
@@ -514,16 +519,46 @@ function clearSearch() {
 function clearRadioButtons() {
   radiobuttonlist.value = '';
 }
-// validaciones de campo de busqueda
-function validateSearch() {
-  if (searchValue.value === '') {
-    notifyWarningRequest('El campo de busqueda no puede estar vacio');
-    clearRadioButtons()
-    return;
+
+
+
+
+async function fetchDataSearch() {
+  // const response = await getData('/apprendice/listallapprentice')
+
+  if(radiobuttonlist.value === 'Fiche'){
+    const response = await getData('/repfora/fiches');
+
+  }else if(radiobuttonlist.value === 'Appretice'){
+    const response = await getData('/apprendice/listallapprentice');
+
+    
+  }else if(radiobuttonlist.value === 'Status'){
+    const response = await getData('/apprendice/listallapprentice');
   }
 
+  
+  optionSearch.value = response.map(option => ({
+    _id: option._id,
+    label: `${option.program.name} - ${option.program.code}`,
+    name: option.program.name,
+    number: option.program.code,
+  }));
+  filterOptionsSearch.value = optionSearch.value;
+  
 }
 
+fetchDataSearch()
+
+async function filterFunctionSearch(val, update) {
+
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsSearch.value = optionSearch.value.filter((option) =>
+      option.name.toLowerCase().includes(needle)
+    );
+  });
+}
 
 
 </script>
@@ -563,6 +598,7 @@ function validateSearch() {
 .buttonssearch {
   width: 100%;
   display: flex;
+  justify-content: flex-end;
   gap: 20px;
 }
 </style>

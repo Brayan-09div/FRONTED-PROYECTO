@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom" :loading="loading">
+    <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom" :filter="filter" :loading="loading">
       <template v-slot:header="props">
         <q-tr :props="props" class="custom-header-row">
           <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
