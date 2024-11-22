@@ -109,14 +109,16 @@ function updateFilter(value) {
 .search-container {
     display: flex;
     justify-content: flex-end;
-    margin: 20px;
-    margin-bottom: auto;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    margin-right: 3%;
 }
 
 .q-input {
     width: 400px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
 }
 
 .q-input input {

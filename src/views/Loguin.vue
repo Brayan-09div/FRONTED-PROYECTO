@@ -25,7 +25,16 @@
                 </template>
               </q-input>
             </div>
-            <button type="submit" class="login-button" >INICIAR SESIÓN</button>
+            <!-- Botón con indicador de carga -->
+            <q-btn
+              label="INICIAR SESIÓN"
+              type="submit"
+              class="login-button"
+              color="green-7"
+              :loading="loading"
+              :disable="loading"
+              unelevated
+            />
           </div>
         </form>
       </div>
@@ -36,16 +45,17 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/ApiClient.js';
 import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '../composables/useNotify.js';
-import { useAuthStore } from "../stores/useAuth.js"
+import { useAuthStore } from "../stores/useAuth.js";
+
+const loading = ref(false); // Estado de carga
 
 const router = useRouter();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 const rol = ref('');
 const email = ref('');
@@ -65,8 +75,6 @@ const roles = ref([
 
 const handleRoleChange = (value) => {
   rol.value = value.value;
-  console.log('Rol seleccionado:', rol.value);
-
   isConsultorRole.value = rol.value === 'CONSULTOR';
   isRol.value = true;
 };
@@ -76,6 +84,7 @@ const handleSubmit = async () => {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
+
   let loginUrl;
   if (rol.value === 'CONSULTOR') {
     loginUrl = '/apprendice/loginApprentice';
@@ -88,12 +97,13 @@ const handleSubmit = async () => {
     return;
   }
 
+  loading.value = true; // Activar indicador de carga
   try {
     const response = await postData(loginUrl, {
       role: rol.value,
-    email: email.value,
-    numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
-    password: rol.value !== 'CONSULTOR' ? password.value : undefined,
+      email: email.value,
+      numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
+      password: rol.value !== 'CONSULTOR' ? password.value : undefined,
     });
 
     notifySuccessRequest('Inicio de sesión exitoso');
@@ -106,20 +116,11 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('Error en handleSubmit:', error);
-    let messageError = 'Error desconocido. Por favor, inténtelo más tarde.'
-    if(error.response){
-      if(error.response.data){
-        if(error.response.data.errors && error.response.data.errors.length > 0){
-          messageError = error.response.data.errors[0].msg
-        }else if(error.response.data.data && error.response.data.data.msg){
-          messageError = 'Usuario/contraseña incorrectos. Intenta nuevamente.'
-        }
-      }
-    }
-    notifyErrorRequest(messageError)
+    notifyErrorRequest('Usuario o contraseña incorrectos. Intenta nuevamente.');
+  } finally {
+    loading.value = false; // Desactivar indicador de carga
   }
-}
-
+};
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');

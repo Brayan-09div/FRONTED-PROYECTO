@@ -89,7 +89,7 @@ function updateFilter(value) {
 }
 
 .custom-header-row {
-    background-color: #4caf50;
+    background-color: #449247;
 }
 
 .custom-header-cell {
@@ -108,5 +108,10 @@ function updateFilter(value) {
 .opcion-btn {
     display: flex;
     gap: 10px;
+}
+
+.q-pa-md{
+    width: 96%;
+    margin-left: 2%;
 }
 </style>
