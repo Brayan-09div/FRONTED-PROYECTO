@@ -4,28 +4,32 @@
       <div class="login-header">
         <h1>REPFORA</h1>
       </div>
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s" alt="Logo SENA" class="logo" />
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s"
+        alt="Logo SENA" class="logo" />
       <h2 class="login-title">LOGIN</h2>
       <hr />
       <div class="container-form">
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <q-select square filled id="rol" v-model="rol" label="ROL" @update:model-value="handleRoleChange" :options="roles"></q-select>
+            <q-select square filled id="rol" v-model="rol" label="ROL" @update:model-value="handleRoleChange"
+              :options="roles"></q-select>
           </div>
 
           <div v-if="isRol">
             <div class="form-group">
               <q-input type="text" v-model="email" label="Email" filled /> <br>
-              
+
               <q-input type="text" v-if="rol === 'CONSULTOR'" v-model="document" label="Documento" filled />
-              
-              <q-input v-if="rol !== 'CONSULTOR'" :type="isPwd ? 'password' : 'text'" id="password" v-model="password" label="Password" filled>
+
+              <q-input v-if="rol !== 'CONSULTOR'" :type="isPwd ? 'password' : 'text'" id="password" v-model="password"
+                label="Password" filled>
                 <template v-slot:append>
-                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
+                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                    @click="isPwd = !isPwd" />
                 </template>
               </q-input>
             </div>
-            <button type="submit" class="login-button" >INICIAR SESIÓN</button>
+            <button type="submit" class="login-button">INICIAR SESIÓN</button>
           </div>
         </form>
       </div>
@@ -72,10 +76,11 @@ const handleRoleChange = (value) => {
 };
 
 const handleSubmit = async () => {
-  if (!rol.value || !email.value || (rol.value !== 'ADMIN' && !document.value) || (rol.value !== 'CONSULTOR' && !password.value)) {
+  if (!rol.value || !email.value || (rol.value == 'CONSULTOR' && !document.value) || (rol.value !== 'CONSULTOR' && !password.value)) {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
+
   let loginUrl;
   if (rol.value === 'CONSULTOR') {
     loginUrl = '/apprendice/loginApprentice';
@@ -91,9 +96,9 @@ const handleSubmit = async () => {
   try {
     const response = await postData(loginUrl, {
       role: rol.value,
-    email: email.value,
-    numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
-    password: rol.value !== 'CONSULTOR' ? password.value : undefined,
+      email: email.value,
+      numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
+      password: rol.value !== 'CONSULTOR' ? password.value : undefined,
     });
 
     notifySuccessRequest('Inicio de sesión exitoso');
@@ -102,16 +107,23 @@ const handleSubmit = async () => {
     if (rol.value === 'CONSULTOR') {
       router.push('/consultant');
     } else {
-      router.push('/layouts');
+      router.push({
+        path: '/layouts',
+        query: {
+          rol: rol.value
+        }
+      });
     }
+
+
   } catch (error) {
     console.error('Error en handleSubmit:', error);
     let messageError = 'Error desconocido. Por favor, inténtelo más tarde.'
-    if(error.response){
-      if(error.response.data){
-        if(error.response.data.errors && error.response.data.errors.length > 0){
+    if (error.response) {
+      if (error.response.data) {
+        if (error.response.data.errors && error.response.data.errors.length > 0) {
           messageError = error.response.data.errors[0].msg
-        }else if(error.response.data.data && error.response.data.data.msg){
+        } else if (error.response.data.data && error.response.data.data.msg) {
           messageError = 'Usuario/contraseña incorrectos. Intenta nuevamente.'
         }
       }
@@ -133,7 +145,7 @@ const forgotPassword = () => {
   align-items: center;
   height: 100vh;
   background-color: #f0f0f0;
-  margin: 0; 
+  margin: 0;
 }
 
 .login-box {

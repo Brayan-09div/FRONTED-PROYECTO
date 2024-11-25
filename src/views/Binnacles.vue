@@ -2,18 +2,21 @@
   <Header title="Bitacoras"></Header>
   <div id="container-buttons">
     <div class="searchButtons">
-      <div>
+      <div class="allInputButtonsSearch">
         <radioButtonInstructor v-model="radioButtonList" label="Instructor" val="instructor"
           @update:model-value="handleRadioChange" />
         <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice"
           @update:model-value="handleRadioChange" />
       </div>
-      <inputSearch class="searchInput" v-model="searchValue" label="Ingrede el nombre o el numero de documento"
-        @input="searchBinnacles" />
+      <div class="InputButtonsSearch">
+        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+        <buttonSearch :onclickButton="bucar" />
+      </div>
     </div>
   </div>
 
-  <tableSelect :props="props" :rows="rows" :columns="columns" :title="title" :options="OptionsStatus"
+  <tableSelect :rows="rows" :columns="columns" :options="OptionsStatus"
     :onClickSeeObservation="openClickSeeObservation" :onClickCreateObservation="openClickCreateObservation"
     :onclickSelectOptions="onclickSelectOptions" :loading="loading" />
 
@@ -23,9 +26,9 @@
 
   </dialogSeeObservation>
 
-  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
-    labelSend="handleSend" :onclickClose="closeDialog" :onclickSend="handleSend"
-    labelTextArea="Escriba esta odservación para esta Bitácora">
+  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="Añadir Observación" labelClose="Cerrar"
+    labelSend="Enviar" :onclickClose="closeDialog" :onclickSend="handleSend" v-model:textValue="newObservation"
+    :informationBinnacles="observationBinnacles">
   </dialogCreateObservation>
 
 </template>
@@ -36,24 +39,32 @@ import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
 import dialogSeeObservation from '../components/modal/dialogClose.vue'
 import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
-// import inputSearch from '../components/input/inputSearch.vue';
 import radioButtonInstructor from '../components/radioButtons/radioButton.vue';
 import radioButtonApprentice from '../components/radioButtons/radioButton.vue';
+import inputSelect from '../components/input/inputSelect.vue';
+import buttonSearch from '../components/buttons/buttonSearch.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 import { getData, postData, putData } from '../services/ApiClient';
-import { Loading } from 'quasar';
+
 
 let searchValue = ref('');
 let radioButtonList = ref('');
+let optionSearch = ref([]);
+let filterOptionsSearch = ref([]);
 
 const title = ref("Lista de Bitacoras");
 let observationBinnacles = ref('');
 const isDialogVisibleObservation = ref(false);
 const isDialogVisibleCreateObservation = ref(false);
 
+// observación
+let newObservation = ref('');
+
 onBeforeMount(async () => {
   await loadDataBinnacles();
 })
+
+const id = ref('')
 
 // spiner
 let loading = ref(false);
@@ -71,7 +82,7 @@ const columns = ref([
     name: "name",
     label: "ETAPA PRODUCTIVA ASIGNADA",
     align: "center",
-    field: row => row.observation.user,
+    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName,
     sortable: true,
   },
   {
@@ -107,30 +118,53 @@ async function loadDataBinnacles() {
   try {
     const response = await getData('/binnacles/listallbinnacles');
     console.log(response);
-    
+
     rows.value = response
   } catch (error) {
     notifyErrorRequest('Error al cargar las bitacoras')
-  }finally{
+  } finally {
     loading.value = false
   }
-
 }
 
 async function openClickSeeObservation(row) {
   isDialogVisibleObservation.value = true;
-  if (!row.observation.observation) {
-    observationBinnacles.value = 'No hay observaciones para esta bitacora';
+  if (!row.observation || row.observation.length === 0) {
+    observationBinnacles.value = ['No hay observaciones para esta bitacora'];
   } else {
-    observationBinnacles.value = row.response.observation.observation;
+    observationBinnacles.value = row.observation.map(obs => obs.observation);
   }
+  loadDataBinnacles();
 }
-async function openClickCreateObservation() {
+
+async function openClickCreateObservation(row) {
   isDialogVisibleCreateObservation.value = true;
+  id.value = row._id
 }
 
 async function handleSend() {
-  const response = await postData('')
+  try {
+
+    const response = await putData(`/binnacles/addobservation/${id.value}`, { observation: newObservation.value });
+    notifySuccessRequest('Observación añadida correctamente');
+    isDialogVisibleCreateObservation.value = false;
+    await loadDataBinnacles();
+  } catch (error) {
+    if (newObservation.value === '') {
+      validationHandleSend()
+    } else {
+      const messageError = error.response.data.errors[0].msg || error.response.data.message || 'Error al añadir la observación'
+      notifyErrorRequest(messageError);
+    }
+
+  }
+}
+
+function validationHandleSend() {
+  if (newObservation.value === '') {
+    notifyWarningRequest('El campo de observación no puede estar vacio')
+    return;
+  }
 }
 
 const OptionsStatus = [
@@ -163,41 +197,62 @@ async function searchInstructor() {
     console.log(response);
     rows.value = response
   } catch (error) {
-    const messageError = error.response.data.error || 'Error al buscar ficha'
-    notifyErrorRequest(messageError)
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      const messageError = error.response.data.error || 'Error al buscar ficha'
+      notifyErrorRequest(messageError)
+    }
+    loadDataBinnacles()
+
   }
 }
 
 async function searchApprentice() {
   try {
-    const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
+    const response = await getData(`/binnacles/listBinnaclesByRegister/${searchValue.value}`)
     console.log(response);
     rows.value = response
   } catch (error) {
-    const messageError = error.response.data.errors[0].msg || 'Error al buscar aprendiz'
-    console.log(messageError);
-    notifyErrorRequest(messageError)
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      const messageError = error.response.data.errors || error.response.data.error[0].msg || error.response.data.message || 'Error al buscar aprendiz'
+      console.log(messageError);
+      notifyErrorRequest(messageError)
+    }
+    loadDataBinnacles()
   }
+
 }
 
-
-function handleRadioChange() {
-  validationSearch()
+const handleRadioChange = async () => {
+  // validationSearch()
   if (radioButtonList.value === 'instructor') {
-    searchInstructor()
+    const response = await getData('/Repfora/instructors');
+    console.log(response)
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.name} - ${option.numdocument}`,
+    }));
+    filterOptionsSearch.value = optionSearch.value;
   } else if (radioButtonList.value === 'apprentice') {
-    searchApprentice()
+    const response = await getData('/binnacles/listallbinnacles');
+    const uniqueApprentices = new Set();
+    optionSearch.value = response.map(option => {
+      const apprenticeId = option.register._id;
+      if (!uniqueApprentices.has(apprenticeId)) {
+        uniqueApprentices.add(apprenticeId);
+        return {
+          _id: apprenticeId,
+          label: `${option.register.idApprentice[0].firstName} ${option.register.idApprentice[0].lastName} - ${option.register.idApprentice[0].numDocument}`,
+          numDocument: option.numDocument
+        };
+      }
+    }).filter(option => option !== undefined);
+    filterOptionsSearch.value = optionSearch.value;
   }
-  clearSearch()
-  clearRadioButtons()
-}
-
-function searchBinnacles() {
-  if (radioButtonList.value === 'instructor') {
-    searchInstructor()
-  } else if (radioButtonList.value === 'apprentice') {
-    searchApprentice()
-  }
+  clearSearch();
 }
 
 // limpiar campos de busqueda
@@ -205,44 +260,43 @@ function clearSearch() {
   searchValue.value = '';
 }
 
-// limpiar radio buttons
-function clearRadioButtons() {
-  radioButtonList.value = '';
-}
-
-// validaciones de campo de busqueda
 function validationSearch() {
   if (searchValue.value === '') {
     notifyWarningRequest('El campo de busqueda no puede estar vacio');
-    clearRadioButtons()
     return;
   }
 }
 
+async function fetchDataSearch() {
+  handleRadioChange()
+}
+
+fetchDataSearch()
+async function filterFunctionSearch(val, update) {
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsSearch.value = optionSearch.value.filter((option) =>
+      option.label.toLowerCase().includes(needle)
+    );
+  });
+}
+
+async function bucar() {
+  validationSearch()
+  if (radioButtonList.value === 'instructor') {
+    await searchInstructor()
+  } else if (radioButtonList.value === 'apprentice') {
+    await searchApprentice()
+  }
+  clearSearch();
+}
 </script>
 
-<style>
+<style scoped>
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-}
-
-.Observations,
-.detail {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
-  text-align: center;
-  background-color: #f0f0f0;
-}
-
-.Observations,
-.detail p {
-  font-size: 18px;
-  color: #989595;
-  margin: 0px;
 }
 
 #container-buttons {
@@ -256,6 +310,13 @@ function validationSearch() {
   display: flex;
   gap: 20px;
   justify-content: space-between;
+  align-items: center;
+}
+
+.InputButtonsSearch {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
   align-items: center;
 }
 </style>

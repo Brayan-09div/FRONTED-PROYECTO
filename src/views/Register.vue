@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <tableRegister :props="props" :rows="rows" :columns="columns" :onClickEdit="openDialogEdit"
+  <tableRegister  :rows="rows" :columns="columns" :onClickEdit="openDialogEdit"
     :onclickStatus="changeStatus" :loading="loading" />
 </template>
 

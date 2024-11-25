@@ -17,37 +17,22 @@
 
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
+                    <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'grey'"
                         :loading="loadingStates[props.row._id]">
                         <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
-                        {{ props.row.status === 1 ? 'Activo' : 'Inactivo' }}
+                        {{ props.row.status === 1 ? 'Certificado' : 'Por Certificar' }}
                     </q-btn>
                 </q-td>
             </template>
 
-            <template v-slot:body-cell-binnacle="props">
-                <q-td>
-                    <q-btn @click="onClickSearchBinnacle(props.row)" color="primary" icon="search" round size="md"
-                        aria-label="Buscar" />
-                </q-td>
-            </template>
-
-            <template v-slot:body-cell-follow="props">
-                <q-td>
-                    <q-btn @click="onClickSearchFollow(props.row)" color="primary" icon="search" round size="md"
-                        aria-label="Buscar" />
-                </q-td>
-            </template>
-
-            <template v-slot:body-cell-options="props">
+            <template v-slot:body-cell-documentCertification="props">
                 <q-td :props="props" class="q-pa-xs ">
-                    <div class="optionsEditAdd-btn">
-                        <q-btn @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
-                            aria-label="edit_square" />
-
-                        <q-btn class="edit-btn" @click="onClickAdd(props.row)" color="primary" icon="add_circle"
-                            round size="md" aria-label="add_circle" />
-                    </div>
+                    <q-btn @click="onClickDocumentCertification(props.row)" color="primary" icon="folder" round size="md" />
+                </q-td>
+            </template>
+            <template v-slot:body-cell-documentJugement="props">
+                <q-td :props="props" class="q-pa-xs ">
+                    <q-btn @click="onClickDocumentJugement(props.row)" color="primary" icon="folder" round size="md" />
                 </q-td>
             </template>
 
@@ -71,22 +56,18 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    onClickEdit: {
-        type: Function,
-        required: true,
+    onClickDocumentCertification:{
+        type:Function,
+        required: true
     },
-    toggleActivate: {
-        type: Function,
-        required: true,
+    onClickDocumentJugement:{
+        type:Function,
+        required: true
     },
-    onClickAdd: {
-        type: Function,
-        required: true,
-    }, 
     loading: {
-    type: Boolean,
-    required: true,
-  }
+        type: Boolean,
+        required: true,
+    }
 
 });
 
@@ -119,12 +100,11 @@ const toggleActivate = async (row) => {
     padding: 12px;
     font-size: 16px;
     font-weight: 700;
+   
 }
 
-.optionsEditAdd-btn{
+.optionsEditAdd-btn {
     display: flex;
     gap: 10px;
 }
-
-
 </style>

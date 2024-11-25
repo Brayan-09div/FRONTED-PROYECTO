@@ -13,6 +13,7 @@
     @filter="filter"
     class="custom-select"
     filled
+    clearable
   >
   </q-select>
 </template>

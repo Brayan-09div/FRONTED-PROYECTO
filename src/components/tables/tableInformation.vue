@@ -46,10 +46,6 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  title: {
-    type: String,
-    required: true,
-  },
   toggleActivate: {
     type: Function,
     required: true,

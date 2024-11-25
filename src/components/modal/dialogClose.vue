@@ -10,7 +10,9 @@
       <q-card-section>
         <slot>
           <div class="Observations">
-            <p>{{ informationBinnacles }}</p>
+            <div v-for="(observation, index) in informationBinnacles" :key="index" class="observation-item">
+              <p>{{ observation }}</p>
+            </div>
           </div>
         </slot>
       </q-card-section>
@@ -44,7 +46,7 @@ const props = defineProps({
   informationBinnacles: {
     type: String,
     required: true,
-    default: 'No hay información..........'
+    default: () => ['No hay información..........']
   }
 
 });
@@ -72,9 +74,17 @@ const computedModelValue = computed({
   width: 400px;
 }
 
-.custom-btn {
+¿.custom-btn {
   background-color: #2f7d32;
   font-weight: bold;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.observation-item {
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
 </style>

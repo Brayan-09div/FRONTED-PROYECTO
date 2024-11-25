@@ -77,15 +77,7 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
     onClickEdit: {
-        type: Function,
-        required: true,
-    },
-    toggleActivate: {
         type: Function,
         required: true,
     },

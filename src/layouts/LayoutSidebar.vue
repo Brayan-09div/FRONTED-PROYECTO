@@ -1,90 +1,52 @@
 <template>
-  <q-drawer
-    v-model="drawer"
-    show-if-above
-    :width="300"
-    :breakpoint="400"
-  >
-    <q-img
-      class="absolute-top"
-      src=""
-      style="height: 150px; background-color: #ddd;"
-    >
+  <q-drawer v-model="drawer" show-if-above :width="300" :breakpoint="400">
+    <q-img class="absolute-top" src="" style="height: 150px; background-color: #ddd;">
       <div class="absolute-bottom bg-transparent user-info">
         <q-avatar size="65px" class="q-mb-sm">
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s">
         </q-avatar>
-        <div class="text-weight-bold text-center" style="text-transform: uppercase; color: black; font-weight: 900; font-size: 15px;">ADMINISTRADOR</div>
+        <div class="text-weight-bold text-center"
+          style="text-transform: uppercase; color: black; font-weight: 900; font-size: 15px;">ADMINISTRADOR</div>
         <div class="text-center" style="color: black;">etapaspruebas@gmail.com</div>
       </div>
     </q-img>
 
     <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
       <q-list padding>
-        <q-item 
-          clickable 
-          to="/layouts/home" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveHome }" 
-          @click="setActive('home')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/home" class="menu-item" v-ripple :class="{ 'active': isActiveHome }"
+          @click="setActive('home')">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
           <q-item-section>Inicio</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/apprentices" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveApprentices }" 
-          @click="setActive('apprentices')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/apprentices" class="menu-item" v-ripple
+          :class="{ 'active': isActiveApprentices }" @click="setActive('apprentices')">
           <q-item-section avatar>
             <q-icon name="groups" />
           </q-item-section>
           <q-item-section>Aprendices</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/fiche" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveFiche }" 
-          @click="setActive('fiche')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/fiche" class="menu-item" v-ripple :class="{ 'active': isActiveFiche }"
+          @click="setActive('fiche')">
           <q-item-section avatar>
             <q-icon name="school" />
           </q-item-section>
           <q-item-section>Fichas</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/register" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveRegister }" 
-          @click="setActive('register')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable  to="/layouts/register" class="menu-item" v-ripple :class="{ 'active': isActiveRegister }"
+          @click="setActive('register')">
           <q-item-section avatar>
             <q-icon name="book" />
           </q-item-section>
           <q-item-section>Registros</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/assignament" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveAssignment }" 
-          @click="setActive('assignment')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/assignament" class="menu-item" v-ripple :class="{ 'active': isActiveAssignment }"
+          @click="setActive('assignment')">
           <q-item-section avatar>
             <q-icon name="how_to_reg" />
           </q-item-section>
@@ -92,98 +54,57 @@
         </q-item>
 
         <q-item 
-          clickable 
-          to="/layouts/myAssignament" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveMyAssignment }" 
-          @click="setActive('myAssignment')"
-        >
+        v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/myAssignament" class="menu-item" v-ripple
+          :class="{ 'active': isActiveMyAssignment }" @click="setActive('myAssignment')">
           <q-item-section avatar>
             <q-icon name="how_to_reg" />
           </q-item-section>
           <q-item-section>Mis Asignaciones</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/binnacles" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveBinnacles }" 
-          @click="setActive('binnacles')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/binnacles" class="menu-item" v-ripple :class="{ 'active': isActiveBinnacles }"
+          @click="setActive('binnacles')">
           <q-item-section avatar>
             <q-icon name="fact_check" />
           </q-item-section>
           <q-item-section>Bitacoras</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/followup" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveFollowup }" 
-          @click="setActive('followup')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/followup" class="menu-item" v-ripple :class="{ 'active': isActiveFollowup }"
+          @click="setActive('followup')">
           <q-item-section avatar>
             <q-icon name="contact_page" />
           </q-item-section>
           <q-item-section>Seguimientos</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/modality" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveModality }" 
-          @click="setActive('modality')"
-        >
-        <q-item-section avatar>
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/modality" class="menu-item" v-ripple :class="{ 'active': isActiveModality }"
+          @click="setActive('modality')">
+          <q-item-section avatar>
             <q-icon name="settings" />
           </q-item-section>
           <q-item-section>Modalidad EP</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/information" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveInformation }" 
-          @click="setActive('information')"
-        >
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/information" class="menu-item" v-ripple
+          :class="{ 'active': isActiveInformation }" @click="setActive('information')">
           <q-item-section avatar>
             <q-icon name="file_copy" />
           </q-item-section>
           <q-item-section>Informes</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/certificaciones" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveCertificaciones }" 
-          @click="setActive('certificaciones')"
-        >
-        <q-item-section avatar>
+        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/certificaciones" class="menu-item" v-ripple
+          :class="{ 'active': isActiveCertificaciones }" @click="setActive('certificaciones')">
+          <q-item-section avatar>
             <q-icon name="done_all" />
           </q-item-section>
           <q-item-section>Certificaciones</q-item-section>
         </q-item>
 
-        <q-item 
-          clickable 
-          to="/layouts/horas" 
-          class="menu-item" 
-          v-ripple 
-          :class="{ 'active': isActiveHoras }" 
-          @click="setActive('horas')"
-        >
-        <q-item-section avatar>
+        <q-item clickable to="/layouts/horas" class="menu-item" v-ripple :class="{ 'active': isActiveHoras }"
+          @click="setActive('horas')">
+          <q-item-section avatar>
             <q-icon name="more_time" />
           </q-item-section>
           <q-item-section>Informe Horas</q-item-section>
@@ -195,9 +116,11 @@
 
 <script setup>
 import { ref } from "vue";
+import {  useRoute } from "vue-router";
+
 
 const drawer = ref(false);
-const isActiveHome = ref(true); 
+const isActiveHome = ref(true);
 const isActiveApprentices = ref(false);
 const isActiveFiche = ref(false);
 const isActiveModality = ref(false);
@@ -224,6 +147,12 @@ function setActive(menu) {
   isActiveFollowup.value = menu === 'followup';
   isActiveInformation.value = menu === 'information';
 }
+const route = useRoute();
+const rol = route.query.rol;
+console.log('Query de la ruta:', route.query.rol);
+console.log('Rol AS:', rol);
+
+
 </script>
 
 <style scoped>

@@ -52,7 +52,6 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-
     toggleSeeApprentice: {
         type: Function,
         required: true,

@@ -10,7 +10,7 @@
         </q-input>
     </div>
 
-    <ficheTable :rows="filteredRows" :props="props" :columns="columns"  v-model:filter="filter"
+    <ficheTable :rows="filteredRows" :columns="columns"  v-model:filter="filter"
         :toggleSeeApprentice="seeApprentices"  :loading="loading"></ficheTable>
 </template>
 

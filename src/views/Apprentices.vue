@@ -73,7 +73,7 @@
       <buttonuploadFile nameButton="Subir"></buttonuploadFile>
     </div>
 
-    <div class="AllInputButtonsSearch">
+    <div class="allInputButtonsSearch">
       <div class="filterButtons">
         <p>Seleccione una opción:</p>
         <div class="radio-buttons">
@@ -87,15 +87,13 @@
       </div>
 
       <div class="InputButtonsSearch">
-
         <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
           optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
         <buttonSearch  :onclickButton="bucar" />
       </div>
-
     </div>
   </div>
-  <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialogEdit" class="class"
+  <CustomTable :rows="rows" :columns="columns" :onClickEdit="openDialogEdit" class="class"
     :toggleActivate="changestatus" :onclickStatus="changestatusIcon" :loading="loading">
   </CustomTable>
 
@@ -161,9 +159,6 @@ const filterOptions = ref([]);
 // filtros modalidades
 const optionsModality = ref([]);
 const filterOptionsModality = ref([]);
-
-
-
 
 const loadData = async () => {
   loading.value = true
@@ -338,10 +333,7 @@ const handleSend = async () => {
     || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
     notifyWarningRequest('Todos los campos son obligatorios');
     return;
-  }
-
-
-
+    }
   const selectedFiche = filterOptions.value.find((opt) => opt._id === fiche.value);
   const apprendiceData = {
     firstName: firstName.value,
@@ -396,12 +388,19 @@ const handleSend = async () => {
 //filtro de fichas
 async function fetchDataFiche() {
   const response = await getData('/repfora/fiches');
-  options.value = response.map(option => ({
-    _id: option._id,
-    label: `${option.program.name} - ${option.program.code}`,
-    name: option.program.name,
-    number: option.program.code,
-  }));
+  const uniqueFiches = new Set();
+  options.value = response.map(option => {
+    const ficheId = option._id
+    if(!uniqueFiches.has(ficheId)){
+      uniqueFiches.add(ficheId)
+      return {
+        _id: option._id,
+        label: `${option.program.name} - ${option.program.code}`,
+        name: option.program.name,
+        number: option.program.code,
+      }
+    }
+  });
   filterOptions.value = options.value;
 
 }
@@ -598,7 +597,7 @@ async function bucar() {
   gap: 20px;
 }
 
-.AllInputButtonsSearch {
+.allInputButtonsSearch {
   width: 100%;
   display: flex;
   justify-content: flex-end;

@@ -1,42 +1,42 @@
 <template>
   <Header title="Seguimiento"></Header>
   <div id="container-search">
-    <q-select v-model="apprentice" :options="filterOptionsApprentice" label="Buscar Aprendiz" emit-value map-options
-      option-label="label" option-value="_id" :use-input="!followup" @filter="filterFunctionsApprentice" use-chips
-      :rules="[(val) => !!val || 'El Modalidad Etapa Productiva es obligatorio']" filled
-      @update:model-value="searchApprentice"/>
-
+    <div class="InputButtonsSearch">
+      <inputSelect v-model="searchValue" :options="filterOptionsApprentice" label="Buscar Aprendiz" optionLabel="label"
+        optionValue="_id" :useInput="!followup" :filter="filterFunctionsApprentice" class="custom-select" />
+      <buttonSearch :onclickButton="searchApprentice" />
+    </div>
   </div>
 
-
-
-
-  <tableSelect :props="props" :rows="rows" :columns="columns" :onClickSeeObservation="openClickSeeObservation"
-    :onClickCreateObservation="openClickCreateObservation" />
+  <tableSelect  :rows="rows" :columns="columns" :onClickSeeObservation="openClickSeeObservation"
+    :onClickCreateObservation="openClickCreateObservation" :loading="loading" />
 
   <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
     labelSend="Guardad" :onclickClose="closeDialog" :onclickSend="saveChanges"
-    :informationBinnacles="observationBinnacles">
+    :informationBinnacles="observationFollowup">
 
   </dialogSeeObservation>
 
-  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
-    labelSend="handleSend" :onclickClose="closeDialog" :onclickSend="handleSend"
-    labelTextArea="Escriba esta odservación para esta Bitácora">
+  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES"  labelClose="close"
+    labelSend="guardar" :onclickClose="closeDialog" :onclickSend="handleSend"
+    labelTextArea="Escriba esta odservación para este Seguimiento" v-model:textValue="newObservation">
   </dialogCreateObservation>
 
 </template>
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import Header from '../components/header/Header.vue';
 import tableSelect from '../components/tables/tableSelect.vue';
-import ModalDialog from '../components/modal/dialogClose.vue';
-import { getData } from '../services/ApiClient';
+import { getData, putData } from '../services/ApiClient';
 import dialogSeeObservation from '../components/modal/dialogClose.vue'
 import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
 import { formatDate } from '../utils/changeDateFormat';
+import inputSelect from '../components/input/inputSelect.vue';
+import buttonSearch from '../components/buttons/buttonSearch.vue';
+import { Loading } from 'quasar';
+import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify';
 
 let isDialogVisibleCreateObservation = ref(false)
 let isDialogVisibleObservation = ref(false)
@@ -45,32 +45,20 @@ let isDialogVisibleObservation = ref(false)
 let filterOptionsApprentice = ref([]);
 let optionsApprentice = ref([]);
 let followup = ref(false);
+let searchValue = ref('');
 
-let isModalDialogVisibleDetail = ref(false)
-let isModalDialogVisibleObservation = ref(false)
+// spiner
+let loading = ref(false);
 
-const rows = ref([
-  {
-    name: "John Doe",
-    number: "12345",
-    status: "1",
-    observationDate: "2022-02-02"
-  }, {
-    name: "John Doe",
-    number: "12345",
-    status: "1",
-
-    observationDate: "2022-02-02"
-  },
-  {
-    name: "John Doe",
-    number: "12345",
-    status: "3",
-    observationDate: "2022-02-02"
-  }
-])
+// observación
+let observationFollowup = ref('');
+let newObservation = ref('')
 
 
+onBeforeMount(() => {
+  loadDataFollowup();
+});
+const rows = ref([])
 
 const columns = ref([
   {
@@ -84,7 +72,7 @@ const columns = ref([
     name: "name",
     label: "ETAPA PRODUCTIVA SEGUIMIENTO",
     align: "center",
-    field: "name",
+    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName,
     sortable: true,
   },
   {
@@ -111,48 +99,65 @@ const columns = ref([
     name: "observationDate",
     label: "Fecha",
     align: "center",
-    field: row => formatDate(row.observationDate),
+    field: row => formatDate(row.createdAt),
     sortable: true,
   }
 ])
 
 async function loadDataFollowup() {
-  const response = await getData('/followup/listallfollowup');
-  rows.value = response
-}
+  loading.value = true;
+  try {
+    const response = await getData('/followup//listallfollowup');
+    rows.value = response
+  } catch (error) {
+    console.error("Error al cargar los seguimientos:", error);
+  } finally {
+    loading.value = false;
+  }
 
-
-async function openClickObservation() {
-  isModalDialogVisibleObservation.value = true
-}
-
-async function openClickDetail() {
-  isModalDialogVisibleDetail.value = true
 }
 
 
 async function openClickSeeObservation(row) {
   isDialogVisibleObservation.value = true;
   if (!row.observation.observation) {
-    observationBinnacles.value = 'No hay observaciones para esta bitacora';
+    observationFollowup.value = 'No hay observaciones para esta bitacora';
   } else {
-    observationBinnacles.value = row.observation.observation;
+    observationFollowup.value = row.observation.map(obs => obs.observation);
   }
 }
 async function openClickCreateObservation() {
   isDialogVisibleCreateObservation.value = true;
 }
+async function handleSend() {
+  try {
+    const response = await putData(`/followup/${id.value}`, { observation: newObservation.value });
+    notifySuccessRequest('Observación guardada correctamente');
+    await loadDataFollowup();
+  } catch (error) {
+    if (newObservation.value === '') {
+      validarHandleSend();
+    } else {
+      const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al guardar La obsevación';
+      notifyErrorRequest(message);
+    }
 
+  }
+}
+
+function validarHandleSend() {
+  if (newObservation.value === '') {
+    notifyWarningRequest('El campo de observación no puede estar vacio');
+    
+  }
+}
 
 
 async function fetchDataApprentice() {
-  const response = await getData('/apprendice/listallapprentice');
+  const response = await getData('/followup//listallfollowup');
   optionsApprentice.value = response.map(option => ({
     _id: option._id,
-    label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
-    document: option.numDocument,
-    name: `${option.firstName} ${option.lastName}`
-
+    label: `${option.register.idApprentice[0].firstName} ${option.register.idApprentice[0].lastName} - ${option.register.idApprentice[0].numDocument}`,
   }));
   filterOptionsApprentice.value = optionsApprentice.value;
 
@@ -177,14 +182,19 @@ async function filterFunctionsApprentice(val, update) {
 }
 
 
-async function searchApprentice(apprenticeId) {
-  if (!apprenticeId) return;
+async function searchApprentice() {
   try {
-    const response = await getData(`/apprendice/${apprenticeId}`);
-    // Actualiza los datos en la tabla con la información del aprendiz seleccionado
+    const response = await getData(`/followup/listfollowupbyid/${searchValue.value}`);
+    console.log(response);
     rows.value = [response];
   } catch (error) {
-    console.error("Error al buscar el aprendiz:", error);
+    if(searchValue.value === ''){
+    validarHandleSend()
+    }else{
+      const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al buscar aprendiz';
+      notifyErrorRequest(message);
+    }
+    await loadDataFollowup()
   }
 }
 
@@ -193,7 +203,6 @@ async function searchApprentice(apprenticeId) {
 
 
 <style scoped>
-
 #container-search {
   display: flex;
   justify-content: flex-end;
@@ -204,5 +213,12 @@ async function searchApprentice(apprenticeId) {
 .custom-select {
   width: 400px;
   /* Ajusta el tamaño del select */
+}
+
+.InputButtonsSearch {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>

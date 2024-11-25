@@ -49,11 +49,6 @@ const props = defineProps({
         type: Array,
         required: true
     },
-    title: {
-        type: String,
-        required: true,
-        default: 'Titulo'
-    },
     toggleBinnacle: {
         type: Function,
         required: true
@@ -62,10 +57,10 @@ const props = defineProps({
         type: Function,
         required: true
     },
-  loading: {
-    type: Boolean,
-    required: true,
-  }
+    loading: {
+        type: Boolean,
+        required: true,
+    }
 })
 </script>
 
