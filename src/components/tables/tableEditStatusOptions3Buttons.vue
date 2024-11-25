@@ -115,7 +115,7 @@ const onclickStatus = async (row) => {
 }
 
 .custom-header-row {
-    background-color: #4caf50;
+    background-color: #449247;
 }
 
 .custom-header-cell {

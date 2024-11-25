@@ -40,16 +40,17 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/ApiClient.js';
 import { notifySuccessRequest, notifyErrorRequest, notifyWarningRequest } from '../composables/useNotify.js';
-import { useAuthStore } from "../stores/useAuth.js"
+import { useAuthStore } from "../stores/useAuth.js";
+
+const loading = ref(false); // Estado de carga
 
 const router = useRouter();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 const rol = ref('');
 const email = ref('');
@@ -69,8 +70,6 @@ const roles = ref([
 
 const handleRoleChange = (value) => {
   rol.value = value.value;
-  console.log('Rol seleccionado:', rol.value);
-
   isConsultorRole.value = rol.value === 'CONSULTOR';
   isRol.value = true;
 };
@@ -80,6 +79,7 @@ const handleSubmit = async () => {
     notifyWarningRequest('Por favor, complete todos los campos');
     return;
   }
+
 
   let loginUrl;
   if (rol.value === 'CONSULTOR') {
@@ -93,9 +93,13 @@ const handleSubmit = async () => {
     return;
   }
 
+  loading.value = true; // Activar indicador de carga
   try {
     const response = await postData(loginUrl, {
       role: rol.value,
+      email: email.value,
+      numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
+      password: rol.value !== 'CONSULTOR' ? password.value : undefined,
       email: email.value,
       numDocument: rol.value === 'CONSULTOR' ? document.value : undefined,
       password: rol.value !== 'CONSULTOR' ? password.value : undefined,
@@ -130,8 +134,7 @@ const handleSubmit = async () => {
     }
     notifyErrorRequest(messageError)
   }
-}
-
+};
 
 const forgotPassword = () => {
   notifyWarningRequest('Funcionalidad de recuperación de contraseña aún no implementada.');

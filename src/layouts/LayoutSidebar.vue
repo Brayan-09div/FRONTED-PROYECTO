@@ -3,7 +3,7 @@
     <q-img class="absolute-top" src="" style="height: 150px; background-color: #ddd;">
       <div class="absolute-bottom bg-transparent user-info">
         <q-avatar size="65px" class="q-mb-sm">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s" />
         </q-avatar>
         <div class="text-weight-bold text-center"
           style="text-transform: uppercase; color: black; font-weight: 900; font-size: 15px;">ADMINISTRADOR</div>
@@ -11,6 +11,7 @@
       </div>
     </q-img>
 
+    <!-- Lista de navegación -->
     <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
       <q-list padding>
         <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/home" class="menu-item" v-ripple :class="{ 'active': isActiveHome }"
@@ -119,6 +120,7 @@ import { ref } from "vue";
 import {  useRoute } from "vue-router";
 
 
+// Estado del drawer
 const drawer = ref(false);
 const isActiveHome = ref(true);
 const isActiveApprentices = ref(false);
@@ -156,6 +158,7 @@ console.log('Rol AS:', rol);
 </script>
 
 <style scoped>
+/* Estilo del usuario */
 .user-info {
   display: flex;
   flex-direction: column;
@@ -163,6 +166,7 @@ console.log('Rol AS:', rol);
   text-align: center;
 }
 
+/* Estilo del menú */
 .menu-item {
   background-color: #2F7D32;
   color: white;
@@ -173,6 +177,7 @@ console.log('Rol AS:', rol);
   margin-top: 8px;
   padding: 10px;
   font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .menu-item .q-item-section {
@@ -180,6 +185,8 @@ console.log('Rol AS:', rol);
 }
 
 .menu-item.active {
-  color: #99e785;
+  background-color: #2F7D32;
+  color: #8ef191;
 }
 </style>
+

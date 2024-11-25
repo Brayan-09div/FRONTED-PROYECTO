@@ -74,7 +74,7 @@ const props = defineProps({
 }
 
 .custom-header-row {
-    background-color: #4caf50;
+    background-color: #2F7D32;
 }
 
 .custom-header-cell {

@@ -98,12 +98,20 @@ const onclickStatus = async (row) => {
 .q-table-custom {
   border: 1px solid #000000;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto; /* Asegura que haya scroll si es necesario */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 96.8%;
+  margin-left: 1.8%;
+  max-height: 400px; 
+}
+
+.q-table-custom {
+  scrollbar-width: thin; 
+  scrollbar-color: #2F7D32 #f1f1f1;
 }
 
 .custom-header-row {
-  background-color: #4caf50;
+  background-color: #449247;
 }
 
 .custom-header-cell {

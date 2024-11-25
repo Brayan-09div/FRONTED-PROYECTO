@@ -75,7 +75,7 @@
 
     <div class="allInputButtonsSearch">
       <div class="filterButtons">
-        <p>Seleccione una opción:</p>
+        <p style="color: #2F7D32; font-weight: bold;">Seleccione una opción:</p>
         <div class="radio-buttons">
           <radioButtonFiche v-model="radiobuttonlist" label="Ficha" val="Fiche"
             @update:model-value="handleRadioChange" />
@@ -88,7 +88,7 @@
 
       <div class="InputButtonsSearch">
         <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
-          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select"/>
         <buttonSearch  :onclickButton="bucar" />
       </div>
     </div>
@@ -597,8 +597,8 @@ async function bucar() {
   gap: 20px;
 }
 
-.allInputButtonsSearch {
-  width: 100%;
+.AllInputButtonsSearch {
+  width: 120%;
   display: flex;
   justify-content: flex-end;
   gap: 20px;
@@ -609,5 +609,6 @@ async function bucar() {
   gap: 10px;
   justify-content: flex-end;
   align-items: center;
+  margin-right: 3%;
 }
 </style>
