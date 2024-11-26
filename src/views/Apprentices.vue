@@ -8,7 +8,7 @@
 
 
         <q-select v-model="fiche" :options="filterOptions" label="Ficha" emit-value map-options option-label="label"
-          option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" use-chips :rules="[
+          option-value="_id" :use-input="!fiche" @filter="filterFunctionFiches" class="custom-select" :rules="[
             (val) => !!val || 'La ficha es obligatoria'
           ]" filled>
           <template v-slot:prepend class="custom-select">
@@ -63,7 +63,7 @@
 
         <q-select v-model="idmodality" :options="filterOptionsModality" label="Modalidad Etapa Productiva" emit-value
           map-options option-label="name" option-value="_id" :use-input="!fiche" @filter="filterFunctionModality"
-          class="custom-select" use-chips v-show="modality" :rules="[
+          class="custom-select" v-show="modality" :rules="[
             (val) => !!val || 'El Modalidad Etapa Productiva es obligatorio'
           ]" filled> <template v-slot:prepend class="custom-select">
             <q-icon name="abc" />
@@ -85,6 +85,7 @@
             @update:model-value="handleRadioChange" />
         </div>
       </div>
+    </div>
 
       <div class="InputButtonsSearch">
         <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
@@ -92,7 +93,6 @@
         <buttonSearch  :onclickButton="bucar" />
       </div>
     </div>
-  </div>
   <CustomTable :rows="rows" :columns="columns" :onClickEdit="openDialogEdit" class="class"
     :toggleActivate="changestatus" :onclickStatus="changestatusIcon" :loading="loading">
   </CustomTable>
@@ -591,24 +591,36 @@ async function bucar() {
   margin: 20px;
 }
 
+.filterButtons {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
 .buttons {
   width: 100%;
-  display: flex;
+  /* display: flex; */
   gap: 20px;
+}
+
+.radio-buttons {
+  display: flex;
+  gap: 10px;
+  margin-right: 4%;
 }
 
 .AllInputButtonsSearch {
   width: 120%;
   display: flex;
-  justify-content: flex-end;
   gap: 20px;
 }
 
 .InputButtonsSearch {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  width: 40%;
   align-items: center;
-  margin-right: 3%;
+  margin-right: 2%;
+  margin-left: 2%;
 }
 </style>

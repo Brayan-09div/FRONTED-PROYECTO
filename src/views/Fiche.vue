@@ -1,5 +1,5 @@
 <template>
-    <Header title="Fichas"></Header>
+    <Header title="Programas"></Header>
 
     <div class="search-container">
         <q-input borderless dense debounce="300" v-model="localFilter" @update:model-value="updateFilter"
