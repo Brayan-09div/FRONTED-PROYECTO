@@ -26,7 +26,7 @@
             </template>
 
             <template v-slot:body-cell-binnacle="props">
-                <q-td>
+                <q-td :props="props" class="q-pa-xs text-center">
                     <q-btn @click="onClickSearchBinnacle(props.row)" color="primary" icon="search" round size="md"
                         aria-label="Buscar" />
                 </q-td>
@@ -86,7 +86,15 @@ const props = defineProps({
     loading: {
     type: Boolean,
     required: true,
-  }
+  },
+  onClickSearchBinnacle:{
+    type: Function,
+    requiere: true
+  },
+    onClickSearchFollow:{
+        type: Function,
+        requiere: true
+    }
 
 });
 

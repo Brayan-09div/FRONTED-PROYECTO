@@ -598,7 +598,7 @@ async function bucar() {
 }
 
 .AllInputButtonsSearch {
-  width: 120%;
+  width: 100%;
   display: flex;
   justify-content: flex-end;
   gap: 20px;

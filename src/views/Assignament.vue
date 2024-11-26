@@ -64,7 +64,8 @@
     </div>
   </div>
   <TableOptions :rows="rows" :columns="columns" :title="title" :toggleActivate="changestatus"
-    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd" :loading="loading">
+    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd" :onClickSearchBinnacle="onclickSearchBinnacles" :onClickSearchFollow="onclickSearchFollow"
+    :loading="loading">
   </TableOptions>
 </template>
 
@@ -81,6 +82,8 @@ import inputSelect from "../components/input/inputSelect.vue";
 import buttonSearch from "../components/buttons/buttonSearch.vue";
 import { getData, putData, postData } from "../services/ApiClient.js";
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
+import { router } from '../router/routers.js';
+
 
 onBeforeMount(async () => {
   await loadDataAssignament();
@@ -148,20 +151,20 @@ const columns = ref([
     name: "projectInstructor",
     label: "INS. SEGUIMIENTO",
     align: "center",
-    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].followUpInstructor ?
+    field: row => row.assignment && row.assignment.length  === 0 && row.assignment[0].followUpInstructor ?
       row.assignment[0].followUpInstructor[0].name : 'No asignado',
     sortable: true,
   },
   {
     name: "instTechnical",
     label: "INS. TECNICO",
-    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].technicalInstructor ?
+    field: row => row.assignment && row.assignment.length === 0 && row.assignment[0].technicalInstructor ?
       row.assignment[0].technicalInstructor[0].name : 'No asignado',
   }, {
     name: "instProject",
     label: "INS. PROYECTO",
     align: "center",
-    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].projectInstructor ?
+    field: row => row.assignment && row.assignment.length === 0 && row.assignment[0].projectInstructor ?
       row.assignment[0].projectInstructor[0].name : 'No asignado',
     sortable: true,
   }, {
@@ -189,6 +192,7 @@ async function loadDataAssignament() {
   loading.value = true;
   try {
     const response = await getData('/register/listallassignment');
+    console.log(response)
     rows.value = response.data
   } catch (error) {
     notifyErrorRequest('Error al cargar las asignaciones');
@@ -249,11 +253,11 @@ async function searchInstProject() {
     if (searchValue.value === '') {
       validationSearch()
     } else {
-    const messageError = error.response?.data?.error || 'Error al buscar el instructor de proyecto';
-    notifyErrorRequest(messageError);
+      const messageError = error.response?.data?.error || 'Error al buscar el instructor de proyecto';
+      notifyErrorRequest(messageError);
+    }
+    await loadDataAssignament()
   }
-  await loadDataAssignament()
-}
 }
 
 
@@ -465,7 +469,21 @@ async function handleSendAdd() {
     const messageError = error.response.data.erorrs[0].msg || 'Error al añadir la asignación';
     notifyErrorRequest(messageError);
   }
+}
 
+
+async function onclickSearchBinnacles(row) {
+  router.push({
+    path: '/layouts/binnacles',
+    query: { id: row._id }
+  });
+}
+
+async function onclickSearchFollow(row) {
+  router.push({
+    path: '/layouts/followup',
+    query: { id: row.assignment[0].id}
+  })
 }
 </script>
 

@@ -16,9 +16,9 @@
     </div>
   </div>
 
-  <tableSelect :rows="rows" :columns="columns" :options="OptionsStatus"
-    :onClickSeeObservation="openClickSeeObservation" :onClickCreateObservation="openClickCreateObservation"
-    :onclickSelectOptions="onclickSelectOptions" :loading="loading" />
+  <tableSelect :rows="rows" :columns="columns" :options="OptionsStatus" :onClickSeeObservation="openClickSeeObservation"
+    :onClickCreateObservation="openClickCreateObservation" :onclickSelectOptions="onclickSelectOptions"
+    :loading="loading" />
 
   <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
     labelSend="Guardad" :onclickClose="closeDialog" :onclickSend="saveChanges"
@@ -45,14 +45,14 @@ import inputSelect from '../components/input/inputSelect.vue';
 import buttonSearch from '../components/buttons/buttonSearch.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 import { getData, postData, putData } from '../services/ApiClient';
-
-
+import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 let searchValue = ref('');
 let radioButtonList = ref('');
 let optionSearch = ref([]);
 let filterOptionsSearch = ref([]);
 
-const title = ref("Lista de Bitacoras");
+// 
 let observationBinnacles = ref('');
 const isDialogVisibleObservation = ref(false);
 const isDialogVisibleCreateObservation = ref(false);
@@ -68,6 +68,8 @@ const id = ref('')
 
 // spiner
 let loading = ref(false);
+const route = useRoute();
+
 
 const rows = ref([]);
 const columns = ref([
@@ -115,13 +117,22 @@ const columns = ref([
 ])
 async function loadDataBinnacles() {
   loading.value = true;
+  const registerId = route.query.id
+  console.log(registerId);
   try {
-    const response = await getData('/binnacles/listallbinnacles');
-    console.log(response);
-
-    rows.value = response
+    if (registerId) {
+      const response = await getData(`/binnacles/listBinnaclesByRegister/${registerId}`);
+      console.log('Listar por Bitacoras', response);
+      rows.value = response.binnacles
+    } else {
+      const response = await getData('/binnacles/listallbinnacles');
+      console.log(response);
+      rows.value = response
+    }
   } catch (error) {
-    notifyErrorRequest('Error al cargar las bitacoras')
+    const messageError = error.response.data.message || error.response.data.errors[0].msg || 'Error al cargar las bitacoras'
+    notifyErrorRequest(messageError)
+
   } finally {
     loading.value = false
   }

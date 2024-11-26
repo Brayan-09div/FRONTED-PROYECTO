@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <tableSelect  :rows="rows" :columns="columns" :onClickSeeObservation="openClickSeeObservation"
+  <tableSelect :rows="rows" :columns="columns" :onClickSeeObservation="openClickSeeObservation"
     :onClickCreateObservation="openClickCreateObservation" :loading="loading" />
 
   <dialogSeeObservation v-model="isDialogVisibleObservation" title="OBSERVACIONES" labelClose="Cerrar"
@@ -17,7 +17,7 @@
 
   </dialogSeeObservation>
 
-  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES"  labelClose="close"
+  <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
     labelSend="guardar" :onclickClose="closeDialog" :onclickSend="handleSend"
     labelTextArea="Escriba esta odservación para este Seguimiento" v-model:textValue="newObservation">
   </dialogCreateObservation>
@@ -37,6 +37,7 @@ import inputSelect from '../components/input/inputSelect.vue';
 import buttonSearch from '../components/buttons/buttonSearch.vue';
 import { Loading } from 'quasar';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify';
+import { useRoute } from 'vue-router';
 
 let isDialogVisibleCreateObservation = ref(false)
 let isDialogVisibleObservation = ref(false)
@@ -54,7 +55,7 @@ let loading = ref(false);
 let observationFollowup = ref('');
 let newObservation = ref('')
 
-
+let route = useRoute();
 onBeforeMount(() => {
   loadDataFollowup();
 });
@@ -106,9 +107,18 @@ const columns = ref([
 
 async function loadDataFollowup() {
   loading.value = true;
+  const idRegister = route.query.id
+  console.log('idRegister:', idRegister);
   try {
-    const response = await getData('/followup//listallfollowup');
-    rows.value = response
+    if (idRegister) {
+      const response = await getData(`/listassigmentbyfollowupinstructor/${idRegister}`);
+      console.log(response);
+      rows.value = response
+    } else {
+      const response = await getData('/followup/listallfollowup');
+      console.log(response)
+      rows.value = response
+    }
   } catch (error) {
     console.error("Error al cargar los seguimientos:", error);
   } finally {
@@ -148,7 +158,7 @@ async function handleSend() {
 function validarHandleSend() {
   if (newObservation.value === '') {
     notifyWarningRequest('El campo de observación no puede estar vacio');
-    
+
   }
 }
 
@@ -188,9 +198,9 @@ async function searchApprentice() {
     console.log(response);
     rows.value = [response];
   } catch (error) {
-    if(searchValue.value === ''){
-    validarHandleSend()
-    }else{
+    if (searchValue.value === '') {
+      validarHandleSend()
+    } else {
       const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al buscar aprendiz';
       notifyErrorRequest(message);
     }
