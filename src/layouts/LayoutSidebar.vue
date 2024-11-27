@@ -14,7 +14,7 @@
     <!-- Lista de navegación -->
     <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
       <q-list padding>
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/home" class="menu-item">
+        <q-item  clickable to="/layouts/home" class="menu-item">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
@@ -49,28 +49,28 @@
           <q-item-section>Asignaciones</q-item-section>
         </q-item>
 
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/myAssignament" class="menu-item">
+        <q-item  v-if="rol !== 'ADMIN'" clickable to="/layouts/myAssignament" class="menu-item">
           <q-item-section avatar>
             <q-icon name="how_to_reg" />
           </q-item-section>
           <q-item-section>Mis Asignaciones</q-item-section>
         </q-item>
 
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/binnacles" class="menu-item">
+        <q-item  clickable to="/layouts/binnacles" class="menu-item">
           <q-item-section avatar>
             <q-icon name="fact_check" />
           </q-item-section>
           <q-item-section>Bitacoras</q-item-section>
         </q-item>
 
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/followup" class="menu-item">
+        <q-item  clickable to="/layouts/followup" class="menu-item">
           <q-item-section avatar>
             <q-icon name="contact_page" />
           </q-item-section>
           <q-item-section>Seguimientos</q-item-section>
         </q-item>
 
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/modality" class="menu-item">
+        <q-item  clickable to="/layouts/modality" class="menu-item">
           <q-item-section avatar>
             <q-icon name="settings" />
           </q-item-section>
@@ -84,14 +84,14 @@
           <q-item-section>Informes</q-item-section>
         </q-item>
 
-        <q-item v-if="rol !== 'INSTRUCTOR'" clickable to="/layouts/certificaciones" class="menu-item">
+        <q-item v-else=" rol !== 'ADMIN'"  clickable to="/layouts/certificaciones" class="menu-item">
           <q-item-section avatar>
             <q-icon name="done_all" />
           </q-item-section>
           <q-item-section>Certificaciones</q-item-section>
         </q-item>
 
-        <q-item clickable to="/layouts/horas" class="menu-item">
+        <q-item  clickable to="/layouts/horas" class="menu-item">
           <q-item-section avatar>
             <q-icon name="more_time" />
           </q-item-section>
@@ -111,8 +111,8 @@ const drawer = ref(false);
 
 const route = useRoute();
 const rol = route.query.rol;
-console.log('Query de la ruta:', route.query.rol);
-console.log('Rol AS:', rol);
+console.log('Query de la ruta:', route.query);
+
 </script>
 
 <style scoped>

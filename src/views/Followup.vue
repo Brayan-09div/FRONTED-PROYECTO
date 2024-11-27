@@ -107,11 +107,11 @@ const columns = ref([
 
 async function loadDataFollowup() {
   loading.value = true;
-  const idRegister = route.query.id
-  console.log('idRegister:', idRegister);
+  const idInstructor = route.query.id
+  console.log('idInstructor:', idInstructor);
   try {
-    if (idRegister) {
-      const response = await getData(`/listassigmentbyfollowupinstructor/${idRegister}`);
+    if (idInstructor) {
+      const response = await getData(`/followup/listfollowupbyinstructor/${idInstructor}`);
       console.log(response);
       rows.value = response
     } else {
@@ -120,7 +120,8 @@ async function loadDataFollowup() {
       rows.value = response
     }
   } catch (error) {
-    console.error("Error al cargar los seguimientos:", error);
+    const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al cargar los seguimientos';
+    notifyErrorRequest(message)
   } finally {
     loading.value = false;
   }

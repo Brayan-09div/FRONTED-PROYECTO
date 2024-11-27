@@ -29,6 +29,7 @@ const Salir = async () => {
   router.replace("/layouts/home")
 }
 
+
 </script>
 
 <style>

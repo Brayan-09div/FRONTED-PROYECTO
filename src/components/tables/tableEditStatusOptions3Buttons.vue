@@ -21,29 +21,59 @@
             <template v-slot:body-cell-options="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     <div class="opcion-btn">
-                        <q-btn class="edit-btn btn-same-size" @click="onClickEdit(props.row)" color="primary"
-                            icon="edit_square" round size="md" aria-label="Edit Square" />
-
-                        <q-btn class="estado-btn btn-same-size" @click="onclickStatus(props.row)"
-                            :icon="props.row.status === 1 ? 'cancel' : 'check_circle'"
-                            :color="props.row.status === 1 ? 'red' : 'green'" round size="md"
-                            :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'"
-                            :loading="loadingStates[props.row._id]">
-                        </q-btn>
-
-
                         <q-fab v-model="options[props.row._id]" class="small-fab" label-position="top" external-label
                             color="primary" icon="keyboard_arrow_right" direction="left" :hide-label="hideLabels">
-                            <q-fab-action :hide-label="hideLabels" external-label label-position="top" color="primary"
-                                @click="onClick" icon="search" label="Asignación" />
-                            <q-fab-action :hide-label="hideLabels" external-label label-position="top" color="primary"
-                                @click="onClick" icon="visibility" label="Detalles" />
-                            <q-fab-action :hide-label="hideLabels" external-label label-position="top" color="primary"
-                                @click="onClick" icon="visibility" label="Registros" />
+
+
+                            <q-fab-action external-label label-position="top" 
+                                class="estado-btn btn-same-size" @click="onclickStatus(props.row)"
+                                :icon="props.row.status === 1 ? 'cancel' : 'check_circle'"
+                                :color="props.row.status === 1 ? 'red' : 'green'" round size="md"
+                                :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'"
+                                :loading="loadingStates[props.row._id]">
+                                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                    <strong>Activar/Desactivar</strong>
+                                </q-tooltip>
+                            </q-fab-action>
+
+                            <q-fab-action external-label label-position="top" color="primary"
+                               class="edit-btn btn-same-size" @click="onClickEdit(props.row)" 
+                                icon="edit_square" round size="md" aria-label="Edit Square">
+                                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                    <strong>Editar</strong>
+                                </q-tooltip>
+                            </q-fab-action>
+                            
+
+                            <q-fab-action external-label label-position="top" color="primary" @click="onClick"
+                                icon="search">
+                                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                    <strong>Asignación</strong>
+                                </q-tooltip>
+                            </q-fab-action>
+
+                            <q-fab-action external-label label-position="top" color="primary" @click="onClick"
+                                icon="visibility">
+
+                                <!-- <q-tooltip anchor="bottom middle" self="top middle" :offset="[10, 10]">
+                                    <strong>Detalles</strong>
+                                </q-tooltip> -->
+                                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                    <strong>Dellates</strong>
+                                </q-tooltip>
+                            </q-fab-action>
+
+                            <q-fab-action external-label label-position="top" color="primary" @click="onClick"
+                                icon="visibility">
+                                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                                    <strong>Registro de Horas</strong>
+                                </q-tooltip>
+
+
+                            </q-fab-action>
 
                         </q-fab>
                     </div>
-
                 </q-td>
             </template>
 
@@ -53,11 +83,11 @@
                 </q-td>
             </template>
 
-            
+
             <template v-slot:loading>
                 <q-inner-loading :showing="loading" color="primary" />
             </template>
- 
+
         </q-table>
     </div>
 </template>

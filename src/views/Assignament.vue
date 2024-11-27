@@ -8,36 +8,42 @@
         :onclickClose="handleCole" :labelSend="Guardar" :labelClose="cerrar">
 
         <div class="formAssinament">
+          <q-select v-model="firstName" :options="filterOptionsApprentice" label="Nombre del Aprendiz" emit-value map-options option-label="label"
+          option-value="_id" :use-input="!apprenticeName" @filter="filterFunctionApprentice" class="custom-select" :rules="[
+            (val) => !!val || 'El instructor de seguimiento es obligatorio'
+          ]" filled>
+          <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
 
-          <q-input v-model="firstName" label="Nombre Aprendiz" v-show="apprenticeName"
-            :rules="[(val) => !!val || 'Este campo Nombres Aprendiz es obligatorio']" filled>
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
+          <q-select v-model="idinstructorFollow" :options="filterOptionsInstFollowup" label="Instructor de Seguimiento" emit-value map-options option-label="label"
+          option-value="_id" :use-input="!fiche" @filter="filterFunctionInstFollowup" class="custom-select" :rules="[
+            (val) => !!val || 'El instructor de seguimiento es obligatorio'
+          ]" filled>
+          <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
 
-          <q-input v-model="idinstructorFollow" label="Intructor de Seguimiento"
-            :rules="[(val) => !!val || 'Este campo  Instructor de Seguimiento es obligatorio']" filled>
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
-
-          <q-input v-model="idinstructortechnical" label="Intructor de Técnico"
-            :rules="[(val) => !!val || 'Este campo Instructoe Técnico es obligatorio']" filled>
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
-
-
-          <q-input v-model="idinstructorproject" label="Instructor de Proyecto"
-            :rules="[(val) => !!val || 'Este campo Instructor de Proyecto es obligatorio']" filled>
-            <template v-slot:prepend>
-              <q-icon name="abc" />
-            </template>
-          </q-input>
-        </div>
+          <q-select v-model="idinstructortechnical" :options="filterOptionsInstTechnical" label="Instructor Técnico" emit-value map-options option-label="label"
+          option-value="_id" :use-input="!instTechnical" @filter="filterFunctionInstTechnical" class="custom-select" :rules="[
+            (val) => !!val || 'El instructor técnico es obligatorio'
+          ]" filled>
+          <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
+        
+        <q-select v-model="idinstructorproject" :options="filterOptionsInstProyect" label="Instructor de Proyecto" emit-value map-options option-label="label"
+          option-value="_id" :use-input="!instProyect" @filter="filterFunctionInstProyect" class="custom-select" :rules="[
+            (val) => !!val || 'El instructor de Proyecto es obligatorio'
+          ]" filled>
+          <template v-slot:prepend class="custom-select">
+            <q-icon name="abc" />
+          </template>
+        </q-select>
+        </div> 
       </ButtonAgregate>
     </div>
 
@@ -63,9 +69,9 @@
 
     </div>
   </div>
-  <TableOptions :rows="rows" :columns="columns" :title="title" :toggleActivate="changestatus"
-    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd" :onClickSearchBinnacle="onclickSearchBinnacles" :onClickSearchFollow="onclickSearchFollow"
-    :loading="loading">
+  <TableOptions :rows="rows" :columns="columns" 
+    :onClickEdit="onclickButtonEdit" :onClickAdd="onclickButtonAdd" :onClickSearchBinnacle="onclickSearchBinnacles"
+    :onClickSearchFollow="onclickSearchFollow" :loading="loading">
   </TableOptions>
 </template>
 
@@ -73,7 +79,7 @@
 import { ref, onBeforeMount } from 'vue';
 import Header from '../components/header/Header.vue';
 import ButtonAgregate from '../components/modal/modal.vue';
-import TableOptions from "../components/tables/tableStatusSearchCreateAdd.vue";
+import TableOptions from "../components/tables/tableStatusSearchCreateEditAdd.vue";
 import radioButtonApprentice from "../components/radioButtons/radioButton.vue";
 import radioButtonInsFollow from "../components/radioButtons/radioButton.vue";
 import radioButtonInstTechnical from "../components/radioButtons/radioButton.vue";
@@ -108,6 +114,18 @@ let labelTitle = ref('');
 
 // spiner
 let loading = ref(false);
+
+// filtros
+let filterOptionsApprentice = ref([])
+let optionApprentice = ref([])
+let filterOptionsInstFollowup = ref([])
+let optionIntFollowup = ref([])
+let filterOptionsInstTechnical = ref([])
+let optionIntTechnical = ref([])
+let filterOptionsInstProyect = ref([])
+let optionIntProyect = ref([])
+
+let row_id = ref('')
 
 const rows = ref([]);
 const columns = ref([
@@ -151,36 +169,26 @@ const columns = ref([
     name: "projectInstructor",
     label: "INS. SEGUIMIENTO",
     align: "center",
-    field: row => row.assignment && row.assignment.length  === 0 && row.assignment[0].followUpInstructor ?
+    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].followUpInstructor ?
       row.assignment[0].followUpInstructor[0].name : 'No asignado',
     sortable: true,
   },
   {
     name: "instTechnical",
     label: "INS. TECNICO",
-    field: row => row.assignment && row.assignment.length === 0 && row.assignment[0].technicalInstructor ?
+    // field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].technicalInstructor ?
+    //   row.assignment[0].technicalInstructor[0].name : 'No asignado',
+      field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].technicalInstructor && row.assignment[0].technicalInstructor[0] ?
       row.assignment[0].technicalInstructor[0].name : 'No asignado',
   }, {
     name: "instProject",
     label: "INS. PROYECTO",
     align: "center",
-    field: row => row.assignment && row.assignment.length === 0 && row.assignment[0].projectInstructor ?
+    field: row => row.assignment && row.assignment.length > 0 && row.assignment[0].projectInstructor && row.assignment[0].projectInstructor[0] ?
       row.assignment[0].projectInstructor[0].name : 'No asignado',
     sortable: true,
-  }, {
-    name: "status",
-    label: "ACTIVAR/DESACTIVAR",
-    align: "center",
-    field: "status"
-  }, {
-    name: "binnacle",
-    label: "BITÁCORAS",
-    align: "center",
-  }, {
-    name: "follow",
-    label: "SEGUIMIENTO",
-    align: "center",
-  }, {
+  },
+   {
     name: "options",
     label: "OPCIONES",
     align: "center",
@@ -219,6 +227,7 @@ async function searchApprentice() {
 async function searchinstFollowup() {
   try {
     const response = await getData(`/register/listassigmentbyfollowupinstructor/${searchValue.value}`);
+    console.log('Td Follow', response)
     rows.value = response.data;
   } catch (error) {
     if (searchValue.value === '') {
@@ -226,14 +235,15 @@ async function searchinstFollowup() {
     } else {
       notifyErrorRequest('Error al buscar el instructor de seguimiento');
     }
+    await loadDataAssignament()
   }
-  await loadDataAssignament()
 }
 
 async function searchInstTechnical() {
   try {
     const response = await getData(`/register/listassigmentbytechnicalinstructor/${searchValue.value}`);
-    rows.value = response;
+    console.log('Td Technical', response)
+    rows.value = response.data
   } catch (error) {
     if (searchValue.value === '') {
       validationSearch()
@@ -248,7 +258,8 @@ async function searchInstTechnical() {
 async function searchInstProject() {
   try {
     const response = await getData(`/register/listassigmentbyprojectinstructor/${searchValue.value}`);
-    rows.value = response;
+    console.log('Td Project', response)
+    rows.value = response.data
   } catch (error) {
     if (searchValue.value === '') {
       validationSearch()
@@ -269,20 +280,22 @@ const handleRadioChange = async () => {
       _id: option._id,
       label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
       numDocument: option.numDocument
-    }));
+    })).filter(Boolean)
     filterOptionsSearch.value = optionSearch.value;
 
   } else if (radioButtonList.value === 'instFollowup') {
     const response = await getData('/register/listallregister');
-    console.log(response)
+    console.log('resgister Follow', response)
     const uniqueInsFollowup = new Set();
     optionSearch.value = response.data.map(option => {
-      const instFollowup = option.assignment[0].followUpInstructor[0].idInstructor;
-      if (!uniqueInsFollowup.has(instFollowup)) {
-        uniqueInsFollowup.add(instFollowup);
-        return {
-          _id: option.assignment[0].followUpInstructor[0].idInstructor,
-          label: `${option.assignment[0].followUpInstructor[0].name} `,
+      if (option.assignment && option.assignment[0] && option.assignment[0].followUpInstructor && option.assignment[0].followUpInstructor[0]) {
+        const instFollowup = option.assignment[0].followUpInstructor[0].idInstructor;
+        if (!uniqueInsFollowup.has(instFollowup)) {
+          uniqueInsFollowup.add(instFollowup);
+          return {
+            _id: option.assignment[0].followUpInstructor[0].idInstructor,
+            label: `${option.assignment[0].followUpInstructor[0].name} `,
+          }
         }
       }
     }).filter(option => option !== undefined);
@@ -290,29 +303,35 @@ const handleRadioChange = async () => {
 
   } else if (radioButtonList.value === 'instTechnical') {
     const response = await getData('/register/listallregister');
+    console.log('info Techenical', response)
     const uniqueInsTechnical = new Set();
     optionSearch.value = response.data.map(option => {
-      const instTechnical = option.assignment[0].technicalInstructor[0].idInstructor;
-      if (!uniqueInsTechnical.has(instTechnical)) {
-        uniqueInsTechnical.add(instTechnical);
-        return {
-          _id: option.assignment[0].technicalInstructor[0].idInstructor,
-          label: `${option.assignment[0].technicalInstructor[0].name} `
+      if (option.assignment && option.assignment[0] && option.assignment[0].technicalInstructor && option.assignment[0].technicalInstructor[0]) {
+        const instTechnical = option.assignment[0].technicalInstructor[0].idInstructor;
+        if (!uniqueInsTechnical.has(instTechnical)) {
+          uniqueInsTechnical.add(instTechnical);
+          return {
+            _id: option.assignment[0].technicalInstructor[0].idInstructor,
+            label: `${option.assignment[0].technicalInstructor[0].name} `
+          }
         }
       }
     }).filter(option => option !== undefined);
     filterOptionsSearch.value = optionSearch.value;
-
   } else if (radioButtonList.value === 'instProject') {
     const response = await getData('/register/listallregister');
+    console.log('info Proyect', response)
     const uniqueInstProject = new Set();
     optionSearch.value = response.data.map(option => {
-      const instProject = option.assignment[0].projectInstructor[0].idInstructor;
-      if (!uniqueInstProject.has(instProject)) {
-        uniqueInstProject.add(instProject);
-        return {
-          _id: option.assignment[0].projectInstructor[0].idInstructor,
-          label: `${option.assignment[0].projectInstructor[0].name} `,
+      if (option.assignment && option.assignment[0] && option.assignment[0].projectInstructor && option.assignment[0].projectInstructor[0]) {
+        const instProject = option.assignment[0].projectInstructor[0].idInstructor;
+        console.log('idInstructor', instProject)
+        if (!uniqueInstProject.has(instProject)) {
+          uniqueInstProject.add(instProject);
+          return {
+            _id: option.assignment[0].projectInstructor[0].idInstructor,
+            label: `${option.assignment[0].projectInstructor[0].name} `,
+          }
         }
       }
     }).filter(option => option !== undefined);
@@ -320,6 +339,7 @@ const handleRadioChange = async () => {
     clearSearch();
   }
 }
+
 
 // limpiar campos de busqueda
 function clearSearch() {
@@ -339,6 +359,14 @@ async function fetchDataSearch() {
 
 fetchDataSearch()
 async function filterFunctionSearch(val, update) {
+
+  if (val === '') {
+    update(() => {
+      filterOptionsSearch.value = filterOptionsSearch.value
+    })
+    return
+  }
+
   update(() => {
     const needle = val.toLowerCase();
     filterOptionsSearch.value = optionSearch.value.filter((option) =>
@@ -377,10 +405,17 @@ function onclickButtonAdd() {
   labelTitle.value = 'Añadir UNA ASIGNACIÓN';
 }
 
-function onclickButtonEdit() {
+function onclickButtonEdit(row) {
   isDialogVisibleModalAssignament.value = true;
+  row_id.value = row._id
   apprenticeName.value = false;
   labelTitle.value = 'EDITAR UNA ASIGNACIÓN';
+  firstName.value = row.firstName;
+  idinstructorFollow.value = row.assignment[0].followUpInstructor[0].idInstructor;
+  idinstructortechnical.value = row.assignment[0].technicalInstructor[0].idInstructor;
+  idinstructorproject.value = row.assignment[0].projectInstructor[0].idInstructor;
+
+
 }
 
 async function handleSendCreate() {
@@ -417,6 +452,7 @@ async function handleSendCreateAssignament() {
     idinstructorproject: idinstructorproject.value,
   }
 
+
   const response = await postData(`/register/createassignment/${id}`, dataAssignamen);
   console.log(response);
 
@@ -437,18 +473,17 @@ async function handleSendEdit() {
     idinstructortechnical: idinstructortechnical.value,
     idinstructorproject: idinstructorproject.value,
   }
-
-  const response = await putData(`/register/updateassignment/${id}`, dataAssignament);
+  console.log('IdRegister', row_id.value)
+  const response = await putData(`/register/updateassignment/${row_id.value}`, dataAssignament);
   console.log(response);
-
-  if (response.status === 200) {
-    notifySuccessRequest('Asignación actualizada correctamente');
-    loadDataAssignament();
-    isDialogVisibleModalAssignament.value = false;
-  } else {
-    const messageError = error.response.data.erorrs[0].msg || 'Error al actualizar la asignación';
-    notifyErrorRequest(messageError);
-  }
+  // if (response.status === 200) {
+  //   notifySuccessRequest('Asignación actualizada correctamente');
+  //   loadDataAssignament();
+  //   isDialogVisibleModalAssignament.value = false;
+  // } else {
+  //   const messageError = error.response.data.erorrs[0].msg || 'Error al actualizar la asignación';
+  //   notifyErrorRequest(messageError);
+  // }
 }
 
 
@@ -473,16 +508,137 @@ async function handleSendAdd() {
 
 
 async function onclickSearchBinnacles(row) {
+  if (row._id) {
   router.push({
     path: '/layouts/binnacles',
     query: { id: row._id }
   });
+  }else {
+    notifyWarningRequest('No hay bitacoras para esta assignación');
+  }   
 }
 
 async function onclickSearchFollow(row) {
+  // if (row.assignment && row.assignment[0] && row.assignment[0].followUpInstructor && row.assignment[0].followUpInstructor[0]) {
   router.push({
     path: '/layouts/followup',
-    query: { id: row.assignment[0].id}
+    query: { id: row.assignment[0].followUpInstructor[0].idInstructor }
+  });
+}
+
+// filtros
+
+async function fetchDataApprentice() {
+  const response = await getData('/apprendice/listallapprentice')
+  console.log('result', response)
+  optionApprentice.value = response.map(option => ({
+    _id: option._id,
+    label: option.firstName + ' ' + option.lastName
+  }))
+  filterOptionsApprentice.value = optionApprentice.value
+}
+
+fetchDataApprentice()
+
+async function filterFunctionApprentice(val, update){
+  if(val === ''){
+    update(()=> {
+      filterOptionsApprentice.value = filterOptionsApprentice.value
+    })
+    return
+  }
+
+  update(() => {
+    const needle = val.toLowerCase()
+    filterOptionsApprentice.value = optionApprentice.value.filter((option) =>
+  option.label.toLowerCase().includes(needle)
+  )
+  })
+}
+
+
+async function fetchDataInstFollowup() {
+  const response = await getData('/Repfora/instructors')
+  console.log('result', response)
+  optionIntFollowup.value = response.map(option => ({
+    _id: option._id,
+    label: option.name
+  }))
+  filterOptionsInstFollowup.value = optionIntFollowup.value
+}
+
+fetchDataInstFollowup()
+
+async function filterFunctionInstFollowup(val, update){
+  if(val === ''){
+    update(()=> {
+      filterOptionsInstFollowup.value = filterOptionsInstFollowup.value
+    })
+    return
+  }
+
+  update(() => {
+    const needle = val.toLowerCase()
+    filterOptionsInstFollowup.value = optionIntFollowup.value.filter((option) =>
+  option.label.toLowerCase().includes(needle)
+  )
+  })
+}
+
+
+async function fetchDataInstTechnical() {
+  const response = await getData('/Repfora/instructors')
+  console.log('result', response)
+  optionIntTechnical.value = response.map(option => ({
+    _id: option._id,
+    label: option.name
+  }))
+  filterOptionsInstTechnical.value = optionIntTechnical.value
+}
+
+fetchDataInstTechnical()
+
+async function filterFunctionInstTechnical(val, update){
+  if(val === ''){
+    update(()=> {
+      filterOptionsInstTechnical.value = filterOptionsInstTechnical.value
+    })
+    return
+  }
+  update(() => {
+    const needle = val.toLowerCase()
+    filterOptionsInstTechnical.value = optionIntTechnical.value.filter((option) =>
+  option.label.toLowerCase().includes(needle)
+  )
+  })
+}
+
+
+async function fetchDataInstProyect() {
+  const response = await getData('/Repfora/instructors')
+  console.log('result', response)
+  optionIntProyect.value = response.map(option => ({
+    _id: option._id,
+    label: option.name
+  }))
+  filterOptionsInstProyect.value = optionIntProyect.value
+}
+
+fetchDataInstProyect()
+
+async function filterFunctionInstProyect(val, update){
+  if(val === ''){
+    update(()=> {
+      filterOptionsInstProyect.value = filterOptionsInstProyect.value
+    })
+    return
+  }
+
+  update(() => {
+    const needle = val.toLowerCase()
+    filterOptionsInstProyect.value = optionIntProyect.value.filter((option) =>
+  option.label.toLowerCase().includes(needle)
+  )
   })
 }
 </script>

@@ -163,7 +163,7 @@ const filterOptionsModality = ref([]);
 const loadData = async () => {
   loading.value = true
   const ficheId = route.query.ficheId
-  console.log(ficheId);
+  console.log('idfiche',ficheId);
   try {
     if (ficheId) {
       const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);

@@ -45,7 +45,6 @@ import inputSelect from '../components/input/inputSelect.vue';
 import buttonSearch from '../components/buttons/buttonSearch.vue';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 import { getData, postData, putData } from '../services/ApiClient';
-import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 let searchValue = ref('');
 let radioButtonList = ref('');
@@ -117,11 +116,11 @@ const columns = ref([
 ])
 async function loadDataBinnacles() {
   loading.value = true;
-  const registerId = route.query.id
-  console.log(registerId);
+  const idRegister= route.query.id
+  console.log('listfollow',idRegister);
   try {
-    if (registerId) {
-      const response = await getData(`/binnacles/listBinnaclesByRegister/${registerId}`);
+    if (idRegister) {
+      const response = await getData(`/binnacles/listBinnaclesByRegister/${idRegister}`);
       console.log('Listar por Bitacoras', response);
       rows.value = response.binnacles
     } else {
@@ -136,6 +135,7 @@ async function loadDataBinnacles() {
   } finally {
     loading.value = false
   }
+
 }
 
 async function openClickSeeObservation(row) {
