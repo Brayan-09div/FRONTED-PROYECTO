@@ -153,6 +153,13 @@ function openButtonCreate() {
   ismodalType.value = true
   modalTitle.value = 'Crear Modalidad'
 }
+
+const originalDataValues = ref({
+  modality: '',
+  hourInstFollowup: '',
+  hourInstTechnical: '',
+  hourInstProyect: ''
+})
 function openDialogEdit(row) {
   isDialogVisibleModal.value = true;
   ismodalType.value = false
@@ -162,6 +169,13 @@ function openDialogEdit(row) {
   hourInstTechnical.value = row.hourInstructorTechnical
   hourInstProyect.value = row.hourInstructorProject
   id.value = row._id
+  originalDataValues.value = {
+    modality: row.name,
+    hourInstFollowup: row.hourInstructorFollow,
+    hourInstTechnical: row.hourInstructorTechnical,
+    hourInstProyect: row.hourInstructorProject
+  }
+
 }
 
 function handleClose() {
@@ -185,14 +199,35 @@ async function handleSend(row) {
     } else {
       response = await putData(`/modality/updatemodalitybyid/${id.value}`, data)
       console.log(response);
+      const hasChanges =
+        originalDataValues.value.modality !== modality.value ||
+        originalDataValues.value.hourInstFollowup !== hourInstFollowup.value ||
+        originalDataValues.value.hourInstTechnical !== hourInstTechnical.value ||
+        originalDataValues.value.hourInstProyect !== hourInstProyect.value
+
+      if (!hasChanges) {
+        notifyWarningRequest('No se han realizado cambios')
+        return
+      }
+
     }
+
     isDialogVisibleModal.value = false;
     cleanForm()
     notifySuccessRequest('Datos enviados correctamente')
     await loadDataModality()
   } catch (error) {
-    const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al enviar los datos'
-    notifyWarningRequest(message)
+    let messageError;
+    if (error.response && error.response.data && error.response.data.message) {
+      messageError = error.response.data.message
+    } else if (error.response && error.response.data && error.response.data.errors &&
+      error.response.data.errors[0].msg) {
+      messageError = error.response.data.errors[0].msg
+    } else {
+      messageError = 'Error al enviar los datos'
+    }
+    // const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al enviar los datos'
+    notifyErrorRequest(messageError)
   }
 }
 

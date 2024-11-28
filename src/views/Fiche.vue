@@ -10,8 +10,8 @@
         </q-input>
     </div>
 
-    <ficheTable :rows="filteredRows" :columns="columns"  v-model:filter="filter"
-        :toggleSeeApprentice="seeApprentices"  :loading="loading"></ficheTable>
+    <ficheTable :rows="filteredRows" :columns="columns" v-model:filter="filter" :toggleSeeApprentice="seeApprentices"
+        :loading="loading"></ficheTable>
 </template>
 
 <script setup>
@@ -20,6 +20,7 @@ import Header from '../components/header/header.vue';
 import ficheTable from '../components/tables/tableFiche.vue';
 import { router } from '../router/routers';
 import { getData } from '../services/ApiClient';
+import { notifyErrorRequest } from '../composables/useNotify';
 
 
 
@@ -31,15 +32,15 @@ const loading = ref(true); // Estado de carga
 let filter = ref('');
 
 async function loadDataFiches() {
-  loading.value = true; // Inicia el estado de carga
-  try {
-    const response = await getData('/repfora/fiches');
-    rows.value = response;
-  } catch (error) {
-    console.error('Error al cargar los datos:', error);
-  } finally {
-    loading.value = false; // Finaliza el estado de carga
-  }
+    loading.value = true; // Inicia el estado de carga
+    try {
+        const response = await getData('/repfora/fiches');
+        rows.value = response;
+    } catch (error) {
+        console.error('Error al cargar los datos:', error);
+    } finally {
+        loading.value = false; // Finaliza el estado de carga
+    }
 }
 
 const rows = ref([]);
@@ -82,10 +83,19 @@ const columns = ref([
 
 
 async function seeApprentices(row) {
-    router.push({
-        path: '/layouts/apprentices',
-        query: { ficheId: row._id }
-    });
+    try {
+        const response = await getData(`/apprendice/listapprenticebyfiche/${row._id}`);
+        if (response) {
+            router.push({
+                path: '/layouts/apprentices',
+                query: { ficheId: row._id }
+            });
+        }
+
+    } catch (error) {
+        notifyErrorRequest('No hay aprendices en esa ficha')
+    }
+
 }
 
 const filteredRows = computed(() => {

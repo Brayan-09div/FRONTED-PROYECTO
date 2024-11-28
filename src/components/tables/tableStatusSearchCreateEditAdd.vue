@@ -30,7 +30,7 @@
                         <q-fab v-model="options[props.row._id]" label-position="rigth" color="primary"
                             icon="keyboard_arrow_left" direction="left">
 
-                            <q-fab-action external-label label-position="top" color="primary"
+                            <!-- <q-fab-action external-label label-position="top" color="primary"
                                 class="edit-btn btn-same-size" @click="onClickAdd(props.row)" icon="add_circle" round
                                 size="md" aria-label="Edit Square">
                                 <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
@@ -44,7 +44,7 @@
                                 <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
                                     <strong>Editar</strong>
                                 </q-tooltip>
-                            </q-fab-action>
+                            </q-fab-action> -->
 
                             <q-fab-action external-label label-position="top" color="primary"
                                 class="edit-btn btn-same-size" @click="onClickSearchFollow(props.row)" icon="search"

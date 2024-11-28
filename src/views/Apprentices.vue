@@ -87,12 +87,12 @@
       </div>
     </div>
 
-      <div class="InputButtonsSearch">
-        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
-          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select"/>
-        <buttonSearch  :onclickButton="bucar" />
-      </div>
+    <div class="InputButtonsSearch">
+      <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+        optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+      <buttonSearch :onclickButton="bucar" />
     </div>
+  </div>
   <CustomTable :rows="rows" :columns="columns" :onClickEdit="openDialogEdit" class="class"
     :toggleActivate="changestatus" :onclickStatus="changestatusIcon" :loading="loading">
   </CustomTable>
@@ -163,21 +163,36 @@ const filterOptionsModality = ref([]);
 const loadData = async () => {
   loading.value = true
   const ficheId = route.query.ficheId
-  console.log('idfiche',ficheId);
+  console.log('idfiche', ficheId);
   try {
     if (ficheId) {
       const response = await getData(`/apprendice/listapprenticebyfiche/${ficheId}`);
       console.log(response)
-      rows.value = response.apprentices
+      rows.value = response.apprentices;
+      if (response.apprentices.length === 0) {
+        notifyWarningRequest('No se encontraron aprendices en la ficha seleccionada. Mostrando todos los aprendices.');
+        const allResponse = await getData('/apprendice/listallapprentice');
+        rows.value = allResponse;
+      }
     } else {
       const response = await getData('/apprendice/listallapprentice');
       console.log(response);
-
       rows.value = response;
     }
+    
   } catch (error) {
-    notifyErrorRequest('Error al cargar los datos');
-  } finally {
+    let messageError;
+    if (error.response && error.response.data && error.response.data.message) {
+      messageError = error.response.data.message
+      const response = await getData('/apprendice/listallapprentice');
+      rows.value = response;
+    } else if (error.respo && error.response.data && error.response.data.errors && error.response.data.errors[0].msg) {
+      messageError = error.response.data.errors[0].msg
+    } else {
+      messageError = 'No se encontraron aprendices'
+    }
+      notifyErrorRequest(messageError);
+  }finally{
     loading.value = false
   }
 }
@@ -292,10 +307,22 @@ function openButtonCreate() {
   modalTitle.value = ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz';
   resetForm();
 }
+// se agregan variables para guardar los valores originales
+const originalValues = ref({
+  firstName: '',
+  lastName: '',
+  personalEmail: '',
+  institutionalEmail: '',
+  phone: '',
+  tpDocument: '',
+  numDocument: '',
+  fiche: ''
+});
 
 function openDialogEdit(row) {
   isDialogVisibleModal.value = true;
   ismodalType.value = false;
+  modality.value = false
   inputIdmodality.value = false;
   modalTitle.value = ismodalType.value ? 'Crear Aprendiz' : 'Editar Aprendiz';
   firstName.value = row.firstName;
@@ -307,6 +334,18 @@ function openDialogEdit(row) {
   numDocument.value = row.numDocument;
   fiche.value = row.fiche.idFiche;
   row_id.value = row._id;
+
+  // guarda valores originales
+  originalValues.value = {
+    firstName: row.firstName,
+    lastName: row.lastName,
+    personalEmail: row.personalEmail,
+    institutionalEmail: row.institutionalEmail,
+    phone: row.phone,
+    tpDocument: row.tpDocument,
+    numDocument: row.numDocument,
+    fiche: row.fiche.idFiche
+  };
 }
 
 function handleClose() {
@@ -327,59 +366,81 @@ function validateAndTrim() {
   fiche.value = fiche.value.trim()
 }
 
-const handleSend = async () => {
+const handleSend = async (row) => {
   validateAndTrim()
   if (!firstName.value || !lastName.value || !emailPersonal.value || !emailIntitutional.value
     || !phone.value || !tpDocument.value || !numDocument.value || !fiche.value) {
     notifyWarningRequest('Todos los campos son obligatorios');
     return;
-    }
+  }
   const selectedFiche = filterOptions.value.find((opt) => opt._id === fiche.value);
-  const apprendiceData = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    personalEmail: emailPersonal.value,
-    institutionalEmail: emailIntitutional.value,
-    phone: phone.value,
-    tpDocument: tpDocument.value,
-    numDocument: numDocument.value,
-    fiche: {
-      idFiche: fiche.value,
-      name: selectedFiche.name,
-      number: selectedFiche.number,
-    },
-    idModality: idmodality.value
-  };
-
-  const apprendiceDataUpdate = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    personalEmail: emailPersonal.value,
-    institutionalEmail: emailIntitutional.value,
-    phone: phone.value,
-    tpDocument: tpDocument.value,
-    numDocument: numDocument.value,
-    fiche: {
-      name: selectedFiche.name,
-      number: selectedFiche.number,
-    },
-  };
 
   try {
-    let result;
+    let response;
     if (ismodalType.value) {
-      result = await postData('/apprendice/addapprentice', apprendiceData);
+      response = await postData('/apprendice/addapprentice', {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        personalEmail: emailPersonal.value,
+        institutionalEmail: emailIntitutional.value,
+        phone: phone.value,
+        tpDocument: tpDocument.value,
+        numDocument: numDocument.value,
+        fiche: {
+          idFiche: fiche.value,
+          name: selectedFiche.name,
+          number: selectedFiche.number,
+        },
+        idModality: idmodality.value
+      });
     } else {
-      result = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, apprendiceDataUpdate);
-    }
+      const hasChanges = 
+        firstName.value !== originalValues.value.firstName ||
+        lastName.value !== originalValues.value.lastName ||
+        emailPersonal.value !== originalValues.value.personalEmail ||
+        emailIntitutional.value !== originalValues.value.institutionalEmail ||
+        phone.value !== originalValues.value.phone ||
+        tpDocument.value !== originalValues.value.tpDocument ||
+        numDocument.value !== originalValues.value.numDocument ||
+        fiche.value !== originalValues.value.fiche;
 
+      if (!hasChanges) {
+        notifyWarningRequest('No se realizaron cambios en los datos del Aprendiz');
+        isDialogVisibleModal.value = false;
+        return;
+      }
+      response = await putData(`/apprendice/updateapprenticebyid/${row_id.value}`, {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        personalEmail: emailPersonal.value,
+        institutionalEmail: emailIntitutional.value,
+        phone: phone.value,
+        tpDocument: tpDocument.value,
+        numDocument: numDocument.value,
+        fiche: {
+          name: selectedFiche.name,
+          number: selectedFiche.number,
+        },
+      });
+    }
     notifySuccessRequest(ismodalType.value ? 'Aprendiz creado correctamente' : 'Aprendiz actualizado correctamente');
+
     isDialogVisibleModal.value = false;
     ismodalType.value = false;
     resetForm();
     await loadData();
   } catch (error) {
-    const messageError = error.response.data.errors[0].msg || error.response.data.message || 'Ocurrió un error inesperado';
+    console.log(error);
+
+    let messageError;
+    if (error.response && error.response.data && error.response.data.message) {
+      messageError = error.response.data.message
+    } else if (error.respo && error.response.data && error.response.data.errors && error.response.data.errors[0].msg) {
+      messageError = error.response.data.errors[0].msg
+    } else {
+      messageError = 'Ocurrió un error inesperado'
+    }
+    // // const messageError = error.response.data.errors[0].msg || error.response.data.message || 'Ocurrió un error inesperado';
     notifyErrorRequest(messageError);
     ismodalType.value = false;
   }
@@ -391,7 +452,7 @@ async function fetchDataFiche() {
   const uniqueFiches = new Set();
   options.value = response.map(option => {
     const ficheId = option._id
-    if(!uniqueFiches.has(ficheId)){
+    if (!uniqueFiches.has(ficheId)) {
       uniqueFiches.add(ficheId)
       return {
         _id: option._id,

@@ -28,7 +28,7 @@
 
   <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="Añadir Observación" labelClose="Cerrar"
     labelSend="Enviar" :onclickClose="closeDialog" :onclickSend="handleSend" v-model:textValue="newObservation"
-    :informationBinnacles="observationBinnacles">
+    :informationBinnacles="observationBinnacles" labelTextArea="Escriba una Observacón para esta bitacoras">
   </dialogCreateObservation>
 
 </template>
@@ -83,7 +83,8 @@ const columns = ref([
     name: "name",
     label: "ETAPA PRODUCTIVA ASIGNADA",
     align: "center",
-    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName,
+    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName ? 
+    row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName : 'No asignado',
     sortable: true,
   },
   {
@@ -97,7 +98,7 @@ const columns = ref([
     name: "user",
     label: "NOMBRE INSTRUCTOR",
     align: "center",
-    field: row => row.instructor.name,
+    field: row => row.instructor ? row.instructor.name : 'No asignado',
     sortable: true,
   },
   {
@@ -129,7 +130,17 @@ async function loadDataBinnacles() {
       rows.value = response
     }
   } catch (error) {
-    const messageError = error.response.data.message || error.response.data.errors[0].msg || 'Error al cargar las bitacoras'
+    let messageError;
+    if(error.response && error.response.data && error.response.data.message){
+      messageError = 'no hay bitacoras para mostrar'
+      const response = await getData('/binnacles/listallbinnacles');
+      rows.value = response
+    }else if(error.response && error.response.data && error.response.data.errors && error.response.data.errors[0].msg){
+      messageError = error.response.data.errors[0].msg || 'Error al cargar las bitacoras'
+    }else{
+      messageError = 'Error al cargar las bitacoras'
+    }
+    // const messageError = error.response.data.message || error.response.data.errors[0].msg || 'Error al cargar las bitacoras'
     notifyErrorRequest(messageError)
 
   } finally {
@@ -160,22 +171,31 @@ async function handleSend() {
     notifySuccessRequest('Observación añadida correctamente');
     isDialogVisibleCreateObservation.value = false;
     await loadDataBinnacles();
+    cleanObservaton()
   } catch (error) {
     if (newObservation.value === '') {
       validationHandleSend()
     } else {
       const messageError = error.response.data.errors[0].msg || error.response.data.message || 'Error al añadir la observación'
       notifyErrorRequest(messageError);
+      cleanObservaton()
     }
-
+    await loadDataBinnacles()
   }
 }
+
 
 function validationHandleSend() {
   if (newObservation.value === '') {
     notifyWarningRequest('El campo de observación no puede estar vacio')
     return;
   }
+}
+function cleanObservaton(){
+  newObservation.value = ''
+}
+function closeDialog() {
+  cleanObservaton()
 }
 
 const OptionsStatus = [
@@ -205,7 +225,7 @@ async function onclickSelectOptions(row, value) {
 async function searchInstructor() {
   try {
     const response = await getData(`/binnacles/listbinnaclesbyinstructor/${searchValue.value}`)
-    console.log(response);
+    console.log('Instlist',response);
     rows.value = response
   } catch (error) {
     if (searchValue.value === '') {
@@ -223,7 +243,7 @@ async function searchApprentice() {
   try {
     const response = await getData(`/binnacles/listBinnaclesByRegister/${searchValue.value}`)
     console.log(response);
-    rows.value = response
+    rows.value = response.binnacles
   } catch (error) {
     if (searchValue.value === '') {
       validationSearch()
@@ -294,6 +314,10 @@ async function filterFunctionSearch(val, update) {
 
 async function bucar() {
   validationSearch()
+  if(searchValue.value === ''){
+    loadDataBinnacles()
+    await loadDataBinnacles()
+  }
   if (radioButtonList.value === 'instructor') {
     await searchInstructor()
   } else if (radioButtonList.value === 'apprentice') {

@@ -61,6 +61,10 @@ const props = defineProps({
   onclickSend: {
     type: Function,
     required: true
+  },
+  onclickClose: {
+    type: Function,
+    required: true
   }
 
 });

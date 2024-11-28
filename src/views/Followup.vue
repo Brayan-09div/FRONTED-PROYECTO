@@ -19,7 +19,7 @@
 
   <dialogCreateObservation v-model="isDialogVisibleCreateObservation" title="AÑADIR ODSERVACIONES" labelClose="close"
     labelSend="guardar" :onclickClose="closeDialog" :onclickSend="handleSend"
-    labelTextArea="Escriba esta odservación para este Seguimiento" v-model:textValue="newObservation">
+    labelTextArea="Escriba esta observación para este Seguimiento" v-model:textValue="newObservation">
   </dialogCreateObservation>
 
 </template>
@@ -38,6 +38,7 @@ import buttonSearch from '../components/buttons/buttonSearch.vue';
 import { Loading } from 'quasar';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify';
 import { useRoute } from 'vue-router';
+import { router } from '../router/routers';
 
 let isDialogVisibleCreateObservation = ref(false)
 let isDialogVisibleObservation = ref(false)
@@ -60,6 +61,7 @@ onBeforeMount(() => {
   loadDataFollowup();
 });
 const rows = ref([])
+let id = ref('')
 
 const columns = ref([
   {
@@ -73,7 +75,8 @@ const columns = ref([
     name: "name",
     label: "ETAPA PRODUCTIVA SEGUIMIENTO",
     align: "center",
-    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName,
+    field: row => row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName ?
+      row.register.idApprentice[0].firstName + ' ' + row.register.idApprentice[0].lastName : 'No hay aprendiz',
     sortable: true,
   },
   {
@@ -111,17 +114,26 @@ async function loadDataFollowup() {
   console.log('idInstructor:', idInstructor);
   try {
     if (idInstructor) {
-      const response = await getData(`/followup/listfollowupbyinstructor/${idInstructor}`);
+      const response = await getData(`/followup/listBinnaclesByRegister/${idInstructor}`);
       console.log(response);
-      rows.value = response
+      rows.value = response.followup
     } else {
       const response = await getData('/followup/listallfollowup');
       console.log(response)
       rows.value = response
     }
   } catch (error) {
-    const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al cargar los seguimientos';
-    notifyErrorRequest(message)
+    let messageError;
+    if (error.response && error.response.data && error.response.data.message) {
+      messageError = error.response.data.message;
+    } else if(error.response && error.response.data && error.response.data.error){
+      messageError = 'No hay seguimientos para mostrar';
+    }else if (error.response && error.response.data && error.response.data.errors && error.response.data.errors[0].msg) {
+     messageError = error.response.data.errors[0].msg;
+    } else {
+      messageError = 'Error al cargar los seguimientos';
+    }
+    notifyErrorRequest(messageError);
   } finally {
     loading.value = false;
   }
@@ -131,26 +143,39 @@ async function loadDataFollowup() {
 
 async function openClickSeeObservation(row) {
   isDialogVisibleObservation.value = true;
-  if (!row.observation.observation) {
-    observationFollowup.value = 'No hay observaciones para esta bitacora';
+  if (!row.observation || row.observation.length === 0) {
+    observationFollowup.value = [' No hay observaciones para esta bitacora'];
   } else {
     observationFollowup.value = row.observation.map(obs => obs.observation);
   }
+
 }
-async function openClickCreateObservation() {
+async function openClickCreateObservation(row) {
   isDialogVisibleCreateObservation.value = true;
+  id.value = row._id;
 }
-async function handleSend() {
+async function handleSend(row) {
+  console.log('idod', id.value);
+
   try {
-    const response = await putData(`/followup/${id.value}`, { observation: newObservation.value });
+    const response = await putData(`/followup/addobservation/${id.value}`, { observation: newObservation.value });
     notifySuccessRequest('Observación guardada correctamente');
+    isDialogVisibleCreateObservation.value = false;
     await loadDataFollowup();
+    cleanObservaton();
   } catch (error) {
     if (newObservation.value === '') {
       validarHandleSend();
     } else {
-      const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al guardar La obsevación';
-      notifyErrorRequest(message);
+      let messageError;
+      if (error.response && error.response.data && error.response.data.message) {
+        messageError = error.response.data.message;
+      } else if (error.response && error.response.data && error.response.data.errors && error.response.data.errors[0].msg) {
+        messageError = error.response.data.errors[0].msg;
+      } else {
+        messageError = 'Error al guardar La obsevación';
+      }
+      notifyErrorRequest(messageError);
     }
 
   }
@@ -164,8 +189,21 @@ function validarHandleSend() {
 }
 
 
+function validationSearch(){
+    if (searchValue.value === '') {
+      notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    }
+  }
+function cleanObservaton() {
+  newObservation.value = '';
+}
+function closeDialog() {
+  cleanObservaton();
+}
+
+
 async function fetchDataApprentice() {
-  const response = await getData('/followup//listallfollowup');
+  const response = await getData('/followup/listallfollowup');
   optionsApprentice.value = response.map(option => ({
     _id: option._id,
     label: `${option.register.idApprentice[0].firstName} ${option.register.idApprentice[0].lastName} - ${option.register.idApprentice[0].numDocument}`,
@@ -200,10 +238,19 @@ async function searchApprentice() {
     rows.value = [response];
   } catch (error) {
     if (searchValue.value === '') {
-      validarHandleSend()
+      validationSearch()
+      await loadDataFollowup()
     } else {
-      const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al buscar aprendiz';
-      notifyErrorRequest(message);
+      let messageError;
+      if(error.response && error.response.data && error.response.data.message){
+        messageError = error.response.data.message;
+      }else if( error.response && error.response.data && error.response.data.errors && error.response.data.errors[0].msg){
+        messageError = error.response.data.errors[0].msg;
+      }else{
+        messageError = 'Error al buscar aprendiz';
+      }
+      // const message = error.response.data.errors[0].msg || error.response.data.message || 'Error al buscar aprendiz';
+      notifyErrorRequest(messageError);
     }
     await loadDataFollowup()
   }
