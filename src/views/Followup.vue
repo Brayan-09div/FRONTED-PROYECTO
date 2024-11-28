@@ -21,9 +21,7 @@
     labelSend="guardar" :onclickClose="closeDialog" :onclickSend="handleSend"
     labelTextArea="Escriba esta observación para este Seguimiento" v-model:textValue="newObservation">
   </dialogCreateObservation>
-
 </template>
-
 
 <script setup>
 import { ref, onBeforeMount } from 'vue';
