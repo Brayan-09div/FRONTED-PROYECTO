@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom">
+    <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom" :filter="filter" :loading="loading">
       <template v-slot:header="props">
         <q-tr :props="props" class="custom-header-row">
           <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -10,19 +10,19 @@
       </template>
 
       <template v-solt:body-cell-optionStatus="props">
-        <q-td :props="props"  class="q-pa-xs text-center" >
-          <q-select v-model="props.rows.status" options="optionStatus" class="" dense  emit-value map-options  >
+        <q-td :props="props" class="q-pa-xs text-center">
+          <q-select v-model="props.rows.status" options="optionStatus" class="" dense emit-value map-options>
           </q-select>
         </q-td>
       </template>
 
+
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="q-pa-xs text-center">
-          <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
-            :loading="loadingStates[props.row._id]">
-            <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
+          <span :style="{ color: props.row.status === 1 ? 'green' : 'red' }">
             {{ props.row.status === 1 ? 'Activo' : 'Inactivo' }}
-          </q-btn>
+          </span>
+
         </q-td>
       </template>
 
@@ -30,9 +30,12 @@
         <q-td :props="props" class="opcion-btn">
           <q-btn class="edit-btn" @click="onClickEdit(props.row)" color="primary" icon="edit_square" round size="md"
             aria-label="Edit Square" />
-          <q-btn class="estado-btn" @click="onclickStatus(props.row)"
+          <q-btn class="estado-btn btn-same-size" @click="onclickStatus(props.row)"
             :icon="props.row.status === 1 ? 'cancel' : 'check_circle'" :color="props.row.status === 1 ? 'red' : 'green'"
-            round size="md" :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'" />
+            round size="md" :aria-label="props.row.status === 1 ? 'Cancel' : 'Check Circle'"
+            :loading="loadingStates[props.row._id]">
+          </q-btn>
+
         </q-td>
       </template>
 
@@ -41,6 +44,11 @@
           {{ props.pageIndex + 1 }}
         </q-td>
       </template>
+      
+      <template v-slot:loading>
+        <q-inner-loading :showing="loading" color="primary" />
+      </template>
+
 
     </q-table>
   </div>
@@ -75,6 +83,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  loading: {
+    type: Boolean,
+    required: true,
+  }
 });
 
 const toggleActivate = async (row) => {
@@ -87,14 +99,14 @@ const toggleActivate = async (row) => {
 };
 
 const onclickStatus = async (row) => {
-  loadingStates.value[row._id]= true;
+  loadingStates.value[row._id] = true;
   try {
     await props.onclickStatus(row)
   } catch (error) {
     console.log(error)
   } finally {
     loadingStates.value[row._id] = false;
-  
+
   }
 };
 </script>
@@ -103,12 +115,20 @@ const onclickStatus = async (row) => {
 .q-table-custom {
   border: 1px solid #000000;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto; /* Asegura que haya scroll si es necesario */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 96.8%;
+  margin-left: 1.8%;
+  max-height: 400px; 
+}
+
+.q-table-custom {
+  scrollbar-width: thin; 
+  scrollbar-color: #2F7D32 #f1f1f1;
 }
 
 .custom-header-row {
-  background-color: #4caf50;
+  background-color: #449247;
 }
 
 .custom-header-cell {

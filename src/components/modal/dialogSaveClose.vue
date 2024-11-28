@@ -8,14 +8,20 @@
       <q-separator />
 
       <q-card-section>
-        <slot></slot>
+        <slot>
+          <div class="q-pa-md" style="max-width: 500px">
+            <q-input v-model="computedTextValue" filled type="textarea" :label="labelTextArea" />
+          </div>
+        </slot>
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn flat icon="save_as" :label="labelSend"  @clicK="onclickSend" color="white" style="background-color: #2f7d32;" />
-        <q-btn flat icon="cancel" :label="labelClose" @clicK="onclicClose" color="red-8" v-close-popup />
+        <q-btn flat :label="labelSend" icon="save_as" @click="onclickSend" color="white"
+          style="background-color: #2F7D32; font-weight: bold;" />
+        <q-btn flat :label="labelClose" icon="cancel" @click="onclickClose" color="red-8" v-close-popup style="font-weight: bold;" />
+        
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -38,18 +44,33 @@ const props = defineProps({
     required: true,
     default: 'Cerrar'
   },
+  labelTextArea:{
+    type: String,
+    required: true,
+    default: 'Escriba..........'
+  },
   labelSend: {
     type: String,
     required: true,
     default: 'Enviar'
   },
+  textValue: {
+    type: String,
+    required: true
+  },
   onclickSend: {
     type: Function,
     required: true
+  },
+  onclickClose: {
+    type: Function,
+    required: true
   }
+
 });
 
-const emit = defineEmits(['update:modelValue']);
+
+const emit = defineEmits(['update:modelValue', 'update:textValue']);
 
 const computedModelValue = computed({
   get() {
@@ -60,6 +81,14 @@ const computedModelValue = computed({
   }
 });
 
+const computedTextValue = computed({
+  get() {
+    return props.textValue;
+  },
+  set(value) {
+    emit('update:textValue', value);
+  }
+});
 </script>
 
 <style>
@@ -67,7 +96,14 @@ const computedModelValue = computed({
   background-color: #2f7d32;
   color: white;
 }
+
 .q-card {
   width: 400px;
+}
+
+.custom-btn {
+  background-color: #2f7d32;
+  font-weight: bold;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>

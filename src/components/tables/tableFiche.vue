@@ -1,6 +1,7 @@
 <template>
     <div class="q-pa-md">
-        <q-table :rows="rows" :columns="columns" flat bordered class="q-table-custom">
+        <q-table :rows="rows" :columns="columns" row-key="name" :filter="filter" flat bordered class="q-table-custom"
+            :loading="loading">
             <template v-slot:header="props">
                 <q-tr :props="props" class="custom-header-row">
                     <q-th v-for="col in props.cols" :key="col.name" :props="props" class="custom-header-cell">
@@ -11,11 +12,9 @@
 
             <template v-slot:body-cell-status="props">
                 <q-td :props="props" class="q-pa-xs text-center">
-                    <q-btn @click="toggleActivate(props.row)" :color="props.row.status === 1 ? 'green' : 'red'"
-                        :loading="loadingStates[props.row._id]">
-                        <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
+                    <span :style="{ color: props.row.status === 1 ? 'green' : 'red' }">
                         {{ props.row.status === 1 ? 'Activo' : 'Inactivo' }}
-                    </q-btn>
+                    </span>
                 </q-td>
             </template>
 
@@ -27,19 +26,22 @@
                 </q-td>
             </template>
 
-             <template v-slot:body-cell-Num="props">
+            <template v-slot:body-cell-Num="props">
                 <q-td :props="props" class="q-pa-xs text-center">
                     {{ props.pageIndex + 1 }}
                 </q-td>
+            </template>
 
-             </template>
+            <template v-slot:loading>
+                <q-inner-loading :showing="loading" color="primary" />
+            </template>
+            
         </q-table>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-let loadingStates = ref({});
+import { ref, watch } from "vue";
 
 const props = defineProps({
     rows: {
@@ -50,28 +52,31 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
-    toggleActivate: {
-        type: Function,
-        required: true,
-    },
     toggleSeeApprentice: {
         type: Function,
+        required: true,
+    },
+    filter: {
+        type: String,
+        default: '',
+    },
+    loading: {
+        type: Boolean,
         required: true,
     }
 });
 
-const toggleActivate = async (row) => {
-    loadingStates.value[row._id] = true;
-    try {
-        await props.toggleActivate(row);
-    } finally {
-        loadingStates.value[row._id] = false;
-    }
-};
+const emit = defineEmits(['update:filter']);
+
+const localFilter = ref(props.filter);
+
+watch(() => props.filter, (newValue) => {
+    localFilter.value = newValue;
+});
+
+function updateFilter(value) {
+    emit('update:filter', value);
+}
 </script>
 
 <style scoped>
@@ -83,7 +88,7 @@ const toggleActivate = async (row) => {
 }
 
 .custom-header-row {
-    background-color: #4caf50;
+    background-color: #449247;
 }
 
 .custom-header-cell {
@@ -102,5 +107,10 @@ const toggleActivate = async (row) => {
 .opcion-btn {
     display: flex;
     gap: 10px;
+}
+
+.q-pa-md{
+    width: 96%;
+    margin-left: 2%;
 }
 </style>

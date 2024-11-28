@@ -1,35 +1,60 @@
 <template>
   <Header title="Registro"></Header>
-  <createRegister nameButton="Agregar" title="Agregar Registro"  labelClose="Cerrar" labelSend="Enviar"
-  :onclickClose="handleClose"  :onclickSend="handleSend">
-    <q-input v-model="idApprentice" label="Aprendiz" filled /> <br>
-    <q-input v-model="idModality" label="Modalidad" filled /> <br>
-    <q-input v-model="startDate" label="Fecha Inicial" filled /> <br>
-    <q-input v-model="endDate" label="Fecha Final" filled /> <br>
-    <q-input v-model="company" label="Compañia" filled /> <br>
-    <q-input v-model="phoneCompany" label="N° Telefono" filled /> <br>
-    <q-input v-model="mailCompany" label="Email" filled /> <br>
-    <q-input v-model="addressCompany" label="Direccióm" filled /> <br>
-    <q-input v-model="owner" label="Dueño" filled /> <br>
-    <q-input v-model="docAlternative" label="Documento Alternativo" filled /> <br>
-    <q-input v-model="hour" label="Horas" filled /> <br>
-    <q-input v-model="businessProyectHour" label="Horas de Proyecto Empresarial" filled /> <br>
-    <q-input v-model="productiveProjectHour" label="Horas de Proyecto Productivo" filled /> <br>
-  </createRegister>
-  <CustomTable :rows="rows" :columns="columns" :title="title" :onClickEdit="openDialog" :toggleActivate="changestatus">
-  </CustomTable>
+
+  <div id="buttons-container">
+    <createRegister class="formRegister" nameButton="Agregar" title="Agregar Registro" labelClose="Cerrar"
+      labelSend="Enviar" :onclickClose="handleClose" :onclickSend="handleSend" v-model:options="optionsSeeSearch">
+      <q-input v-model="idApprentice" label="Aprendiz" filled /> <br>
+      <q-input v-model="idModality" label="Modalidad" filled /> <br>
+      <q-input v-model="startDate" label="Fecha Inicial" filled /> <br>
+      <q-input v-model="endDate" label="Fecha Final" filled /> <br>
+      <q-input v-model="company" label="Compañia" filled /> <br>
+      <q-input v-model="phoneCompany" label="N° Telefono" filled /> <br>
+      <q-input v-model="mailCompany" label="Email" filled /> <br>
+      <q-input v-model="addressCompany" label="Direccióm" filled /> <br>
+      <q-input v-model="owner" label="Dueño" filled /> <br>
+      <q-input v-model="docAlternative" label="Documento Alternativo" filled /> <br>
+      <q-input v-model="hour" label="Horas" filled /> <br>
+      <q-input v-model="businessProyectHour" label="Horas de Proyecto Empresarial" filled /> <br>
+      <q-input v-model="productiveProjectHour" label="Horas de Proyecto Productivo" filled /> <br>
+    </createRegister>
+
+    <div class="AllButtonsSearch">
+      <div class="filterRadioButtons">
+        <p>Realizar filtro por:</p>
+        <radioButtonFiche v-model="radioButtonList" label="Ficha" val="fiche" @update:model-value="handleRadioChange">
+        </radioButtonFiche>
+        <radioButtonAppretice v-model="radioButtonList" label="Aprendiz" val="apprentice"
+          @update:model-value="handleRadioChange"></radioButtonAppretice>
+      </div>
+      <div class="inputButtonSearch">
+        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+        <buttonSelect :onclickButton="searchDateRegister" />
+      </div>
+    </div>
+  </div>
+
+  <tableRegister  :rows="rows" :columns="columns" :onClickEdit="openDialogEdit"
+    :onclickStatus="changeStatus" :loading="loading" />
 </template>
 
 
 <script setup>
 import { ref, onBeforeMount } from 'vue';
-import CustomTable from '../components/tables/tableEditStatusOptions.vue'
 import Header from '../components/header/header.vue';
 import createRegister from '../components/modal/modal.vue';
-import { notifyErrorRequest, notifySuccessRequest } from '../composables/useNotify'
 import { getData, postData, putData } from '../services/ApiClient';
+import tableRegister from '../components/tables/tableEditStatusOptions3Buttons.vue'
+import radioButtonAppretice from '../components/radioButtons/radioButton.vue';
+import radioButtonFiche from '../components/radioButtons/radioButton.vue';
+import { formatDate } from '../utils/changeDateFormat';
+import buttonSelect from '../components/buttons/buttonSearch.vue';
+import inputSelect from '../components/input/inputSelect.vue';
 
+import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify.js';
 
+// formulario de registro
 let idApprentice = ref('')
 let idModality = ref('')
 let startDate = ref('')
@@ -44,106 +69,96 @@ let hour = ref('')
 let businessProyectHour = ref('')
 let productiveProjectHour = ref('')
 
+// radio buttons
+let searchValue = ref('')
+let radioButtonList = ref('')
+let filterOptionsSearch = ref([])
+let optionSearch = ref([])
+
+// spiner
+let loading = ref(false)
 
 
-const rows = ref([])
-
+const optionsSeeSearch = ref(false)
 onBeforeMount(() => {
   loadData();
 });
 
-async function loadData() {
-  const response = await getData('/register/listallregister')
-  console.log(response.data);
-  rows.value = response.data
-}
 
+const rows = ref([])
 const columns = ref([
-{
+  {
     name: "Num",
     label: "N°",
-    field: "startDate",
     align: "center",
+    sortable: true,
+  },
+  {
+    name: "name",
+    label: "NOMBRE APRENDIZ",
+    field: row => row.idApprentice[0] && row.idApprentice.length > 0 ? row.idApprentice[0].firstName + " " +
+      row.idApprentice[0].lastName : 'No asignado',
+    align: "name",
+    sortable: true,
+  }, {
+    name: "numApprentice",
+    label: "N° APRENDIZ",
+    field: row => row.idApprentice ? row.idApprentice.length : 0,
+    align: "center",
+    sortable: true,
+  }, {
+    name: "program",
+    label: "PROGRAMA",
+    field: row => row.idApprentice[0].fiche ? row.idApprentice[0].fiche.name : 'No asignado',
+    align: "center",
+    sortable: true,
+  },
+  {
+    name: "modality",
+    label: "MODALIDAD",
+    align: "center",
+    field: row => row.idModality ? row.idModality.name : 'No asignado',
     sortable: true,
   },
   {
     name: "startDate",
-    label: "FECHA INICIAL",
-    field: "startDate",
     align: "center",
+    label: "FECHA INICIO",
+    field: row => formatDate(row.startDate),
     sortable: true,
   }, {
     name: "endDate",
-    label: "FECHA FINAL",
-    field: "endDate",
     align: "center",
+    label: "FECHA FIN",
+    field: row => formatDate(row.endDate),
     sortable: true,
   }, {
-    name: "company",
-    label: "COMPAÑIA",
-    field: "company",
-    align: "center",
-    sortable: true,
-  },
-  {
-    name: "phoneCompany",
-    label: "TEL",
-    align: "center",
-    field: "phoneCompany",
-    sortable: true,
-  },
-  {
-    name: "addressCompany",
-    align: "center",
-    label: "DIRECCION",
-    field: "addressCompany",
-    sortable: true,
-  }, {
-    name: "mailCompany",
-    align: "center",
-    label: "EMAIL COMPAÑIA",
-    field: "mailCompany",
-    sortable: true,
-  },
-  {
-    name: "owner",
-    align: "center",
-    label: "DUEÑO",
-    field: "owner",
-    sortable: true,
-  },
-  {
-    name: "hour",
-    align: "center",
-    label: "HORAS",
-    field: "hour",
-    sortable: true,
-  }, {
-    name: "businessProyectHour",
-    align: "center",
-    label: "HORAS PROYECTO EMPRESARIAL",
-    field: "businessProyectHour",
-    sortable: true,
-  }, {
-    name: "productiveProjectHour",
-    align: "center",
-    label: "HORAS PROYECTO PRODUCTIVO",
-    field: "productiveProjectHour",
-    sortable: true,
-  },
-  {
     name: "status",
     label: "ESTADO",
     align: "center",
     field: "status"
-  }, {
-    name: "editar",
-    label: "EDITAR",
+  },
+  {
+    name: "options",
+    label: "OPCIONES",
     align: "center",
-    field: "editar"
+    field: "buttons"
   },
 ]);
 
+async function loadData() {
+  loading.value = true
+  try {
+    const response = await getData('/register/listallregister')
+    console.log(response);
+    rows.value = response.data
+  } catch (error) {
+    notifyErrorRequest('Error al cargar los registros')
+  } finally {
+    loading.value = false
+  }
+
+}
 async function changestatus(row) {
   if (rows.status === 200) {
     await putData(`/register/enableregister/${row._id}`)
@@ -178,7 +193,164 @@ async function handleSend() {
 
 }
 
+async function searchFiche() {
+  try {
+    const response = await getData(`/register/listregisterbyfiche/${searchValue.value}`)
+    rows.value = response.data
+  } catch (error) {
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      const messageError = error.response.data.error || 'Error al buscar ficha'
+      notifyErrorRequest(messageError)
+    }
+    loadData()
+
+  }
+}
+
+async function searchApprentice() {
+  try {
+    const response = await getData(`/register/listregisterbyapprentice/${searchValue.value}`)
+    console.log(response);
+    rows.value = response.data
+
+    if (response.data.length === 0) {
+      notifyErrorRequest('No se encontraron registros')
+      loadData()
+    }
+
+  } catch (error) {
+    if (searchValue.value === '') {
+      validationSearch()
+    } else {
+      notifyErrorRequest('Error al buscar aprendiz')
+    }
+    loadData()
+  }
+}
+
+const handleRadioChange = async () => {
+
+  if (radioButtonList.value === 'fiche') {
+    const response = await getData('/repfora/fiches');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.program.name} - ${option.program.code}`,
+    }));
+    filterOptionsSearch.value = optionSearch.value;
+  } else if (radioButtonList.value === 'apprentice') {
+    const response = await getData('/apprendice/listallapprentice');
+    optionSearch.value = response.map(option => ({
+      _id: option._id,
+      label: `${option.firstName} ${option.lastName} - ${option.numDocument}`,
+      numDocument: option.numDocument
+    }));
+    filterOptionsSearch.value = optionSearch.value;
+  }
+  clearSearch();
+}
+
+// limpiar campos de busqueda
+function clearSearch() {
+  searchValue.value = '';
+}
+
+function validationSearch() {
+  if (searchValue.value === '') {
+    notifyWarningRequest('El campo de busqueda no puede estar vacio');
+    return;
+  }
+}
+
+async function fetchDataSearch() {
+  handleRadioChange()
+}
+
+fetchDataSearch()
+async function filterFunctionSearch(val, update) {
+  update(() => {
+    const needle = val.toLowerCase();
+    filterOptionsSearch.value = optionSearch.value.filter((option) =>
+      option.label.toLowerCase().includes(needle)
+    );
+  });
+}
+
+async function searchDateRegister() {
+
+  if (radioButtonList.value === 'fiche') {
+    await searchFiche();
+  } else if (radioButtonList.value === 'apprentice') {
+    await searchApprentice();
+  }
+  clearSearch();
+}
+
+
+
+// // limpiar campos de busqueda
+// function clearSearch() {
+//   searchValue.value = '';
+// }
+
+// // limpiar radio buttons
+// function clearRadioButtons() {
+//   radioButtonList.value = '';
+// }
+
+async function changeStatus(row) {
+  if (row.status === 1) {
+    await putData(`/register/disableregister/${row._id}`)
+  } else {
+    await putData(`/register/enableregister/${row._id}`)
+  }
+
+  row.status = row.status === 1 ? 0 : 1;
+}
+
+
+
 </script>
 
 
-<style></style>
+<style scoped>
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+#buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+
+}
+
+.filterRadioButtonsp {
+  font-weight: bold;
+  font-size: 11px;
+  margin: 0px;
+}
+
+
+.formregister {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.AllButtonsSearch {
+  display: flex;
+  gap: 20px;
+}
+
+.inputButtonSearch {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
