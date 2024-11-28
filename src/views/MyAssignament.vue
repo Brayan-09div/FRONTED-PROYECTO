@@ -5,7 +5,7 @@
   
   <script setup>
   import { ref } from "vue"
-  import Header from '../components/header/Header.vue';
+  import Header from '../components/header/header.vue';
   import ButtonAgregate from '../components/modal/modal.vue';
   import tableAssignament from "../components/tables/tableAssignament.vue";
   
