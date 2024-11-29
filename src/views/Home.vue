@@ -90,20 +90,6 @@ const cards = [
     roles: 'INSTRUCTOR'
   },
   {
-    imageSrc: 'https://img.freepik.com/vector-gratis/especialistas-trabajan-datos-digitales-portatiles-gente-pequena-transformacion-digital-desarrollo-soluciones-digitales-concepto-soluciones-flujo-trabajo-papel_335657-2411.jpg?t=st=1731032981~exp=1731036581~hmac=9496b80a118994aa0be17701f7abb076d1574f42b45bf998f11b8ab752801011&w=1380',
-    title: 'Bitácoras',
-    buttonLink: '/layouts/binnaclesAdmin',
-    buttonText: 'Ver',
-    roles: 'ADMIN'
-  },
-  {
-    imageSrc: 'https://img.freepik.com/vector-gratis/marca-aprobacion-ventaja-producto-calificacion-resenas-requisitos-cumplimiento_335657-3106.jpg?t=st=1731033022~exp=1731036622~hmac=eab2ece2e35135bec4fa24b19bc45eb89b3915ecd571c5d293c1c809dbb39ad8&w=1380',
-    title: 'Seguimiento',
-    buttonLink: '/layouts/followupAdmin',
-    buttonText: 'Ver',
-    roles: 'ADMIN'
-  },
-  {
     imageSrc: 'https://img.freepik.com/vector-gratis/concepto-abstracto-toma-decisiones_335657-3039.jpg?t=st=1731033739~exp=1731037339~hmac=63230feb1f7f047fb1a4c7b66e0acff9bf3f57a4615aaf3d62c37d26143d5a55&w=826',
     title: 'Modalidad EP',
     buttonLink: '/layouts/modality',
@@ -135,7 +121,7 @@ const cards = [
 //   }
 // }
 function filters() {
-  const sharedCards = ["Modalidad EP", "Certificaciones", "Informe Horas"];
+  const sharedCards = ["Modalidad EP", "Certificaciones", "Informe Horas", "Bitácoras", "Seguimiento"];
   
   if (rol === 'INSTRUCTOR') {
     return cards.filter(card => card.roles === 'INSTRUCTOR' || sharedCards.includes(card.title));
@@ -143,6 +129,7 @@ function filters() {
     return cards.filter(card => card.roles === 'ADMIN' || sharedCards.includes(card.title));
   }
 }
+
 
 
 </script>

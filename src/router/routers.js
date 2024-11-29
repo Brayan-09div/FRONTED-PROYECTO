@@ -3,8 +3,6 @@ import assignament from '../views/Assignament.vue'
 import myAssignament from '../views/MyAssignament.vue'
 import binnacles from '../views/Binnacles.vue'
 import followup from '../views/Followup.vue'
-import binnaclesAdmin from '../views/BinnaclesAdmin.vue'
-import followupAdmin from '../views/FollowupAdmin.vue'
 import loguin from '../views/Loguin.vue'
 import modality from '../views/Modality.vue'
 import register from '../views/Register.vue'
@@ -18,7 +16,6 @@ import certificaciones from '../views/Certificaciones.vue'
 import consultant from '../views/Consultant.vue'
 import informationFicheApprentice from '../views/InformationFicheApprentice.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
-import information from '../views/Information.vue'
 
 const routes = [
     {
@@ -35,14 +32,11 @@ const routes = [
         { path: 'certificaciones', component: certificaciones },
         { path: 'binnacles', component: binnacles },
         { path: 'followup', component: followup },
-        { path: 'binnaclesAdmin', component: binnaclesAdmin },
-        { path: 'followupAdmin', component: followupAdmin },
         { path: 'instructor', component: instructor },
         { path: 'modality', component: modality },
         { path: 'register', component: register },
         { path: 'userEP', component: userEP },
         { path: 'informationFicheApprentice', component: informationFicheApprentice },
-        { path: 'information', component: information }
       ]
     },
     { path: '/', component: loguin },
