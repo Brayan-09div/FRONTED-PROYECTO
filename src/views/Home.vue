@@ -96,7 +96,7 @@ const cards = [
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/hombre-que-sostiene-concepto-gestion-tiempo-reloj_23-2148823171.jpg?t=st=1731034266~exp=1731037866~hmac=affa79d2e7bbd24405045301eea838591c7d0569918c69c8abf7498b99a57820&w=826',
-    title: 'Informe Horas Instructores EP',
+    title: 'Informe Horas',
     buttonLink: '/layouts/horas',
     buttonText: 'Ver',
   }
