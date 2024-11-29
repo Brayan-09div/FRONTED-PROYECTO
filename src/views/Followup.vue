@@ -1,10 +1,25 @@
 <template>
   <Header title="Seguimiento"></Header>
-  <div id="container-search">
+  <!-- <div id="container-search">
     <div class="InputButtonsSearch">
       <inputSelect v-model="searchValue" :options="filterOptionsApprentice" label="Buscar Aprendiz" optionLabel="label"
         optionValue="_id" :useInput="!followup" :filter="filterFunctionsApprentice" class="custom-select" />
       <buttonSearch :onclickButton="searchApprentice" />
+    </div>
+  </div> -->
+  <div id="container-buttons">
+    <div class="searchButtons">
+      <div class="allInputButtonsSearch">
+        <radioButtonInstructor v-model="radioButtonList" label="Instructor" val="instructor"
+          @update:model-value="handleRadioChange" />
+        <radioButtonApprentice v-model="radioButtonList" label="Aprendiz" val="apprentice"
+          @update:model-value="handleRadioChange" />
+      </div>
+      <div class="InputButtonsSearch">
+        <inputSelect v-model="searchValue" label="Buscar" :options="filterOptionsSearch" optionLabel="label"
+          optionValue="_id" :useInput="!Search" :filter="filterFunctionSearch" class="custom-select" />
+        <buttonSearch :onclickButton="bucar" />
+      </div>
     </div>
   </div>
 
@@ -33,10 +48,9 @@ import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
 import { formatDate } from '../utils/changeDateFormat';
 import inputSelect from '../components/input/inputSelect.vue';
 import buttonSearch from '../components/buttons/buttonSearch.vue';
-import { Loading } from 'quasar';
 import { notifyErrorRequest, notifySuccessRequest, notifyWarningRequest } from '../composables/useNotify';
 import { useRoute } from 'vue-router';
-import { router } from '../router/routers';
+
 
 let isDialogVisibleCreateObservation = ref(false)
 let isDialogVisibleObservation = ref(false)

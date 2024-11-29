@@ -1,37 +1,38 @@
-import axios from 'axios';
-
-
-const token = JSON.parse(localStorage.getItem('auth')); 
- 
-const apiClient = axios.create({
-  baseURL: 'http://localhost:4500/api',
-  // baseURL: 'https://etapas-practicas-ep.onrender.com',
-  headers: {
-    "token": token.token
-  }
-});
-export default apiClient;
-
 // import axios from 'axios';
 
-// const token = localStorage.getItem('token') || '';
 
+// const token = JSON.parse(localStorage.getItem('auth')); 
+ 
 // const apiClient = axios.create({
 //   // baseURL: 'http://localhost:4500/api',
 //   baseURL: 'https://etapas-practicas-ep.onrender.com/api',
-//     headers: {
-//         "token": token.token
-//     }
+//   headers: {
+//     "token": token.token
+//   }
 // });
+// export default apiClient;
+import axios from 'axios';
 
-// apiClient.interceptors.request.use((config) => {
-//     const token = localStorage.getItem('token'); 
-//     if (token) {
-//         config.headers['token'] = token; 
-//     }
-//     return config;
-// }, (error) => {
-//     return Promise.reject(error);
-// });
+// Recuperar el token de localStorage
+const token = JSON.parse(localStorage.getItem('auth')) || {};
 
-// export default apiClient;
+// Crear una instancia de axios
+const apiClient = axios.create({
+  baseURL: 'https://etapas-practicas-ep.onrender.com/api',
+  headers: {
+    "token": token.token || ''
+  }
+});
+
+// Interceptor para agregar el token a cada solicitud
+apiClient.interceptors.request.use((config) => {
+  const token = JSON.parse(localStorage.getItem('auth')) || {};
+  if (token.token) {
+    config.headers['token'] = token.token;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+export default apiClient;
