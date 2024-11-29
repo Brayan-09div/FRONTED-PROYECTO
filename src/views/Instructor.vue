@@ -6,7 +6,7 @@
     
 <script setup>
     
-    import Header from '../components/header/Header.vue';
+    import Header from '../components/header/header.vue';
     
 </script>
     

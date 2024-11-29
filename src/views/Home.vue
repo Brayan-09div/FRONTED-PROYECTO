@@ -7,7 +7,7 @@
         <h1 class="titleHome">SEGUIMIENTO ETAPAS PRODUCTIVAS ASIGNADAS Y REGISTRO DE HORAS LABORADAS</h1>
         <div class="cards">
           <UserCard
-          v-for="(Card, index) in cards"
+          v-for="(Card, index) in filters()"
             :key="index"
             :imageSrc="Card.imageSrc"
             :title="Card.title"
@@ -43,18 +43,21 @@ const cards = [
     title: 'Aprendices',
     buttonLink: '/layouts/apprentices',
     buttonText: 'Ver',
+    rolee: 'ADMIN'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/fondo-plano-concepto-universidad_23-2148189158.jpg?t=st=1731032827~exp=1731036427~hmac=df0cb7782798ae376e3cf4291dbf95e2bf9b23dd0b6853419fc51f7a27ec7a43&w=826',
     title: 'Fichas',
     buttonLink: '/layouts/fiche',
     buttonText: 'Ver',
+    rolee: 'ADMIN'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/icono-colorido-gestion-documentacion-personaje-dibujos-animados-femenino-poniendo-documento-carpeta-amarilla-grande-almacenamiento-clasificacion-organizacion-archivos_335657-846.jpg?t=st=1731032677~exp=1731036277~hmac=f63be9339d47863234f36d3ee80ffa554b9dc73b01aea47ba54cfa5ae3cd2986&w=826',
     title: 'Registros',
     buttonLink: '/layouts/register',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
 
   },
   {
@@ -62,6 +65,7 @@ const cards = [
     title: 'Asignaciones',
     buttonLink: '/layouts/assignament',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
 
   },
   {
@@ -69,36 +73,43 @@ const cards = [
     title: 'Mis Asignaciones',
     buttonLink: '/layouts/myassignament',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/especialistas-trabajan-datos-digitales-portatiles-gente-pequena-transformacion-digital-desarrollo-soluciones-digitales-concepto-soluciones-flujo-trabajo-papel_335657-2411.jpg?t=st=1731032981~exp=1731036581~hmac=9496b80a118994aa0be17701f7abb076d1574f42b45bf998f11b8ab752801011&w=1380',
     title: 'Bitácoras',
     buttonLink: '/layouts/binnacles',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/marca-aprobacion-ventaja-producto-calificacion-resenas-requisitos-cumplimiento_335657-3106.jpg?t=st=1731033022~exp=1731036622~hmac=eab2ece2e35135bec4fa24b19bc45eb89b3915ecd571c5d293c1c809dbb39ad8&w=1380',
     title: 'Seguimiento',
     buttonLink: '/layouts/followup',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/concepto-abstracto-toma-decisiones_335657-3039.jpg?t=st=1731033739~exp=1731037339~hmac=63230feb1f7f047fb1a4c7b66e0acff9bf3f57a4615aaf3d62c37d26143d5a55&w=826',
     title: 'Modalidad EP',
     buttonLink: '/layouts/modality',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   },
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/concepto-certificacion-linea_23-2148570057.jpg?t=st=1731034091~exp=1731037691~hmac=226d95dd288d6cd0f04708d37f40206e73a630eb4bc045a0de79f457c617ab29&w=826',
     title: 'Certificaciones',
     buttonLink: '/layouts/certificaciones',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   },
+  
   {
     imageSrc: 'https://img.freepik.com/vector-gratis/hombre-que-sostiene-concepto-gestion-tiempo-reloj_23-2148823171.jpg?t=st=1731034266~exp=1731037866~hmac=affa79d2e7bbd24405045301eea838591c7d0569918c69c8abf7498b99a57820&w=826',
     title: 'Informe Horas',
     buttonLink: '/layouts/horas',
     buttonText: 'Ver',
+    rolee: 'INSTRUCTOR'
   }
 ];
 
@@ -109,6 +120,13 @@ const cards = [
 //     return cards
 //   }
 // }
+function filters(){
+  if(rol === 'INSTRUCTOR'){
+    return cards.filter(card => card.rolee === 'INSTRUCTOR');
+  }else{
+    return cards.filter(card => card.rolee === 'ADMIN');
+  }
+}
 
 </script>
 

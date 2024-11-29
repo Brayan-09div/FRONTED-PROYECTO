@@ -35,7 +35,7 @@
 
 <script setup>
 import { ref, onBeforeMount, handleError } from 'vue';
-import Header from '../components/header/Header.vue';
+import Header from '../components/header/header.vue';
 import tableSelect from '../components/tables/tableSelect.vue'
 import dialogSeeObservation from '../components/modal/dialogClose.vue'
 import dialogCreateObservation from '../components/modal/dialogSaveClose.vue';
