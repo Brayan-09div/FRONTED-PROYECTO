@@ -3,6 +3,8 @@ import assignament from '../views/Assignament.vue'
 import myAssignament from '../views/MyAssignament.vue'
 import binnacles from '../views/Binnacles.vue'
 import followup from '../views/Followup.vue'
+import binnaclesAdmin from '../views/BinnaclesAdmin.vue'
+import followupAdmin from '../views/FollowupAdmin.vue'
 import loguin from '../views/Loguin.vue'
 import modality from '../views/Modality.vue'
 import register from '../views/Register.vue'
@@ -33,6 +35,8 @@ const routes = [
         { path: 'certificaciones', component: certificaciones },
         { path: 'binnacles', component: binnacles },
         { path: 'followup', component: followup },
+        { path: 'binnaclesAdmin', component: binnaclesAdmin },
+        { path: 'followupAdmin', component: followupAdmin },
         { path: 'instructor', component: instructor },
         { path: 'modality', component: modality },
         { path: 'register', component: register },
