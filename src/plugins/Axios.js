@@ -5,13 +5,11 @@
  
 // const apiClient = axios.create({
 //   // baseURL: 'http://localhost:4500/api',
-//   baseURL: 'https://etapas-practicas-ep.onrender.com',
+//   // baseURL: 'https://etapas-practicas-ep.onrender.com',
 //   headers: {
 //     "token": token.token
 //   }
 // });
-
-
 // export default apiClient;
 
 import axios from 'axios';
@@ -19,8 +17,8 @@ import axios from 'axios';
 const token = localStorage.getItem('token') || '';
 
 const apiClient = axios.create({
-    // baseURL: 'http://localhost:4600/api',
-    baseURL: 'https://etapas-practicas-ep.onrender.com',
+    baseURL: 'http://localhost:4500/api',
+    baseURL: 'https://etapas-practicas-ep.onrender.com/api',
     headers: {
         "token": token 
     }
